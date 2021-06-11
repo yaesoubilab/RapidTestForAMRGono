@@ -1,6 +1,6 @@
 from apace.Inputs import ModelSettings
+from definitions import get_survey_size
 from model import Data as D
-from model.Data import get_survey_size
 
 
 def get_model_settings(if_calibrating=False, if_disruption=False):

@@ -264,7 +264,7 @@ def screened(compart, destination, params):
 def Tx1st(compart, drug, destination, intervention):
     return EpiIndepEvent(
         name='1st Tx with {} | '.format(drug) + compart.name,
-        rate_param=Constant(value=100000000),
+        rate_param=Constant(value=1000),
         destination=destination,
         interv_to_activate=intervention)
 

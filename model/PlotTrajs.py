@@ -15,7 +15,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     :return:
     """
 
-    sim_outcomes = A.SimOutcomeTrajectories(csv_directory='trajectories')
+    sim_outcomes = A.SimOutcomeTrajectories(csv_directory='outputs/trajectories')
 
     # defaults
     A.TIME_0 = 0  # 2014
