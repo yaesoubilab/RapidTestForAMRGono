@@ -5,7 +5,8 @@ from scipy.stats import norm
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-SUSP_PROFILES = ['SUS', 'PEN-R', 'PEN/CFX-R']
+SYMP_STATES = ['Symp', 'Asym']
+SUSP_PROFILES = ['PEN-R', 'PEN/CFX-R', 'SUS']
 
 
 class SymStat(Enum):
@@ -26,33 +27,22 @@ class SuspProfile(Enum):
     SUS = 2
 
 
-class AgeGroupsProfiles:
-    # to convert (age group index, profile index) to an index and vice versa
+class SympSuspProfiles:
+    # to convert (symptom state, susceptibility profile) to an index and vice versa
 
-    def __init__(self, n_age_groups, n_profiles):
-        self.nAgeGroups = n_age_groups
-        self.nProfiles = n_profiles
-        self.length = n_age_groups * n_profiles
+    def __init__(self, n_symp_stats, n_susp_profiles):
+        self.nSympStats = n_symp_stats
+        self.nSuspProfiles = n_susp_profiles
+        self.length = n_symp_stats * n_susp_profiles
 
-    def get_row_index(self, age_group, profile):
-        return self.nProfiles * age_group + profile
+    def get_row_index(self, symp_state, susp_profile):
+        return self.nSuspProfiles * symp_state + susp_profile
 
     def get_age_group_and_profile(self, i):
-        return int(i/self.nProfiles), i % self.nAgeGroups
+        return int(i / self.nSuspProfiles), i % self.nSympStats
 
-    def get_str_age_profile(self, age_group, profile):
-
-        if profile == 0:
-            return AGES[age_group] + '-Current'
-        elif profile == 1:
-            return AGES[age_group] + '-Novel'
-        else:
-            raise ValueError
-        #return 'age/profile ({},{})'.format(age_group, profile)
-
-    def get_str_age(self, age_group):
-        return AGES[age_group]
-        # return 'age {}'.format(age_group)
+    def get_str_susp_profile(self, symp_state, susp_profile):
+        return '{}-{}'.format(SYMP_STATES[symp_state], SUSP_PROFILES[susp_profile])
 
 
 def get_survey_size(mean, l, u, multiplier=1):

@@ -1,7 +1,7 @@
 from SimPy.Parameters import Constant, Equal, Inverse, Product, Division, \
     OneMinus, Uniform, TenToPower, LinearCombination
 from apace.Inputs import EpiParameters
-from definitions import SuspProfile, AB, SymStat, SUSP_PROFILES
+from definitions import SuspProfile, AB, SymStat, SUSP_PROFILES, SympSuspProfiles
 
 
 class Parameters(EpiParameters):
@@ -57,6 +57,7 @@ class Parameters(EpiParameters):
         self.infectivityBySuspProfile = [None] * len(SuspProfile)
         self.sizeS = None
         self.sizeI = None
+        self.sizeIBySympAndSusp = None
 
         self.calculate_dependent_params(model_sets)
         self.build_dict_of_params()
@@ -85,9 +86,14 @@ class Parameters(EpiParameters):
             self.infectivityBySuspProfile[i] = Product([self.transm, self.ratioInf[i]])
 
         # size of compartments
+        indexer = SympSuspProfiles(n_symp_stats=len(SymStat), n_susp_profiles=len(SuspProfile))
         self.sizeS = Product(self.popSize, self.prevS0)
         self.sizeI = Product(self.popSize, self.prevI0)
-
+        self.sizeIBySympAndSusp = [None] * indexer.length
+        for s in range(len(SymStat)):
+            for i in range(len(SuspProfile)-1):
+                j = indexer.get_row_index(symp_state=s, susp_profile=i)
+                self.sizeIBySympAndSusp[j] = Product([self.sizeI, self.percI0Sym])
 
     def build_dict_of_params(self):
 
