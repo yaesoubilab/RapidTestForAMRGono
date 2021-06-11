@@ -3,7 +3,7 @@ from definitions import get_survey_size
 from model import Data as D
 
 
-def get_model_settings(if_calibrating=False, if_disruption=False):
+def get_model_settings(if_calibrating=False):
     """
     :param if_calibrating: (bool) if calibrating the model
     :param if_disruption: (bool) if simulate trajectories under disruptions
@@ -25,7 +25,6 @@ def get_model_settings(if_calibrating=False, if_disruption=False):
 
     # projection period
     settings.disruptionPeriod = 2  # years
-    settings.withDisruption = if_disruption
 
     # calibration targets
     if settings.calcLikelihood:

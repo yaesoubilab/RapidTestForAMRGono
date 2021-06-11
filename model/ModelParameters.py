@@ -1,4 +1,4 @@
-from SimPy.Parameters import Constant, Equal, Inverse, Product, Division, OneMinus, Uniform, TenToPower, Surge
+from SimPy.Parameters import Constant, Equal, Inverse, Product, Division, OneMinus, Uniform, TenToPower
 from apace.Inputs import EpiParameters
 
 
@@ -12,47 +12,71 @@ class Parameters(EpiParameters):
         EpiParameters.__init__(self)
 
         one_over_364 = 1/364
+
+        self.popSize = Constant(1000000)
+        self.prevI0 = Uniform(0.03, 0.06)
+        self.percI0Sym = Uniform(0.0, 0.25)
+
+        self.percI0ResPEN = Uniform(0.0, 0.04)
+        self.percI0ResCFX = Constant(0)
+        self.percI0ResCFX_PEN = Uniform(0.0, 0.005)
+
+        self.transm = Uniform(2, 4)
+        self.ratioInfPEN = Uniform(0.8, 1)
+        self.ratioInfCFX = Uniform(0.8, 1)
+
+        self.probSym = Uniform(0.2, 0.8)
+        self.exponProbResPEN = Uniform(-5, -3)
+        self.exponProbResCFX = Uniform(-5, -3)
+
+        self.tToNaturalRecovery = Uniform(1/12, 5)
+        self.tToScreened = Uniform(0.5, 5)
+        self.tToTreatment = Uniform(1*one_over_364, 14*one_over_364)
+        self.tToRetreatment = Uniform(1 * one_over_364, 14 * one_over_364)
+        self.annulSurveySize = Constant(value=1000)
+
+        # calculate dependent parameters
+        self.prevS0 = None
+        self.prevI0Asym = None
+        self.calculate_dependent_params()
+        # build the dictionary of parameters
+        self.build_dict_of_params()
+
+    def calculate_dependent_params(self):
+
+        self.prevS0 = OneMinus(par=self.prevI0)
+        self.prevI0Asym = OneMinus(par=self.percI0Sym)
+
+
+
+    def build_dict_of_params(self):
         self.dictOfParams = dict(
-            {'Pop size': Constant(value=1000000),
-             'Initial prevalence': Uniform(0.03, 0.06),  # Constant(value=0.04),
-             'Initial % I symptomatic': Uniform(0.0, 0.25),  # Constant(value=0.1),
-             'Initial % I resistant': Uniform(0.0, 0.04),  # Constant(value=0.02),
+            {'Pop size': self.popSize,
+             'Initial prevalence': self.prevI0,
+             'Initial % I symptomatic': self.percI0Sym,
+             'Initial % I PEN-R': self.percI0ResPEN,
+             'Initial % I CFX-R': self.percI0ResCFX,
              # ----
-             'Transmission parameter': Uniform(2, 4),  # Constant(value=3),
-             'Relative infectivity of resistant strain': Uniform(0.8, 1),  # Constant(value=0.8),
+             'Transmission parameter': self.transm,
+             'Relative infectivity of PEN-R strain': self.ratioInfPEN,
+             'Relative infectivity of CFX-R strain': self.ratioInfCFX,
              # ----
-             'Prob symptomatic': Uniform(0.2, 0.8),  # Constant(value=0.5),
-             'Exponent of prob of resistance': Uniform(-5, -3),
+             'Prob symptomatic': self.probSym,
+             'Exponent of prob of resistance to PEN': self.exponProbResPEN,
+             'Exponent of prob of resistance to CFX': self.exponProbResCFX,
              # ----
-             'Time until natural recovery': Uniform(1/12, 5),  # Constant(value=2),
-             'Time until screened': Uniform(0.5, 5),  # Constant(value=1),
-             'Time until seeking treatment (symptomatic)': Uniform(1*one_over_364, 14*one_over_364),  # Constant(value=14 / 364),
-             'Time until seeking retreatment (symptomatic)': Uniform(1*one_over_364, 14*one_over_364),  # Constant(value=14 / 364),
-             'Annual survey size': Constant(value=1000)
+             'Time until natural recovery': self.tToNaturalRecovery,
+             'Time until screened': self.tToScreened,
+             'Time until seeking treatment (symptomatic)': self.tToTreatment,
+             'Time until seeking retreatment (symptomatic)': self.tToRetreatment,
+             'Annual survey size': self.annulSurveySize
              })
 
-        # period of disruption
-        if model_sets.withDisruption:
-            t0 = model_sets.periodBeforeCalibration + model_sets.calibPeriod
-            t1 = t0 + model_sets.disruptionPeriod
-            self.dictOfParams['(time-dep) Infectivity of susceptible strain'] = Surge(
-                par_base=self.dictOfParams['Transmission parameter'],
-                par_max_percent_change=-0.5, par_t0=t0, par_t1=t1)
-            self.dictOfParams['(time-dep) Time until screened'] = Surge(
-                par_base=self.dictOfParams['Time until screened'],
-                par_max_percent_change=1, par_t0=t0, par_t1=t1)
-            self.dictOfParams['(time-dep) Time until seeking treatment (symptomatic)'] = Surge(
-                par_base=self.dictOfParams['Time until seeking treatment (symptomatic)'],
-                par_max_percent_change=1, par_t0=t0, par_t1=t1)
-            self.dictOfParams['(time-dep) Time until seeking retreatment (symptomatic)'] = Surge(
-                par_base=self.dictOfParams['Time until seeking retreatment (symptomatic)'],
-                par_max_percent_change=1, par_t0=t0, par_t1=t1)
-            self.dictOfParams['(time-dep) Annual survey size'] = Surge(
-                par_base=self.dictOfParams['Annual survey size'],
-                par_max_percent_change=-0.5, par_t0=t0, par_t1=t1)
+        self.dictOfParams['Initial % Susceptible'] = self.prevS0
+        self.dictOfParams['Initial % I asymptomatic'] = self.prevI0Asym
 
-        self.dictOfParams['Initial % Susceptible'] = OneMinus(par=self.dictOfParams['Initial prevalence'])
-        self.dictOfParams['Initial % I asymptomatic'] = OneMinus(par=self.dictOfParams['Initial % I symptomatic'])
+        # ---------------
+
         self.dictOfParams['Initial % I susceptible'] = OneMinus(
             par=self.dictOfParams['Initial % I resistant'])
 
@@ -85,30 +109,17 @@ class Parameters(EpiParameters):
         self.dictOfParams['Rate of natural recovery'] = Inverse(
             par=self.dictOfParams['Time until natural recovery'])
 
-        if model_sets.withDisruption:
-            self.dictOfParams['Rate of screening'] = Inverse(
-                par=self.dictOfParams['(time-dep) Time until screened'])
-            self.dictOfParams['Rate of seeking treatment'] = Inverse(
-                par=self.dictOfParams['(time-dep) Time until seeking treatment (symptomatic)'])
-            self.dictOfParams['Rate of seeking retreatment'] = Inverse(
-                par=self.dictOfParams['(time-dep) Time until seeking retreatment (symptomatic)'])
-            self.dictOfParams['Survey size (over observation periods)'] = Division(
-                par_numerator=self.dictOfParams['(time-dep) Annual survey size'],
-                par_denominator=Constant(value=model_sets.observationPeriod))
-            self.dictOfParams['Infectivity of susceptible strain'] = Equal(
-                par=self.dictOfParams['(time-dep) Infectivity of susceptible strain'])
-        else:
-            self.dictOfParams['Rate of screening'] = Inverse(
-                par=self.dictOfParams['Time until screened'])
-            self.dictOfParams['Rate of seeking treatment'] = Inverse(
-                par=self.dictOfParams['Time until seeking treatment (symptomatic)'])
-            self.dictOfParams['Rate of seeking retreatment'] = Inverse(
-                par=self.dictOfParams['Time until seeking retreatment (symptomatic)'])
-            self.dictOfParams['Survey size (over observation periods)'] = Division(
-                par_numerator=self.dictOfParams['Annual survey size'],
-                par_denominator=Constant(value=model_sets.observationPeriod))
-            self.dictOfParams['Infectivity of susceptible strain'] = Equal(
-                par=self.dictOfParams['Transmission parameter'])
+        self.dictOfParams['Rate of screening'] = Inverse(
+            par=self.dictOfParams['Time until screened'])
+        self.dictOfParams['Rate of seeking treatment'] = Inverse(
+            par=self.dictOfParams['Time until seeking treatment (symptomatic)'])
+        self.dictOfParams['Rate of seeking retreatment'] = Inverse(
+            par=self.dictOfParams['Time until seeking retreatment (symptomatic)'])
+        self.dictOfParams['Survey size (over observation periods)'] = Division(
+            par_numerator=self.dictOfParams['Annual survey size'],
+            par_denominator=Constant(value=model_sets.observationPeriod))
+        self.dictOfParams['Infectivity of susceptible strain'] = Equal(
+            par=self.dictOfParams['Transmission parameter'])
 
         self.dictOfParams['Infectivity of resistant strain'] = Product(
             parameters=[self.dictOfParams['Infectivity of susceptible strain'],

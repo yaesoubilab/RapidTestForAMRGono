@@ -4,13 +4,12 @@ from model import Data as D
 
 def plot(prev_multiplier=52, incd_multiplier=1,
          obs_prev_multiplier=1, obs_incd_multiplier=1,
-         if_disruption=False, filename='trajectories.png'):
+         filename='trajectories.png'):
     """
     :param prev_multiplier: (int) to multiply the simulation time to convert it to year, week, or day.
     :param incd_multiplier: (int) to multiply the simulation period to covert it to year, week, or day.
     :param obs_prev_multiplier: (int) to multiply the prevalence survey time to convert it to year, week, or day.
     :param obs_incd_multiplier: (int) to multiply the incidence survey period to covert it to year, week, or day.
-    :param if_disruption: (bool) if simulate trajectories under disruptions
     :param filename: (string) filename to save the trajectories as
     :return:
     """
@@ -58,10 +57,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                 title='To: I | Res | Asym',
                                 x_multiplier=incd_multiplier)
 
-    if if_disruption:
-        validation_filename = 'figures/(validation+disrupted) ' + filename
-    else:
-        validation_filename = 'figures/(validation) ' + filename
+    validation_filename = 'figures/(validation) ' + filename
 
     sim_outcomes.plot_multi_panel(n_rows=2, n_cols=5,
                                   list_plot_info=[S, I0_Sym, I0_Asym, IA_Sym, IA_Asym,
@@ -99,10 +95,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                             x_multiplier=obs_incd_multiplier,
                                             y_multiplier=100, y_range=(0, 100))
 
-    if if_disruption:
-        calibration_filename = 'figures/(calibration+disrupted) ' + filename
-    else:
-        calibration_filename = 'figures/(calibration) ' + filename
+    calibration_filename = 'figures/(calibration) ' + filename
 
     sim_outcomes.plot_multi_panel(n_rows=2, n_cols=2,
                                   list_plot_info=[Prev, GonoRate, PercentSymptomatic, PercentCasesResistantA],
