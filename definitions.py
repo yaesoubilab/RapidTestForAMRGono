@@ -9,7 +9,7 @@ SYMP_STATES = ['Symp', 'Asym']
 SUSP_PROFILES = ['PEN-R', 'PEN/CFX-R', 'SUS']
 
 
-class SymStat(Enum):
+class SympStat(Enum):
     SYMP = 0
     ASYM = 1
 

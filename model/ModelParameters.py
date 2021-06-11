@@ -1,7 +1,7 @@
 from SimPy.Parameters import Constant, Equal, Inverse, Product, Division, \
     OneMinus, Uniform, TenToPower, LinearCombination
 from apace.Inputs import EpiParameters
-from definitions import SuspProfile, AB, SymStat, SUSP_PROFILES, SympSuspProfiles
+from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, SympSuspProfiles
 
 
 class Parameters(EpiParameters):
@@ -14,6 +14,7 @@ class Parameters(EpiParameters):
         EpiParameters.__init__(self)
 
         one_over_364 = 1/364
+        self.precI0BySymp = [None] * len(SympStat)
         self.percI0BySuspProfile = [None] * len(SuspProfile)
         self.ratioInf = [None] * len(SuspProfile)
         self.exponProbRes = [None] * len(AB)
@@ -21,18 +22,17 @@ class Parameters(EpiParameters):
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
-        self.percI0Sym = Uniform(0.0, 0.25)
+        self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.25)
 
         # percent of I0 by susceptibility profile
-        self.percI0BySuspProfile[SuspProfile.SUS.value] = None  # will calculate later
         self.percI0BySuspProfile[SuspProfile.PEN.value] = Uniform(0.0, 0.04)
         self.percI0BySuspProfile[SuspProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
 
         # infectivity parameters
         self.transm = Uniform(2, 4)  # baseline infectivity
-        self.ratioInf[SuspProfile.SUS.value] = Constant(1)
         self.ratioInf[SuspProfile.PEN.value] = Uniform(0.8, 1)
         self.ratioInf[SuspProfile.PEN_CFX.Value] = Uniform(0.8, 1)
+        self.ratioInf[SuspProfile.SUS.value] = Constant(1)
 
         # exponent of the probability for the emergence of resistance for a drug
         for i in range(len(AB)):
@@ -46,8 +46,8 @@ class Parameters(EpiParameters):
 
         # calculate dependent parameters
         self.prevS0 = None
-        self.prevI0Asym = None
         self.prevI0Res = None
+        self.pervI0Sus = None
         self.probResEmerge = [None] * len(AB)
         self.rateNaturalRecovery = None
         self.rateScreened = None
@@ -66,11 +66,11 @@ class Parameters(EpiParameters):
 
         self.surveySize = Division(self.annulSurveySize, model_sets.observationPeriod)
         self.prevS0 = OneMinus(par=self.prevI0)
-        self.prevI0Asym = OneMinus(par=self.percI0Sym)
+        self.precI0BySymp[SympStat.ASYM.value] = OneMinus(par=self.precI0BySymp[SympStat.SYMP.value])
 
         # find the prevalence of I0 that are susceptible to all antibiotics
-        self.prevI0Res = LinearCombination(parameters=self.percI0BySuspProfile[:-1])
-        self.percI0BySuspProfile[SuspProfile.SUS.value] = OneMinus(par=self.prevI0Res)
+        self.prevI0Res = LinearCombination(parameters=self.percI0BySuspProfile)
+        self.pervI0Sus = OneMinus(par=self.prevI0Res)
 
         # probability for the emergence of resistance for a drug
         for i in range(len(AB)):
@@ -86,14 +86,14 @@ class Parameters(EpiParameters):
             self.infectivityBySuspProfile[i] = Product([self.transm, self.ratioInf[i]])
 
         # size of compartments
-        indexer = SympSuspProfiles(n_symp_stats=len(SymStat), n_susp_profiles=len(SuspProfile))
+        indexer = SympSuspProfiles(n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
         self.sizeS = Product(self.popSize, self.prevS0)
         self.sizeI = Product(self.popSize, self.prevI0)
         self.sizeIBySympAndSusp = [None] * indexer.length
-        for s in range(len(SymStat)):
-            for i in range(len(SuspProfile)-1):
+        for s in range(len(SympStat)):
+            for i in range(len(SuspProfile)):
                 j = indexer.get_row_index(symp_state=s, susp_profile=i)
-                self.sizeIBySympAndSusp[j] = Product([self.sizeI, self.percI0Sym])
+                self.sizeIBySympAndSusp[j] = Product([self.sizeI, self.precI0BySymp[s], self.percI0BySuspProfile[i]])
 
     def build_dict_of_params(self):
 
@@ -101,7 +101,7 @@ class Parameters(EpiParameters):
             {'Pop size': self.popSize,
              'Annual survey size': self.annulSurveySize,
              'Initial prevalence': self.prevI0,
-             'Initial % I symptomatic': self.percI0Sym,
+             'Initial % I by symptom states': self.precI0BySymp,
              'Initial % I by susceptibility profile': self.percI0BySuspProfile,
              # ----
              'Transmission parameter': self.transm,
@@ -118,7 +118,6 @@ class Parameters(EpiParameters):
 
         self.dictOfParams['Survey size (over observation periods)'] = self.surveySize
         self.dictOfParams['Initial % Susceptible'] = self.prevS0
-        self.dictOfParams['Initial % I asymptomatic'] = self.prevI0Asym
         self.dictOfParams['Initial % I resistant to any drug'] = self.prevI0Res
         self.dictOfParams['Initial % I by susceptibility profile'] = self.percI0BySuspProfile
 
@@ -134,24 +133,8 @@ class Parameters(EpiParameters):
 
         self.dictOfParams['Size of S'] = self.sizeS
         self.dictOfParams['Size of I'] = self.sizeI
+        self.dictOfParams['Size of I by Symp/Susp'] = self.sizeIBySympAndSusp
 
-
-        self.dictOfParams['Size of I-Sus|Sym'] = Product(
-            parameters=[self.dictOfParams['Size of I'],
-                        self.dictOfParams['Initial % I symptomatic'],
-                        self.dictOfParams['Initial % I susceptible']])
-        self.dictOfParams['Size of I-Sus|Asym'] = Product(
-            parameters=[self.dictOfParams['Size of I'],
-                        self.dictOfParams['Initial % I asymptomatic'],
-                        self.dictOfParams['Initial % I susceptible']])
-        self.dictOfParams['Size of I-Res|Sym'] = Product(
-            parameters=[self.dictOfParams['Size of I'],
-                        self.dictOfParams['Initial % I symptomatic'],
-                        self.dictOfParams['Initial % I resistant']])
-        self.dictOfParams['Size of I-Res|Asym'] = Product(
-            parameters=[self.dictOfParams['Size of I'],
-                        self.dictOfParams['Initial % I asymptomatic'],
-                        self.dictOfParams['Initial % I resistant']])
 
 
 
