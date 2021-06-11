@@ -5,18 +5,25 @@ from scipy.stats import norm
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-AGES = ['0-4yrs', '5-19yrs', '20-49yrs', '50-64yrs', '65-79yrs', '80+yrs']
+SUSP_PROFILES = ['SUS', 'PEN-R', 'PEN/CFX-R']
 
 
-class SymStats(Enum):
+class SymStat(Enum):
     SYMP = 0
     ASYM = 1
 
 
-class Profiles(Enum):
-    SUS = 0
-    PEN = 1
-    PEN_CFX = 2
+class AB(Enum):
+    PEN = 0
+    CFX = 1
+
+
+class SuspProfile(Enum):
+    # we put SUS last because its prevalence is calculated after calculating the prevalence
+    # of all other drugs
+    PEN = 0
+    PEN_CFX = 1
+    SUS = 2
 
 
 class AgeGroupsProfiles:
