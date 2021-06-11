@@ -8,19 +8,15 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 AGES = ['0-4yrs', '5-19yrs', '20-49yrs', '50-64yrs', '65-79yrs', '80+yrs']
 
 
+class SymStats(Enum):
+    SYMP = 0
+    ASYM = 1
+
+
 class Profiles(Enum):
-    A = 0   # infected with circulating strain
-    B = 1   # infected with novel strain
-    # V = 2   # vaccinated and infected with novel strain
-
-
-class AgeGroups(Enum):
-    Age_0_4 = 0
-    Age_5_19 = 1
-    Age_20_49 = 2
-    Age_50_64 = 3
-    Age_65_79 = 4
-    Age_80_ = 5
+    SUS = 0
+    PEN = 1
+    PEN_CFX = 2
 
 
 class AgeGroupsProfiles:
