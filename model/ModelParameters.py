@@ -1,7 +1,7 @@
 from SimPy.Parameters import Constant, Equal, Inverse, Product, Division, \
     OneMinus, Uniform, TenToPower, LinearCombination
 from apace.Inputs import EpiParameters
-from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, SympSuspProfiles
+from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, ComboSympAndSusp
 
 
 class Parameters(EpiParameters):
@@ -27,6 +27,7 @@ class Parameters(EpiParameters):
         # percent of I0 by susceptibility profile
         self.percI0BySuspProfile[SuspProfile.PEN.value] = Uniform(0.0, 0.04)
         self.percI0BySuspProfile[SuspProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
+        self.percI0BySuspProfile[SuspProfile.SUS.value] = None  # will calculate later
 
         # infectivity parameters
         self.transm = Uniform(2, 4)  # baseline infectivity
@@ -46,7 +47,7 @@ class Parameters(EpiParameters):
 
         # calculate dependent parameters
         self.prevS0 = None
-        self.prevI0Res = None
+        self.percI0Res = None
         self.pervI0Sus = None
         self.probResEmerge = [None] * len(AB)
         self.rateNaturalRecovery = None
@@ -69,12 +70,12 @@ class Parameters(EpiParameters):
         self.precI0BySymp[SympStat.ASYM.value] = OneMinus(par=self.precI0BySymp[SympStat.SYMP.value])
 
         # find the prevalence of I0 that are susceptible to all antibiotics
-        self.prevI0Res = LinearCombination(parameters=self.percI0BySuspProfile)
-        self.pervI0Sus = OneMinus(par=self.prevI0Res)
+        self.percI0Res = LinearCombination(parameters=self.percI0BySuspProfile[:-1])
+        self.percI0BySuspProfile[SuspProfile.SUS.value] = OneMinus(par=self.percI0Res)
 
         # probability for the emergence of resistance for a drug
-        for i in range(len(AB)):
-            self.probResEmerge[i] = TenToPower(self.exponProbRes[i])
+        for p in range(len(AB)):
+            self.probResEmerge[p] = TenToPower(self.exponProbRes[p])
 
         self.rateNaturalRecovery = Inverse(self.tToNaturalRecovery)
         self.rateScreened = Inverse(self.tToScreened)
@@ -82,18 +83,18 @@ class Parameters(EpiParameters):
         self.rateRetreatment = Inverse(self.tToRetreatment)
 
         # infectivity by susceptibility profile
-        for i in range(len(SuspProfile)):
-            self.infectivityBySuspProfile[i] = Product([self.transm, self.ratioInf[i]])
+        for p in range(len(SuspProfile)):
+            self.infectivityBySuspProfile[p] = Product([self.transm, self.ratioInf[p]])
 
         # size of compartments
-        indexer = SympSuspProfiles(n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
+        indexer = ComboSympAndSusp(n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
         self.sizeS = Product(self.popSize, self.prevS0)
         self.sizeI = Product(self.popSize, self.prevI0)
         self.sizeIBySympAndSusp = [None] * indexer.length
         for s in range(len(SympStat)):
-            for i in range(len(SuspProfile)):
-                j = indexer.get_row_index(symp_state=s, susp_profile=i)
-                self.sizeIBySympAndSusp[j] = Product([self.sizeI, self.precI0BySymp[s], self.percI0BySuspProfile[i]])
+            for p in range(len(SuspProfile)):
+                i = indexer.get_row_index(symp_state=s, susp_profile=p)
+                self.sizeIBySympAndSusp[i] = Product([self.sizeI, self.precI0BySymp[s], self.percI0BySuspProfile[p]])
 
     def build_dict_of_params(self):
 
@@ -118,7 +119,7 @@ class Parameters(EpiParameters):
 
         self.dictOfParams['Survey size (over observation periods)'] = self.surveySize
         self.dictOfParams['Initial % Susceptible'] = self.prevS0
-        self.dictOfParams['Initial % I resistant to any drug'] = self.prevI0Res
+        self.dictOfParams['Initial % I resistant to any drug'] = self.percI0Res
         self.dictOfParams['Initial % I by susceptibility profile'] = self.percI0BySuspProfile
 
         self.dictOfParams['Prob of resistance by antibiotics'] = self.probResEmerge
@@ -128,8 +129,8 @@ class Parameters(EpiParameters):
         self.dictOfParams['Rate of seeking treatment'] = self.rateTreatment
         self.dictOfParams['Rate of seeking retreatment'] = self.rateRetreatment
 
-        for i in range(len(SuspProfile)):
-            self.dictOfParams['Infectivity of '+SUSP_PROFILES[i]] = self.infectivityBySuspProfile[i]
+        for p in range(len(SuspProfile)):
+            self.dictOfParams['Infectivity of '+SUSP_PROFILES[p]] = self.infectivityBySuspProfile[p]
 
         self.dictOfParams['Size of S'] = self.sizeS
         self.dictOfParams['Size of I'] = self.sizeI

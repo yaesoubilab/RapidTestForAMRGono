@@ -27,7 +27,7 @@ class SuspProfile(Enum):
     SUS = 2
 
 
-class SympSuspProfiles:
+class ComboSympAndSusp:
     # to convert (symptom state, susceptibility profile) to an index and vice versa
 
     def __init__(self, n_symp_stats, n_susp_profiles):
@@ -38,7 +38,7 @@ class SympSuspProfiles:
     def get_row_index(self, symp_state, susp_profile):
         return self.nSuspProfiles * symp_state + susp_profile
 
-    def get_age_group_and_profile(self, i):
+    def get_symp_and_profile(self, i):
         return int(i / self.nSuspProfiles), i % self.nSympStats
 
     def get_str_susp_profile(self, symp_state, susp_profile):

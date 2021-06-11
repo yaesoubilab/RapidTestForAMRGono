@@ -8,20 +8,37 @@ from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention
 
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
 from model.ModelParameters import Parameters
+from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, ComboSympAndSusp
 
 
 def build_model(model):
 
     # model settings
     sets = model.settings
+    indexer = ComboSympAndSusp(n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
 
     # model parameters
     params = Parameters(model_sets=sets)
 
     # ------------- model compartments ---------------
+    Is = [None] * indexer.length
+    Ts = [None] *
+    RTs = [None] * indexer.length
+
     # model compartments
-    S = Compartment(name='S', size_par=params.dictOfParams['Size of S'],
-                    susceptibility_params=[Constant(value=1), Constant(value=1)])
+    S = Compartment(name='S', size_par=params.sizeS,
+                    susceptibility_params=[Constant(value=1)])
+
+    for s in range(len(SympStat)):
+        for p in range(len(SuspProfile)):
+            i = indexer.get_row_index(symp_state=s, susp_profile=p)
+            infectivity_params = [Constant(value=0)] * indexer.nSuspProfiles
+            infectivity_params[p] = params.infectivityBySuspProfile[p]
+            Is[i] = Compartment(name='I'+indexer.get_str_susp_profile(symp_state=s, susp_profile=p),
+                                size_par=params.sizeIBySympAndSusp[i],
+                                if_empty_to_eradicate=True,
+                                infectivity_params=infectivity_params)
+
     I_Sus_Sym = I(sus_profile='Sus', symptom='Sym', params=params)
     I_Sus_Asym = I(sus_profile='Sus', symptom='Asym', params=params)
     I_Res_Sym = I(sus_profile='Res', symptom='Sym', params=params)
