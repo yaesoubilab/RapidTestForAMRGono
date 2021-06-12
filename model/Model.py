@@ -42,7 +42,7 @@ def build_model(model):
                                 if_empty_to_eradicate=True,
                                 infectivity_params=infectivity_params)
 
-    # Fs
+    # Fs: infectious compartments after treatment failure
     for s in range(len(SympStat)):
         for p in range(len(SuspProfile)):
             if p != SuspProfile.SUS.value:
@@ -52,7 +52,7 @@ def build_model(model):
                                     if_empty_to_eradicate=True,
                                     infectivity_params=infectivity_params)
 
-    # chance node for if symptomatic
+    # chance nodes for if symptomatic
     for p in range(len(SuspProfile)):
         dest_symp = Is[indexer.get_row_index(symp_state=SympStat.SYMP.value, susp_profile=p)]
         dest_asym = Is[indexer.get_row_index(symp_state=SympStat.ASYM.value, susp_profile=p)]
@@ -60,7 +60,7 @@ def build_model(model):
                                         destination_compartments=[dest_symp, dest_asym],
                                         probability_params=params.probSym)
 
-    # treatment outcomes
+    # change nodes for treatment outcomes
     for s in range(len(SympStat)):
         for p in range(len(SuspProfile)):
             for a in range(len(AB)):
