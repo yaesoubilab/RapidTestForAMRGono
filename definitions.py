@@ -41,7 +41,10 @@ class ComboSympAndSusp:
     def get_symp_and_profile(self, i):
         return int(i / self.nSuspProfiles), i % self.nSympStats
 
-    def get_str_susp_profile(self, symp_state, susp_profile):
+    def get_str_susp(self, susp_profile):
+        return SUSP_PROFILES[susp_profile]
+
+    def get_str_symp_susp(self, symp_state, susp_profile):
         return '{}-{}'.format(SYMP_STATES[symp_state], SUSP_PROFILES[susp_profile])
 
 

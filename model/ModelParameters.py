@@ -19,6 +19,10 @@ class Parameters(EpiParameters):
         self.ratioInf = [None] * len(SuspProfile)
         self.exponProbRes = [None] * len(AB)
 
+        # rapid test characteristics
+        self.sens = Constant(1)
+        self.spec = Constant(0)
+
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
@@ -99,7 +103,10 @@ class Parameters(EpiParameters):
     def build_dict_of_params(self):
 
         self.dictOfParams = dict(
-            {'Pop size': self.popSize,
+            {'Sensitivity': self.sens,
+             'Specificity': self.spec,
+             # ----
+             'Pop size': self.popSize,
              'Annual survey size': self.annulSurveySize,
              'Initial prevalence': self.prevI0,
              'Initial % I by symptom states': self.precI0BySymp,

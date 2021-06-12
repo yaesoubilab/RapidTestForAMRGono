@@ -22,47 +22,71 @@ def build_model(model):
 
     # ------------- model compartments ---------------
     Is = [None] * indexer.length
-    Ts = [None] *
-    RTs = [None] * indexer.length
+    Fs = [None] * (len(SuspProfile)-1)
+    ifs_symp_from_S = [None] * len(SuspProfile)
+    rapid_tests = [None] * indexer.length
+    ifs_tx_outcomes = [None] * indexer.length
 
     # model compartments
     S = Compartment(name='S', size_par=params.sizeS,
                     susceptibility_params=[Constant(value=1)])
 
+    # Is
     for s in range(len(SympStat)):
         for p in range(len(SuspProfile)):
             i = indexer.get_row_index(symp_state=s, susp_profile=p)
             infectivity_params = [Constant(value=0)] * indexer.nSuspProfiles
             infectivity_params[p] = params.infectivityBySuspProfile[p]
-            Is[i] = Compartment(name='I'+indexer.get_str_susp_profile(symp_state=s, susp_profile=p),
+            Is[i] = Compartment(name='I'+indexer.get_str_symp_susp(symp_state=s, susp_profile=p),
                                 size_par=params.sizeIBySympAndSusp[i],
                                 if_empty_to_eradicate=True,
                                 infectivity_params=infectivity_params)
 
-    I_Sus_Sym = I(sus_profile='Sus', symptom='Sym', params=params)
-    I_Sus_Asym = I(sus_profile='Sus', symptom='Asym', params=params)
-    I_Res_Sym = I(sus_profile='Res', symptom='Sym', params=params)
-    I_Res_Asym = I(sus_profile='Res', symptom='Asym', params=params)
+    # Fs
+    for s in range(len(SympStat)):
+        for p in range(len(SuspProfile)):
+            if p != SuspProfile.SUS.value:
+                infectivity_params = [Constant(value=0)] * indexer.nSuspProfiles
+                infectivity_params[p] = params.infectivityBySuspProfile[p]
+                Fs[p] = Compartment(name='F' + indexer.get_str_symp_susp(symp_state=s, susp_profile=p),
+                                    if_empty_to_eradicate=True,
+                                    infectivity_params=infectivity_params)
 
-    W_I_Sus_Sym = Compartment(name='Waiting 1st | '+I_Sus_Sym.name, num_of_pathogens=2)
-    W_I_Sus_Asym = Compartment(name='Waiting 1st | '+I_Sus_Asym.name, num_of_pathogens=2)
-    W_I_Res_Sym = Compartment(name='Waiting 1st | '+I_Res_Sym.name, num_of_pathogens=2)
-    W_I_Res_Asym = Compartment(name='Waiting 1st | '+I_Res_Asym.name, num_of_pathogens=2)
-    W2_I_Res_Sym = Compartment(name='Waiting 2nd | ' + I_Res_Sym.name, num_of_pathogens=2)
+    # chance node for if symptomatic
+    for p in range(len(SuspProfile)):
+        dest_symp = Is[indexer.get_row_index(symp_state=SympStat.SYMP.value, susp_profile=p)]
+        dest_asym = Is[indexer.get_row_index(symp_state=SympStat.ASYM.value, susp_profile=p)]
+        ifs_symp_from_S[p] = ChanceNode(name='If symptomatic to '+indexer.get_str_susp(susp_profile=p),
+                                        destination_compartments=[dest_symp, dest_asym],
+                                        probability_params=params.probSym)
 
-    if_Sym_Sus = ChanceNode(name='If symptomatic | Sus',
-                            destination_compartments=[I_Sus_Sym, I_Sus_Asym],
-                            probability_params=params.dictOfParams['Prob symptomatic'])
-    if_sym_inf_res = ChanceNode(name='If symptomatic | Res',
-                                destination_compartments=[I_Res_Sym, I_Res_Asym],
-                                probability_params=params.dictOfParams['Prob symptomatic'])
-    if_sym_emerge_res = ChanceNode(name='If symptomatic after emergence of resistance',
-                                   destination_compartments=[W2_I_Res_Sym, I_Res_Asym],
-                                   probability_params=params.dictOfParams['Prob symptomatic'])
+    # treatment outcomes
+    for s in range(len(SympStat)):
+        for p in range(len(SuspProfile)):
+            for a in range(len(AB)):
 
-    if_res_after_tx = ChanceNode(name='If resistance after Tx-A',
-                                 destination_compartments=[if_sym_emerge_res, S],
-                                 probability_params=params.dictOfParams['Prob of resistance'])
+                dest_succ = None
+                dest_rest = None
+                dest_fail = None
+                ifs_tx_outcomes[i] = ChanceNode(name=,
+                                                destination_compartments=[],
+                                                probability_params=[])
+
+    # rapid tests
+    for s in range(len(SympStat)):
+        for p in range(len(SuspProfile)):
+            i = indexer.get_row_index(symp_state=s, susp_profile=p)
+            dest_pos = None
+            dest_neg = None
+            if s in (SuspProfile.PEN.value or SuspProfile.PEN_CFX.value):
+                prob = params.sens
+            else:
+                prob = params.spec
+            rapid_tests[i] = ChanceNode(name='Rapid test in '+indexer.get_str_symp_susp(symp_state=s, susp_profile=p),
+                                        destination_compartments=[dest_pos, dest_neg],
+                                        probability_params=prob)
+
+
 
     # ------------- compartment histories ---------------
     # set up prevalence, incidence, and cumulative incidence to collect
