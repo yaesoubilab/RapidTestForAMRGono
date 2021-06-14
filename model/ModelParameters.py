@@ -1,7 +1,6 @@
-from SimPy.Parameters import Constant, Inverse, Product, Division, \
-    OneMinus, Uniform, TenToPower, LinearCombination
+from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, TenToPower, LinearCombination
 from apace.Inputs import EpiParameters
-from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio
+from definitions import RestProfile, AB, SympStat, REST_PROFILES
 
 
 class Parameters(EpiParameters):
@@ -30,13 +29,15 @@ class Parameters(EpiParameters):
 
         # percent of I0 by susceptibility profile
         self.percI0BySuspProfile[RestProfile.PEN.value] = Uniform(0.0, 0.04)
+        self.percI0BySuspProfile[RestProfile.CFX.value] = Uniform(0.0, 0.005)
         self.percI0BySuspProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
         self.percI0BySuspProfile[RestProfile.SUS.value] = None  # will calculate later
 
         # infectivity parameters
         self.transm = Uniform(2, 4)  # baseline infectivity
         self.ratioInf[RestProfile.PEN.value] = Uniform(0.8, 1)
-        self.ratioInf[RestProfile.PEN_CFX.Value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.CFX.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.PEN_CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.SUS.value] = Constant(1)
 
         # exponent of the probability for the emergence of resistance for a drug
@@ -46,7 +47,7 @@ class Parameters(EpiParameters):
         self.probSym = Uniform(0.2, 0.8)
         self.tToNaturalRecovery = Uniform(1/12, 5)
         self.tToScreened = Uniform(0.5, 5)
-        self.tToTreatment = Uniform(1*one_over_364, 14*one_over_364)
+        self.tToTreatment = Uniform(1 * one_over_364, 14 * one_over_364)
         self.tToRetreatment = Uniform(1 * one_over_364, 14 * one_over_364)
 
         # calculate dependent parameters
@@ -71,7 +72,7 @@ class Parameters(EpiParameters):
     def calculate_dependent_params(self, model_sets):
 
         self.oneMinusSpec = OneMinus(par=self.spec)
-        self.surveySize = Division(self.annulSurveySize, model_sets.observationPeriod)
+        self.surveySize = Product([self.annulSurveySize, Constant(model_sets.observationPeriod)])
         self.prevS0 = OneMinus(par=self.prevI0)
         self.precI0BySymp[SympStat.ASYM.value] = OneMinus(par=self.precI0BySymp[SympStat.SYMP.value])
 
@@ -93,14 +94,14 @@ class Parameters(EpiParameters):
             self.infectivityBySuspProfile[p] = Product([self.transm, self.ratioInf[p]])
 
         # size of compartments
-        indexer = ConvertSympAndSuspAndAntiBio(n_symp_stats=len(SympStat), n_susp_profiles=len(RestProfile))
-        self.sizeS = Product(self.popSize, self.prevS0)
-        self.sizeI = Product(self.popSize, self.prevI0)
-        self.sizeIBySympAndSusp = [None] * indexer.length
+        self.sizeS = Product([self.popSize, self.prevS0])
+        self.sizeI = Product([self.popSize, self.prevI0])
+        self.sizeIBySympAndSusp = [None] * len(SympStat) * len(RestProfile)
+        i = 0
         for s in range(len(SympStat)):
             for p in range(len(RestProfile)):
-                i = indexer.get_row_index(symp_state=s, susp_profile=p)
                 self.sizeIBySympAndSusp[i] = Product([self.sizeI, self.precI0BySymp[s], self.percI0BySuspProfile[p]])
+                i += 1
 
     def build_dict_of_params(self):
 

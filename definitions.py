@@ -38,19 +38,20 @@ class ConvertSympAndSuspAndAntiBio:
         self.nSympStats = n_symp_stats
         self.nSuspProfiles = n_susp_profiles
         self.nAntiBiotics = n_antibiotics
-        if n_antibiotics is (None, 0):
+        if n_antibiotics in (None, 0):
             self.length = n_symp_stats * n_susp_profiles
         else:
             self.length = n_symp_stats * n_susp_profiles * n_antibiotics
 
     def get_row_index(self, symp_state, susp_profile, antibiotic=None):
-        if self.nAntiBiotics is (None, 0):
+        if self.nAntiBiotics in (None, 0):
             return self.nSuspProfiles * symp_state + susp_profile
         else:
-            return None
+            return (self.nSuspProfiles * self.nAntiBiotics) * symp_state \
+                   + self.nAntiBiotics * susp_profile + antibiotic
 
     def get_symp_and_profile(self, i):
-        if self.nAntiBiotics is (None, 0):
+        if self.nAntiBiotics in (None, 0):
             return int(i / self.nSuspProfiles), i % self.nSympStats
         else:
             return None

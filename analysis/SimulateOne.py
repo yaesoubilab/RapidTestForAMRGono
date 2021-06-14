@@ -1,10 +1,10 @@
 from apace.Epidemic import EpiModel
 from model.Model import build_model
-from model.ModelSettings import get_model_settings
+from model.ModelSettings import GonoSettings
 from model.PlotTrajs import plot
 
 # get model settings
-sets = get_model_settings()
+sets = GonoSettings()
 # make an (empty) epidemic model
 model = EpiModel(id=0, settings=sets)
 # populate the SIR model

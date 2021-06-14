@@ -38,29 +38,27 @@ def build_model(model):
                     susceptibility_params=[Constant(value=1)])
 
     # Is (infectious) and Fs (infectious after treatment failure)
+    i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
-            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
-            # Is
-            name = 'I '+covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
+            str_symp_susp = covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
             infectivity_params = [Constant(value=0)] * covert_symp_susp.nSuspProfiles
             infectivity_params[p] = params.infectivityBySuspProfile[p]
-            Is[i] = Compartment(name=name,
+            # Is
+            Is[i] = Compartment(name='I ' + str_symp_susp,
                                 size_par=params.sizeIBySympAndSusp[i],
                                 if_empty_to_eradicate=True,
                                 infectivity_params=infectivity_params)
             # if symptomatic
-            if s == SympStat.SYMP:
+            if s == SympStat.SYMP.value:
                 Is_symp.append(Is[i])
 
             # Fs: infectious compartments after treatment failure
-            name = 'F ' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
-            infectivity_params = [Constant(value=0)] * covert_symp_susp.nSuspProfiles
-            infectivity_params[p] = params.infectivityBySuspProfile[p]
-            Fs[i] = Compartment(name=name,
+            Fs[i] = Compartment(name='F ' + str_symp_susp,
                                 if_empty_to_eradicate=True,
                                 infectivity_params=infectivity_params)
-
+            # increment i
+            i += 1
     # if symptomatic after infection
     for p in range(len(RestProfile)):
         name = 'If symptomatic to ' + covert_symp_susp.get_str_susp(susp_profile=p)
@@ -71,24 +69,22 @@ def build_model(model):
                                         probability_params=params.probSym)
 
     # if retreatment after treatment failure
+    i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
             name = 'Re-Tx after failure in ' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
-            j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+            dest_yes = Fs[i]
+            dest_no = Is[i]
             if s == SympStat.SYMP.value:
-                dest_yes = Fs[j]
-                dest_no = Is[j]
                 prob_yes = Constant(1)
             elif s == SympStat.ASYM.value:
-                dest_yes = Fs[j]
-                dest_no = Is[j]
                 prob_yes = Constant(0)
             else:
                 raise ValueError('Invalid symptom status.')
-            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
             ifs_re_tx[i] = ChanceNode(name=name,
                                       destination_compartments=[dest_yes, dest_no],
                                       probability_params=prob_yes)
+            i += 1
 
     # chance nodes for if symptomatic after emergence of resistance during treatment
     for p in range(len(RestProfile)):
@@ -125,29 +121,33 @@ def build_model(model):
                 # if resistance to PEN
                 elif p == RestProfile.PEN.value:
                     if a == AB.PEN.value:
+                        # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
                         # failure due to ineffective treatment
                         j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
                         dest_succ = ifs_re_tx[j]
                         dest_fail = ifs_re_tx[j]
                         prob_fail = Constant(1)
-                    elif a == AB.CFX:
+                    elif a == AB.CFX.value:
+                        # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
                         # success or resistance
                         dest_succ = S
                         dest_fail = ifs_re_tx[covert_symp_susp.get_row_index(
                             symp_state=s, susp_profile=RestProfile.PEN_CFX.value)]
-                        prob_fail = params.probResEmerge
+                        prob_fail = params.probResEmerge[a]
                     else:
                         raise ValueError('Invalid antibiotic.')
 
                 # if resistance to CFX
                 elif p == RestProfile.CFX:
-                    if a == AB.PEN:
+                    if a == AB.PEN.value:
+                        # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
                         # success or resistance
                         dest_succ = S
                         dest_fail = ifs_re_tx[covert_symp_susp.get_row_index(
                             symp_state=s, susp_profile=RestProfile.PEN_CFX.value)]
-                        prob_fail = params.probResEmerge
-                    elif a == AB.CFX:
+                        prob_fail = params.probResEmerge[a]
+                    elif a == AB.CFX.value:
+                        # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
                         # failure
                         j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
                         dest_succ = ifs_re_tx[j]
@@ -156,7 +156,8 @@ def build_model(model):
                     else:
                         raise ValueError('Invalid antibiotic.')
 
-                elif p == RestProfile.PEN_CFX:
+                elif p == RestProfile.PEN_CFX.value:
+                    # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
                     # failure
                     j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
                     dest_succ = ifs_re_tx[j]
@@ -353,7 +354,7 @@ def build_model(model):
             # treatment
             Fs[i].add_event(EpiIndepEvent(
                 name='Re-Tx | ' + compart_name,
-                rate_param=params.rateTreatment,
+                rate_param=params.rateRetreatment,
                 destination=S
             ))
 
