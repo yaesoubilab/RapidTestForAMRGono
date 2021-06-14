@@ -17,6 +17,7 @@ def get_model_settings(if_calibrating=False):
     settings.simulationOutputPeriod = 1  # simulation output period
     settings.observationPeriod = 1
     settings.storeParameterValues = True
+    settings.ifCollectTrajsOfCompartments = True  # if collect the trajectories of all compartments
 
     # calibration settings
     settings.calcLikelihood = if_calibrating

@@ -8,7 +8,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after
 # calculating the prevalence of all other drugs
-SUSP_PROFILES = ['PEN-R', 'PEN/CFX-R', 'SUS']
+REST_PROFILES = ['PEN-R', 'CFX-R', 'PEN/CFX-R', 'SUS']
 ANTIBIOTICS = ['PEN', 'CFX']
 
 
@@ -22,12 +22,13 @@ class AB(Enum):
     CFX = 1
 
 
-class SuspProfile(Enum):
+class RestProfile(Enum):
     # we put SUS last because its prevalence is calculated after calculating the prevalence
     # of all other drugs
     PEN = 0
-    PEN_CFX = 1
-    SUS = 2
+    CFX = 1
+    PEN_CFX = 2
+    SUS = 3
 
 
 class ConvertSympAndSuspAndAntiBio:
@@ -55,13 +56,13 @@ class ConvertSympAndSuspAndAntiBio:
             return None
 
     def get_str_susp(self, susp_profile):
-        return SUSP_PROFILES[susp_profile]
+        return REST_PROFILES[susp_profile]
 
     def get_str_symp_susp(self, symp_state, susp_profile):
-        return '{}-{}'.format(SYMP_STATES[symp_state], SUSP_PROFILES[susp_profile])
+        return '{}-{}'.format(SYMP_STATES[symp_state], REST_PROFILES[susp_profile])
 
     def get_str_symp_susp_antibio(self, symp_state, susp_profile, antibiotic):
-        return '{}-{}-{}'.format(SYMP_STATES[symp_state], SUSP_PROFILES[susp_profile], ANTIBIOTICS[antibiotic])
+        return '{}-{}-{}'.format(SYMP_STATES[symp_state], REST_PROFILES[susp_profile], ANTIBIOTICS[antibiotic])
 
 
 def get_survey_size(mean, l, u, multiplier=1):

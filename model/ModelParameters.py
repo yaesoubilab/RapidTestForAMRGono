@@ -1,7 +1,7 @@
-from SimPy.Parameters import Constant, Equal, Inverse, Product, Division, \
+from SimPy.Parameters import Constant, Inverse, Product, Division, \
     OneMinus, Uniform, TenToPower, LinearCombination
 from apace.Inputs import EpiParameters
-from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, ConvertSympAndSuspAndAntiBio
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio
 
 
 class Parameters(EpiParameters):
@@ -15,8 +15,8 @@ class Parameters(EpiParameters):
 
         one_over_364 = 1/364
         self.precI0BySymp = [None] * len(SympStat)
-        self.percI0BySuspProfile = [None] * len(SuspProfile)
-        self.ratioInf = [None] * len(SuspProfile)
+        self.percI0BySuspProfile = [None] * len(RestProfile)
+        self.ratioInf = [None] * len(RestProfile)
         self.exponProbRes = [None] * len(AB)
 
         # rapid test characteristics
@@ -29,15 +29,15 @@ class Parameters(EpiParameters):
         self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.25)
 
         # percent of I0 by susceptibility profile
-        self.percI0BySuspProfile[SuspProfile.PEN.value] = Uniform(0.0, 0.04)
-        self.percI0BySuspProfile[SuspProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
-        self.percI0BySuspProfile[SuspProfile.SUS.value] = None  # will calculate later
+        self.percI0BySuspProfile[RestProfile.PEN.value] = Uniform(0.0, 0.04)
+        self.percI0BySuspProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
+        self.percI0BySuspProfile[RestProfile.SUS.value] = None  # will calculate later
 
         # infectivity parameters
         self.transm = Uniform(2, 4)  # baseline infectivity
-        self.ratioInf[SuspProfile.PEN.value] = Uniform(0.8, 1)
-        self.ratioInf[SuspProfile.PEN_CFX.Value] = Uniform(0.8, 1)
-        self.ratioInf[SuspProfile.SUS.value] = Constant(1)
+        self.ratioInf[RestProfile.PEN.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.PEN_CFX.Value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.SUS.value] = Constant(1)
 
         # exponent of the probability for the emergence of resistance for a drug
         for i in range(len(AB)):
@@ -60,7 +60,7 @@ class Parameters(EpiParameters):
         self.rateTreatment = None
         self.rateRetreatment = None
         self.surveySize = None
-        self.infectivityBySuspProfile = [None] * len(SuspProfile)
+        self.infectivityBySuspProfile = [None] * len(RestProfile)
         self.sizeS = None
         self.sizeI = None
         self.sizeIBySympAndSusp = None
@@ -77,7 +77,7 @@ class Parameters(EpiParameters):
 
         # find the prevalence of I0 that are susceptible to all antibiotics
         self.percI0Res = LinearCombination(parameters=self.percI0BySuspProfile[:-1])
-        self.percI0BySuspProfile[SuspProfile.SUS.value] = OneMinus(par=self.percI0Res)
+        self.percI0BySuspProfile[RestProfile.SUS.value] = OneMinus(par=self.percI0Res)
 
         # probability for the emergence of resistance for a drug
         for p in range(len(AB)):
@@ -89,16 +89,16 @@ class Parameters(EpiParameters):
         self.rateRetreatment = Inverse(self.tToRetreatment)
 
         # infectivity by susceptibility profile
-        for p in range(len(SuspProfile)):
+        for p in range(len(RestProfile)):
             self.infectivityBySuspProfile[p] = Product([self.transm, self.ratioInf[p]])
 
         # size of compartments
-        indexer = ConvertSympAndSuspAndAntiBio(n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
+        indexer = ConvertSympAndSuspAndAntiBio(n_symp_stats=len(SympStat), n_susp_profiles=len(RestProfile))
         self.sizeS = Product(self.popSize, self.prevS0)
         self.sizeI = Product(self.popSize, self.prevI0)
         self.sizeIBySympAndSusp = [None] * indexer.length
         for s in range(len(SympStat)):
-            for p in range(len(SuspProfile)):
+            for p in range(len(RestProfile)):
                 i = indexer.get_row_index(symp_state=s, susp_profile=p)
                 self.sizeIBySympAndSusp[i] = Product([self.sizeI, self.precI0BySymp[s], self.percI0BySuspProfile[p]])
 
@@ -139,8 +139,8 @@ class Parameters(EpiParameters):
         self.dictOfParams['Rate of seeking treatment'] = self.rateTreatment
         self.dictOfParams['Rate of seeking retreatment'] = self.rateRetreatment
 
-        for p in range(len(SuspProfile)):
-            self.dictOfParams['Infectivity of '+SUSP_PROFILES[p]] = self.infectivityBySuspProfile[p]
+        for p in range(len(RestProfile)):
+            self.dictOfParams['Infectivity of ' + REST_PROFILES[p]] = self.infectivityBySuspProfile[p]
 
         self.dictOfParams['Size of S'] = self.sizeS
         self.dictOfParams['Size of I'] = self.sizeI
