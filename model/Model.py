@@ -8,24 +8,33 @@ from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention
 
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
 from model.ModelParameters import Parameters
-from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, ComboSympAndSusp
+from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, ConvertSympAndSuspAndAntiBio
 
 
 def build_model(model):
 
     # model settings
     sets = model.settings
-    indexer = ComboSympAndSusp(n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
+    covert_symp_susp = ConvertSympAndSuspAndAntiBio(
+        n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
+    covert_symp_susp_antibio = ConvertSympAndSuspAndAntiBio(
+        n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile), n_antibiotics=len(AB))
+
 
     # model parameters
     params = Parameters(model_sets=sets)
 
     # ------------- model compartments ---------------
-    Is = [None] * indexer.length
-    Fs = [None] * (len(SuspProfile)-1)
+    Is = [None] * covert_symp_susp.length
+    Fs = [None] * covert_symp_susp.length
     ifs_symp_from_S = [None] * len(SuspProfile)
-    rapid_tests = [None] * indexer.length
-    ifs_tx_outcomes = [None] * indexer.length
+
+    ifs_re_tx = [None] * covert_symp_susp.length
+    ifs_symp_from_emerg_res = [None] * len(SuspProfile)
+    ifs_tx_outcomes = [None] * covert_symp_susp_antibio.length
+    ifs_rapid_tests = [None] * covert_symp_susp.length
+
+
 
     # model compartments
     S = Compartment(name='S', size_par=params.sizeS,
@@ -34,10 +43,10 @@ def build_model(model):
     # Is
     for s in range(len(SympStat)):
         for p in range(len(SuspProfile)):
-            i = indexer.get_row_index(symp_state=s, susp_profile=p)
-            infectivity_params = [Constant(value=0)] * indexer.nSuspProfiles
+            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+            infectivity_params = [Constant(value=0)] * covert_symp_susp.nSuspProfiles
             infectivity_params[p] = params.infectivityBySuspProfile[p]
-            Is[i] = Compartment(name='I'+indexer.get_str_symp_susp(symp_state=s, susp_profile=p),
+            Is[i] = Compartment(name='I'+covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p),
                                 size_par=params.sizeIBySympAndSusp[i],
                                 if_empty_to_eradicate=True,
                                 infectivity_params=infectivity_params)
@@ -45,18 +54,18 @@ def build_model(model):
     # Fs: infectious compartments after treatment failure
     for s in range(len(SympStat)):
         for p in range(len(SuspProfile)):
-            if p != SuspProfile.SUS.value:
-                infectivity_params = [Constant(value=0)] * indexer.nSuspProfiles
-                infectivity_params[p] = params.infectivityBySuspProfile[p]
-                Fs[p] = Compartment(name='F' + indexer.get_str_symp_susp(symp_state=s, susp_profile=p),
-                                    if_empty_to_eradicate=True,
-                                    infectivity_params=infectivity_params)
+            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+            infectivity_params = [Constant(value=0)] * covert_symp_susp.nSuspProfiles
+            infectivity_params[p] = params.infectivityBySuspProfile[p]
+            Fs[i] = Compartment(name='F' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p),
+                                if_empty_to_eradicate=True,
+                                infectivity_params=infectivity_params)
 
     # chance nodes for if symptomatic
     for p in range(len(SuspProfile)):
-        dest_symp = Is[indexer.get_row_index(symp_state=SympStat.SYMP.value, susp_profile=p)]
-        dest_asym = Is[indexer.get_row_index(symp_state=SympStat.ASYM.value, susp_profile=p)]
-        ifs_symp_from_S[p] = ChanceNode(name='If symptomatic to '+indexer.get_str_susp(susp_profile=p),
+        dest_symp = Is[covert_symp_susp.get_row_index(symp_state=SympStat.SYMP.value, susp_profile=p)]
+        dest_asym = Is[covert_symp_susp.get_row_index(symp_state=SympStat.ASYM.value, susp_profile=p)]
+        ifs_symp_from_S[p] = ChanceNode(name='If symptomatic to '+covert_symp_susp.get_str_susp(susp_profile=p),
                                         destination_compartments=[dest_symp, dest_asym],
                                         probability_params=params.probSym)
 
@@ -64,27 +73,90 @@ def build_model(model):
     for s in range(len(SympStat)):
         for p in range(len(SuspProfile)):
             for a in range(len(AB)):
+                i = covert_symp_susp_antibio.get_row_index(symp_state=s, susp_profile=p, antibiotic=a)
+                name = 'Tx outcome for ' + covert_symp_susp_antibio.get_str_symp_susp_antibio(
+                    symp_state=s, susp_profile=p, antibiotic=a)
 
-                dest_succ = None
-                dest_rest = None
-                dest_fail = None
-                ifs_tx_outcomes[i] = ChanceNode(name=,
-                                                destination_compartments=[],
-                                                probability_params=[])
+                if p == SuspProfile.SUS:
+                    # all drugs work for a susceptible profile
+                    dest_succ = S
+                    dest_fail = S
+                    prob_succ = Constant(1)
+
+                elif p == SuspProfile.PEN:
+                    if a == AB.PEN:
+                        # failure
+                        j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+                        dest_succ = Fs[j]
+                        dest_fail = Fs[j]
+                        prob_succ = Constant(0)
+                    elif a == AB.CFX:
+                        # success or resistance
+                        dest_succ = S
+                        dest_fail = Fs[SuspProfile.PEN_CFX.value - 1]
+                        prob_succ = params.probResEmerge
+                    else:
+                        raise ValueError('Invalid antibiotic.')
+
+                elif p == SuspProfile.PEN_CFX:
+
+                else:
+                    raise ValueError('Invalid treatment outcome.')
+
+                ifs_tx_outcomes[i] = ChanceNode(name=name,
+                                                destination_compartments=[dest_succ, dest_fail],
+                                                probability_params=prob_succ)
+
+
+    # if retreatment after treatment failure
+    for s in range(len(SympStat)):
+        for p in range(len(SuspProfile)):
+            name = 'Re-Tx after failure in ' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
+            j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+            if s == SympStat.SYMP.value:
+                dest_yes = Fs[j]
+                dest_no = Is[j]
+                prob_yes = Constant(1)
+            elif s == SympStat.ASYM.value:
+                dest_yes = Fs[j]
+                dest_no = Is[j]
+                prob_yes = Constant(0)
+            else:
+                raise ValueError('Invalid symptom status.')
+            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+            ifs_re_tx[i] = ChanceNode(name=name,
+                                      destination_compartments=[dest_yes, dest_no],
+                                      probability_params=prob_yes)
+
+
+    # chance nodes for if symptomatic after emergence of resistance during treatment
+    for p in range(len(SuspProfile)):
+        name = 'If symptomatic after moving to {} due to the emergence of resistance'.format(
+            covert_symp_susp.get_str_susp(susp_profile=p.value))
+        dest_symp = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=SympStat.SYMP.value, susp_profile=p)]
+        dest_asym = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=SympStat.ASYM.value, susp_profile=p)]
+        ifs_symp_from_emerg_res[p] = ChanceNode(name=name,
+                                                destination_compartments=[dest_symp, dest_asym],
+                                                probability_params=params.probSym)
 
     # rapid tests
     for s in range(len(SympStat)):
         for p in range(len(SuspProfile)):
-            i = indexer.get_row_index(symp_state=s, susp_profile=p)
-            dest_pos = None
-            dest_neg = None
+            j_pos = covert_symp_susp_antibio.get_row_index(symp_state=s, susp_profile=p, antibiotic=AB.CFX.value)
+            j_neg = covert_symp_susp_antibio.get_row_index(symp_state=s, susp_profile=p, antibiotic=AB.PEN.value)
+
+            dest_pos = ifs_tx_outcomes[j_pos]
+            dest_neg = ifs_tx_outcomes[j_neg]
+
             if s in (SuspProfile.PEN.value or SuspProfile.PEN_CFX.value):
-                prob = params.sens
+                prob_pos = params.sens
             else:
-                prob = params.spec
-            rapid_tests[i] = ChanceNode(name='Rapid test in '+indexer.get_str_symp_susp(symp_state=s, susp_profile=p),
+                prob_pos = params.oneMinusSpec
+
+            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+            ifs_rapid_tests[i] = ChanceNode(name='Rapid test in '+covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p),
                                         destination_compartments=[dest_pos, dest_neg],
-                                        probability_params=prob)
+                                        probability_params=prob_pos)
 
 
 

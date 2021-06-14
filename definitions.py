@@ -6,7 +6,10 @@ from scipy.stats import norm
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SYMP_STATES = ['Symp', 'Asym']
+# we put SUS last because its prevalence is calculated after
+# calculating the prevalence of all other drugs
 SUSP_PROFILES = ['PEN-R', 'PEN/CFX-R', 'SUS']
+ANTIBIOTICS = ['PEN', 'CFX']
 
 
 class SympStat(Enum):
@@ -27,25 +30,38 @@ class SuspProfile(Enum):
     SUS = 2
 
 
-class ComboSympAndSusp:
-    # to convert (symptom state, susceptibility profile) to an index and vice versa
+class ConvertSympAndSuspAndAntiBio:
+    # to convert (symptom state, susceptibility profile, antibiotic) to an index and vice versa
 
-    def __init__(self, n_symp_stats, n_susp_profiles):
+    def __init__(self, n_symp_stats, n_susp_profiles, n_antibiotics=None):
         self.nSympStats = n_symp_stats
         self.nSuspProfiles = n_susp_profiles
-        self.length = n_symp_stats * n_susp_profiles
+        self.nAntiBiotics = n_antibiotics
+        if n_antibiotics is (None, 0):
+            self.length = n_symp_stats * n_susp_profiles
+        else:
+            self.length = n_symp_stats * n_susp_profiles * n_antibiotics
 
-    def get_row_index(self, symp_state, susp_profile):
-        return self.nSuspProfiles * symp_state + susp_profile
+    def get_row_index(self, symp_state, susp_profile, antibiotic=None):
+        if self.nAntiBiotics is (None, 0):
+            return self.nSuspProfiles * symp_state + susp_profile
+        else:
+            return None
 
     def get_symp_and_profile(self, i):
-        return int(i / self.nSuspProfiles), i % self.nSympStats
+        if self.nAntiBiotics is (None, 0):
+            return int(i / self.nSuspProfiles), i % self.nSympStats
+        else:
+            return None
 
     def get_str_susp(self, susp_profile):
         return SUSP_PROFILES[susp_profile]
 
     def get_str_symp_susp(self, symp_state, susp_profile):
         return '{}-{}'.format(SYMP_STATES[symp_state], SUSP_PROFILES[susp_profile])
+
+    def get_str_symp_susp_antibio(self, symp_state, susp_profile, antibiotic):
+        return '{}-{}-{}'.format(SYMP_STATES[symp_state], SUSP_PROFILES[susp_profile], ANTIBIOTICS[antibiotic])
 
 
 def get_survey_size(mean, l, u, multiplier=1):

@@ -1,7 +1,7 @@
 from SimPy.Parameters import Constant, Equal, Inverse, Product, Division, \
     OneMinus, Uniform, TenToPower, LinearCombination
 from apace.Inputs import EpiParameters
-from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, ComboSympAndSusp
+from definitions import SuspProfile, AB, SympStat, SUSP_PROFILES, ConvertSympAndSuspAndAntiBio
 
 
 class Parameters(EpiParameters):
@@ -50,6 +50,7 @@ class Parameters(EpiParameters):
         self.tToRetreatment = Uniform(1 * one_over_364, 14 * one_over_364)
 
         # calculate dependent parameters
+        self.oneMinusSpec = None
         self.prevS0 = None
         self.percI0Res = None
         self.pervI0Sus = None
@@ -69,6 +70,7 @@ class Parameters(EpiParameters):
 
     def calculate_dependent_params(self, model_sets):
 
+        self.oneMinusSpec = OneMinus(par=self.spec)
         self.surveySize = Division(self.annulSurveySize, model_sets.observationPeriod)
         self.prevS0 = OneMinus(par=self.prevI0)
         self.precI0BySymp[SympStat.ASYM.value] = OneMinus(par=self.precI0BySymp[SympStat.SYMP.value])
@@ -91,7 +93,7 @@ class Parameters(EpiParameters):
             self.infectivityBySuspProfile[p] = Product([self.transm, self.ratioInf[p]])
 
         # size of compartments
-        indexer = ComboSympAndSusp(n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
+        indexer = ConvertSympAndSuspAndAntiBio(n_symp_stats=len(SympStat), n_susp_profiles=len(SuspProfile))
         self.sizeS = Product(self.popSize, self.prevS0)
         self.sizeI = Product(self.popSize, self.prevI0)
         self.sizeIBySympAndSusp = [None] * indexer.length
@@ -105,6 +107,7 @@ class Parameters(EpiParameters):
         self.dictOfParams = dict(
             {'Sensitivity': self.sens,
              'Specificity': self.spec,
+             '1-Specificity': self.oneMinusSpec
              # ----
              'Pop size': self.popSize,
              'Annual survey size': self.annulSurveySize,
