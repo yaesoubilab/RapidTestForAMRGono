@@ -69,6 +69,37 @@ def build_model(model):
                                         destination_compartments=[dest_symp, dest_asym],
                                         probability_params=params.probSym)
 
+    # if retreatment after treatment failure
+    for s in range(len(SympStat)):
+        for p in range(len(SuspProfile)):
+            name = 'Re-Tx after failure in ' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
+            j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+            if s == SympStat.SYMP.value:
+                dest_yes = Fs[j]
+                dest_no = Is[j]
+                prob_yes = Constant(1)
+            elif s == SympStat.ASYM.value:
+                dest_yes = Fs[j]
+                dest_no = Is[j]
+                prob_yes = Constant(0)
+            else:
+                raise ValueError('Invalid symptom status.')
+            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
+            ifs_re_tx[i] = ChanceNode(name=name,
+                                      destination_compartments=[dest_yes, dest_no],
+                                      probability_params=prob_yes)
+
+
+    # chance nodes for if symptomatic after emergence of resistance during treatment
+    for p in range(len(SuspProfile)):
+        name = 'If symptomatic after moving to {} due to the emergence of resistance'.format(
+            covert_symp_susp.get_str_susp(susp_profile=p))
+        dest_symp = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=SympStat.SYMP.value, susp_profile=p)]
+        dest_asym = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=SympStat.ASYM.value, susp_profile=p)]
+        ifs_symp_from_emerg_res[p] = ChanceNode(name=name,
+                                                destination_compartments=[dest_symp, dest_asym],
+                                                probability_params=params.probSym)
+
     # change nodes for treatment outcomes
     for s in range(len(SympStat)):
         for p in range(len(SuspProfile)):
@@ -107,37 +138,6 @@ def build_model(model):
                                                 destination_compartments=[dest_succ, dest_fail],
                                                 probability_params=prob_succ)
 
-
-    # if retreatment after treatment failure
-    for s in range(len(SympStat)):
-        for p in range(len(SuspProfile)):
-            name = 'Re-Tx after failure in ' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
-            j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
-            if s == SympStat.SYMP.value:
-                dest_yes = Fs[j]
-                dest_no = Is[j]
-                prob_yes = Constant(1)
-            elif s == SympStat.ASYM.value:
-                dest_yes = Fs[j]
-                dest_no = Is[j]
-                prob_yes = Constant(0)
-            else:
-                raise ValueError('Invalid symptom status.')
-            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
-            ifs_re_tx[i] = ChanceNode(name=name,
-                                      destination_compartments=[dest_yes, dest_no],
-                                      probability_params=prob_yes)
-
-
-    # chance nodes for if symptomatic after emergence of resistance during treatment
-    for p in range(len(SuspProfile)):
-        name = 'If symptomatic after moving to {} due to the emergence of resistance'.format(
-            covert_symp_susp.get_str_susp(susp_profile=p.value))
-        dest_symp = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=SympStat.SYMP.value, susp_profile=p)]
-        dest_asym = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=SympStat.ASYM.value, susp_profile=p)]
-        ifs_symp_from_emerg_res[p] = ChanceNode(name=name,
-                                                destination_compartments=[dest_symp, dest_asym],
-                                                probability_params=params.probSym)
 
     # rapid tests
     for s in range(len(SympStat)):

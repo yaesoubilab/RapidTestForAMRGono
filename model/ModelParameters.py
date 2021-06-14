@@ -107,7 +107,7 @@ class Parameters(EpiParameters):
         self.dictOfParams = dict(
             {'Sensitivity': self.sens,
              'Specificity': self.spec,
-             '1-Specificity': self.oneMinusSpec
+             '1-Specificity': self.oneMinusSpec,
              # ----
              'Pop size': self.popSize,
              'Annual survey size': self.annulSurveySize,
