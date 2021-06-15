@@ -269,7 +269,7 @@ def build_model(model):
     if sets.calcLikelihood:
         # prevalence
         prevalence.add_feasible_conditions(feasible_conditions=FeasibleConditions(
-            feasible_min=0, feasible_max=0.5))
+            feasible_min=0, feasible_max=0.1))
         prevalence.add_calibration_targets(ratios=sets.prevMean,
                                            survey_sizes=sets.prevN)
         # gonorrhea rate

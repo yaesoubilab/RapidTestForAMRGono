@@ -34,7 +34,7 @@ class Parameters(EpiParameters):
         self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
 
         # infectivity parameters
-        self.transm = Uniform(2, 2)  # baseline infectivity
+        self.transm = Uniform(1, 3)  # baseline infectivity
         self.ratioInf[RestProfile.PEN.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.PEN_CFX.value] = Uniform(0.8, 1)

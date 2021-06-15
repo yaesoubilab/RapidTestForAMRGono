@@ -53,7 +53,7 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True):
 
     # ------- simulate the calibrated model ----------
     # get the seeds and probability weights
-    seeds, weights = calib.get_seeds_and_probs('summary/calibration_summary.csv')
+    seeds, weights = calib.get_seeds_and_probs('outputs/calibration/calibration_summary.csv')
 
     # simulate the calibrated model
     simulate_multi_trajectories(n=n_of_sims,
@@ -70,17 +70,21 @@ def estimate_parameters(n_of_resamples):
     # ---------- parameter estimation -----------
     # calculate posterior distributions and plot figures
     estimator = P.ParameterAnalyzer()
-    estimator.resample_param_values(csvfile_param_values_and_weights='summary/calibration_summary.csv',
+    estimator.resample_param_values(csvfile_param_values_and_weights='outputs/calibration/calibration_summary.csv',
                                     n=n_of_resamples, weight_col=2,
-                                    csvfile_resampled_params='summary/resampled_parameter_values.csv', seed=0)
+                                    sample_by_weight=False,
+                                    csvfile_resampled_params='outputs/calibration/resampled_parameter_values.csv', seed=0)
 
-    param_list = ['Infectivity of susceptible strain',
-                  'Relative infectivity of resistant strain',
+    param_list = ['Transmission parameter',
+                  'Relative infectivity by susceptibility profile-0',
+                  'Relative infectivity by susceptibility profile-1',
+                  'Relative infectivity by susceptibility profile-2',
                   'Prob symptomatic',
-                  'Exponent of prob of resistance',
+                  'Exponent for the prob of resistance by antibiotics-0',
+                  'Exponent for the prob of resistance by antibiotics-1',
                   'Time until natural recovery',
                   'Time until screened']
     print('\nPosterior distributions:')
     estimator.print_means_and_intervals(names=param_list)
-    estimator.export_means_and_intervals(poster_file='summary/posteriors.csv', names=param_list)
+    estimator.export_means_and_intervals(poster_file='outputs/calibration/posteriors.csv', names=param_list)
     estimator.plot_pairwise(fig_filename='figures/posterior_figure.png', names=param_list)

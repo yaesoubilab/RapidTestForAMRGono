@@ -5,9 +5,9 @@ from model.Support import estimate_parameters, simulate_calibrated_model
 
 # To calibrate a simple SIR model when incidences should remain in a certain range
 
-N_OF_CALIBRATION_ITERATIONS = 2000    # total number of trajectories to simulate as part of calibration
+N_OF_CALIBRATION_ITERATIONS = 200    # total number of trajectories to simulate as part of calibration
 N_OF_TRAJS_TO_USE_FOR_SIMULATION = 25   # number of trajectories with the highest likelihood to keep
-N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 200  # number of parameter values to resample for parameter estimation
+N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 25  # number of parameter values to resample for parameter estimation
 
 if __name__ == "__main__":
 
@@ -24,7 +24,7 @@ if __name__ == "__main__":
         if_run_in_parallel=True)
 
     # save calibration results
-    calibration.save_results(filename='summary/calibration_summary.csv')
+    calibration.save_results(filename='outputs/calibration/calibration_summary.csv')
 
     # estimate parameters and draw histograms
     estimate_parameters(n_of_resamples=N_OF_RESAMPLES_FOR_PARAM_ESTIMATION)
