@@ -29,9 +29,9 @@ class Parameters(EpiParameters):
         self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.25)
 
         # percent of I0 by resistance profile
-        self.percI0ByRestProfile[RestProfile.PEN.value] = Constant(0) # Uniform(0.05, 0.15)
-        self.percI0ByRestProfile[RestProfile.CFX.value] = Constant(0) # Uniform(0.0, 0.005)
-        self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Constant(0) # Uniform(0.0, 0.005)
+        self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.05, 0.15)
+        self.percI0ByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.005)
+        self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
 
         # infectivity parameters
         self.transm = Uniform(2, 2)  # baseline infectivity
@@ -42,11 +42,11 @@ class Parameters(EpiParameters):
 
         # exponent of the probability for the emergence of resistance for a drug
         self.exponProbRes[AB.PEN.value] = Uniform(-5, -3)
-        self.exponProbRes[AB.CFX.value] = Uniform(-5, -3) # Uniform(-5, -3)
+        self.exponProbRes[AB.CFX.value] = Uniform(-5, -3)
 
-        self.probSym = Constant(0.75) # Uniform(0.2, 0.8)
-        self.tToNaturalRecovery = Constant(4) # Uniform(1/12, 5)
-        self.tToScreened = Constant(4) # Uniform(0.5, 5)
+        self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
+        self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)
+        self.tToScreened = Uniform(0.5, 5)  # Constant(4)
         self.tToTreatment = Uniform(1 * one_over_364, 14 * one_over_364)
         self.tToRetreatment = Uniform(1 * one_over_364, 14 * one_over_364)
 
