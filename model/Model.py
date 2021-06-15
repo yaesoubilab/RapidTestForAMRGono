@@ -96,7 +96,7 @@ def build_model(model):
                                                 destination_compartments=[dest_symp, dest_asym],
                                                 probability_params=params.probSym)
 
-    # change nodes for treatment outcomes
+    # chance nodes for treatment outcomes
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
             for a in range(len(AB)):
@@ -106,58 +106,53 @@ def build_model(model):
 
                 # if drug-susceptible
                 if p == RestProfile.SUS.value:
-                    dest_succ = S
                     # failure due to the emergence of resistance
+                    dest_succ = S
                     prob_fail = params.probResEmerge[a]
+
+                    # if resistance emerges while receiving PEN
                     if a == AB.PEN.value:
-                        dest_fail = ifs_symp_from_emerg_res[covert_symp_susp.get_row_index(
-                            symp_state=s, susp_profile=RestProfile.PEN.value)]
+                        dest_fail = ifs_symp_from_emerg_res[
+                            covert_symp_susp.get_row_index(symp_state=s, susp_profile=RestProfile.PEN.value)]
+
+                    # if resistance emerges while receiving CFX
                     elif a == AB.CFX.value:
                         dest_fail = ifs_symp_from_emerg_res[
                             covert_symp_susp.get_row_index(symp_state=s, susp_profile=RestProfile.CFX.value)]
                     else:
                         raise ValueError('Invalid antibiotic.')
 
-                # if resistance to PEN
-                elif p == RestProfile.PEN.value:
-                    if a == AB.PEN.value:
-                        # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
+                # if resistance to PEN or CFX
+                elif p in (RestProfile.PEN.value, RestProfile.CFX.value):
+                    # failure due to ineffective treatment
+                    if (p == RestProfile.PEN.value and a == AB.PEN.value) or \
+                            (p == RestProfile.CFX.value and a == AB.CFX.value):
                         # failure due to ineffective treatment
                         j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
                         dest_succ = ifs_re_tx[j]
                         dest_fail = ifs_re_tx[j]
                         prob_fail = Constant(1)
-                    elif a == AB.CFX.value:
-                        # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
+
+                    # failure due to the emergence of resistance
+                    elif (p == RestProfile.PEN.value and a == AB.CFX.value) or \
+                            (p == RestProfile.CFX.value and a == AB.PEN.value):
                         # success or resistance
                         dest_succ = S
-                        dest_fail = ifs_re_tx[covert_symp_susp.get_row_index(
-                            symp_state=s, susp_profile=RestProfile.PEN_CFX.value)]
                         prob_fail = params.probResEmerge[a]
+
+                        # decide where to go next depending on the symptom status
+                        if s == SympStat.SYMP.value:
+                            dest_fail = ifs_re_tx[
+                                covert_symp_susp.get_row_index(symp_state=s, susp_profile=RestProfile.PEN_CFX.value)]
+                        elif s == SympStat.ASYM.value:
+                            dest_fail = ifs_symp_from_emerg_res[RestProfile.PEN_CFX.value]
+                        else:
+                            raise ValueError('Invalid symptom status.')
                     else:
                         raise ValueError('Invalid antibiotic.')
 
-                # if resistance to CFX
-                elif p == RestProfile.CFX:
-                    if a == AB.PEN.value:
-                        # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
-                        # success or resistance
-                        dest_succ = S
-                        dest_fail = ifs_re_tx[covert_symp_susp.get_row_index(
-                            symp_state=s, susp_profile=RestProfile.PEN_CFX.value)]
-                        prob_fail = params.probResEmerge[a]
-                    elif a == AB.CFX.value:
-                        # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
-                        # failure
-                        j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
-                        dest_succ = ifs_re_tx[j]
-                        dest_fail = ifs_re_tx[j]
-                        prob_fail = Constant(1)
-                    else:
-                        raise ValueError('Invalid antibiotic.')
-
+                # if resistance to PEN and CFX
                 elif p == RestProfile.PEN_CFX.value:
-                    # TODO: ifs_re_tx should be ifs_symp_from_emerg_res
                     # failure
                     j = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
                     dest_succ = ifs_re_tx[j]
