@@ -37,7 +37,7 @@ def build_model(model):
 
     # S
     S = Compartment(name='S', size_par=params.sizeS,
-                    susceptibility_params=[Constant(value=1)])
+                    susceptibility_params=[Constant(value=1)]*len(RestProfile))
 
     # Is (infectious) and Fs (infectious after treatment failure)
     i = 0
