@@ -2,24 +2,23 @@ import SimPy.ParameterEstimation as P
 import apace.Calibration as calib
 from apace.MultiEpidemics import MultiEpidemics
 from model.Model import build_model
-from model.ModelSettings import get_model_settings
+from model.ModelSettings import GonoSettings
 from model.PlotTrajs import plot
 
 
 def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_weights=True,
-                                if_disruption=False, figure_filename='traj.png'):
+                                figure_filename='traj.png'):
     """
     :param n: (int) number of trajectories to simulate
     :param seeds: (list) of seeds
     :param weights: (list) probability weights over seeds
     :param sample_seeds_by_weights: (bool) set to False to only use seeds with positive weights
-    :param if_disruption: (bool) if simulate trajectories under disruptions
     :param figure_filename: (string) filename to save the figures as
     :return:
     """
 
     # get model settings
-    sets = get_model_settings(if_disruption=if_disruption)
+    sets = GonoSettings()
 
     # build multiple epidemics
     multi_model = MultiEpidemics(model_settings=sets)
@@ -42,16 +41,14 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
          incd_multiplier=1,  # to show weeks on the x-axis of incidence data
          obs_prev_multiplier=1,
          obs_incd_multiplier=1,
-         if_disruption=if_disruption,
          filename=figure_filename)
 
 
-def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True, if_disruption=False):
+def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True):
     """
     simulates the calibrated model
     :param n_of_sims: (int) number of trajectories to simulate
     :param sample_seeds_by_weights: (bool)
-    :param if_disruption: (bool) if simulate trajectories under disruptions
     """
 
     # ------- simulate the calibrated model ----------
@@ -63,7 +60,6 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True, if_disrup
                                 seeds=seeds,
                                 weights=weights,
                                 sample_seeds_by_weights=sample_seeds_by_weights,
-                                if_disruption=if_disruption,
                                 figure_filename='Calibrated.png')
 
 

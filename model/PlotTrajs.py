@@ -22,7 +22,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     A.X_RANGE = (0, 11)
     A.X_TICKS = [A.TIME_0, 5]  # x-axis ticks (min at 0 with interval of 5)
     A.X_LABEL = 'Year'  # x-axis label
-    A.TRAJ_TRANSPARENCY = 0.5
+    A.TRAJ_TRANSPARENCY = 0.25
 
     # plot information
     S = A.TrajPlotInfo(outcome_name='In: S',

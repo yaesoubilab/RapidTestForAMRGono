@@ -1,6 +1,6 @@
 import apace.Calibration as calib
 from model import Model as M
-from model.ModelSettings import get_model_settings
+from model.ModelSettings import GonoSettings
 from model.Support import estimate_parameters, simulate_calibrated_model
 
 # To calibrate a simple SIR model when incidences should remain in a certain range
@@ -12,7 +12,7 @@ N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 200  # number of parameter values to resam
 if __name__ == "__main__":
 
     # get model settings
-    sets = get_model_settings(if_calibrating=True)
+    sets = GonoSettings(if_calibrating=True)
 
     # --------- calibration ----------
     # calibrate the model
