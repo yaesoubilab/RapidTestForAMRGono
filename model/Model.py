@@ -59,6 +59,7 @@ def build_model(model):
                                 infectivity_params=infectivity_params)
             # increment i
             i += 1
+
     # if symptomatic after infection
     for p in range(len(RestProfile)):
         name = 'If symptomatic to ' + covert_symp_susp.get_str_susp(susp_profile=p)
@@ -68,11 +69,12 @@ def build_model(model):
                                         destination_compartments=[dest_symp, dest_asym],
                                         probability_params=params.probSym)
 
-    # if retreatment after treatment failure
+    # if retreatment after ineffective treatment or resistance development
     i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
-            name = 'Re-Tx after failure in ' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
+            name = 'If re-tx after ineffective tx/resistance development in ' \
+                   + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
             dest_yes = Fs[i]
             dest_no = Is[i]
             if s == SympStat.SYMP.value:
@@ -112,13 +114,25 @@ def build_model(model):
 
                     # if resistance emerges while receiving PEN
                     if a == AB.PEN.value:
-                        dest_fail = ifs_symp_from_emerg_res[
-                            covert_symp_susp.get_row_index(symp_state=s, susp_profile=RestProfile.PEN.value)]
+                        # decide where to go next depending on the symptom status
+                        if s == SympStat.SYMP.value:
+                            dest_fail = ifs_re_tx[
+                                covert_symp_susp.get_row_index(symp_state=s, susp_profile=RestProfile.PEN.value)]
+                        elif s == SympStat.ASYM.value:
+                            dest_fail = ifs_symp_from_emerg_res[RestProfile.PEN.value]
+                        else:
+                            raise ValueError('Invalid symptom status.')
 
                     # if resistance emerges while receiving CFX
                     elif a == AB.CFX.value:
-                        dest_fail = ifs_symp_from_emerg_res[
-                            covert_symp_susp.get_row_index(symp_state=s, susp_profile=RestProfile.CFX.value)]
+                        # decide where to go next depending on the symptom status
+                        if s == SympStat.SYMP.value:
+                            dest_fail = ifs_re_tx[
+                                covert_symp_susp.get_row_index(symp_state=s, susp_profile=RestProfile.CFX.value)]
+                        elif s == SympStat.ASYM.value:
+                            dest_fail = ifs_symp_from_emerg_res[RestProfile.CFX.value]
+                        else:
+                            raise ValueError('Invalid symptom status.')
                     else:
                         raise ValueError('Invalid antibiotic.')
 
@@ -166,26 +180,26 @@ def build_model(model):
                                                 probability_params=prob_fail)
 
     # rapid tests
+    i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
-            name = 'Rapid test in '+covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
+            name = 'Rapid test in ' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
             j_pos = covert_symp_susp_antibio.get_row_index(symp_state=s, susp_profile=p, antibiotic=AB.CFX.value)
             j_neg = covert_symp_susp_antibio.get_row_index(symp_state=s, susp_profile=p, antibiotic=AB.PEN.value)
 
             dest_pos = ifs_tx_outcomes[j_pos]
             dest_neg = ifs_tx_outcomes[j_neg]
 
-            if s in (RestProfile.PEN.value or RestProfile.PEN_CFX.value):
+            if p in (RestProfile.PEN.value, RestProfile.PEN_CFX.value):
                 prob_pos = params.sens
             else:
                 prob_pos = params.oneMinusSpec
 
-            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
             ifs_rapid_tests[i] = ChanceNode(name=name,
                                             destination_compartments=[dest_pos, dest_neg],
                                             probability_params=prob_pos)
-
             if_rest_to[p].append(ifs_rapid_tests[i])
+            i += 1
 
     # ------------- compartment histories ---------------
     # set up prevalence, incidence, and cumulative incidence to collect
