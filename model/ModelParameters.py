@@ -29,12 +29,12 @@ class Parameters(EpiParameters):
         self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.25)
 
         # percent of I0 by resistance profile
-        self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.0, 0.04)
+        self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.05, 0.15)
         self.percI0ByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.005)
         self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
 
         # infectivity parameters
-        self.transm = Uniform(2, 4)  # baseline infectivity
+        self.transm = Uniform(1, 3)  # baseline infectivity
         self.ratioInf[RestProfile.PEN.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.PEN_CFX.value] = Uniform(0.8, 1)
