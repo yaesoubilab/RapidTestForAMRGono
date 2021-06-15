@@ -6,7 +6,7 @@ from model.PlotTrajs import plot
 # get model settings
 sets = GonoSettings()
 # make an (empty) epidemic model
-model = EpiModel(id=0, settings=sets)
+model = EpiModel(id=1, settings=sets)
 # populate the SIR model
 build_model(model)
 

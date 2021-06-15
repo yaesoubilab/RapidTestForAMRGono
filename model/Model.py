@@ -211,6 +211,8 @@ def build_model(model):
             i.setup_history(collect_prev=True)
         for f in Fs:
             f.setup_history(collect_prev=True)
+        for t in ifs_tx_outcomes:
+            t.setup_history(collect_incd=True)
 
     # ------------- summation statistics ---------------
     # population size
