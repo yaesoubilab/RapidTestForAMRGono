@@ -31,7 +31,9 @@ def build_model(model):
     ifs_tx_outcomes = [None] * covert_symp_susp_antibio.length
     ifs_rapid_tests = [None] * covert_symp_susp.length
     if_symp = []
-    if_rest_to = [[]] * len(RestProfile)
+    if_rest_to = []
+    for p in RestProfile:
+        if_rest_to.append([])
 
     # S
     S = Compartment(name='S', size_par=params.sizeS,
@@ -229,37 +231,37 @@ def build_model(model):
                                  if_surveyed=True)
 
     # rate of gonorrhea cases
-    new_cases = SumIncidence(name='Number of gonorrhea cases',
-                             compartments=ifs_tx_outcomes)
+    n_cases = SumIncidence(name='Number of gonorrhea cases',
+                           compartments=ifs_rapid_tests)
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
-                                numerator_sum_time_series=new_cases,
+                                numerator_sum_time_series=n_cases,
                                 denominator_sum_time_series=pop_size,
                                 if_surveyed=True)
 
     # % cases symptomatic
-    cases_symptomatic = SumIncidence(name='Number of cases symptomatic',
-                                     compartments=if_symp)
+    n_cases_symptomatic = SumIncidence(name='Number of cases symptomatic',
+                                       compartments=if_symp)
     percent_cases_symptomatic = RatioTimeSeries(name='Proportion of cases symptomatic',
-                                                numerator_sum_time_series=cases_symptomatic,
-                                                denominator_sum_time_series=new_cases,
+                                                numerator_sum_time_series=n_cases_symptomatic,
+                                                denominator_sum_time_series=n_cases,
                                                 if_surveyed=True)
 
     # cases resistant to drug A
-    cases_resistant_by_profile = []
-    perc_cases_resistant_by_profile = []
+    n_cases_by_resistance_profile = []
+    perc_cases_by_resistance_profile = []
 
     for p in range(len(RestProfile)):
-        resistant_cases = SumIncidence(name='Number of cases resistant to ' + REST_PROFILES[p],
-                                       compartments=if_rest_to[p])
-        perc_cases = RatioTimeSeries(
+        n_resistant_cases = SumIncidence(name='Number of cases resistant to ' + REST_PROFILES[p],
+                                         compartments=if_rest_to[p])
+        perc_cases_resistant = RatioTimeSeries(
             name='Proportion of cases resistant to ' + REST_PROFILES[p],
-            numerator_sum_time_series=resistant_cases,
-            denominator_sum_time_series=new_cases,
+            numerator_sum_time_series=n_resistant_cases,
+            denominator_sum_time_series=n_cases,
             if_surveyed=True,
             survey_size_param=params.surveySize)
 
-        cases_resistant_by_profile.append(resistant_cases)
-        perc_cases_resistant_by_profile.append(perc_cases)
+        n_cases_by_resistance_profile.append(n_resistant_cases)
+        perc_cases_by_resistance_profile.append(perc_cases_resistant)
 
     # ------------- calibration targets ---------------
     if sets.calcLikelihood:
@@ -333,9 +335,9 @@ def build_model(model):
                 generating_pathogen=p))
 
     # add events to infection compartments
+    i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
-            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
             compart_name = Is[i].name
 
             # natural recovery
@@ -354,18 +356,20 @@ def build_model(model):
                     name='Seeking treatment | ' + compart_name,
                     rate_param=params.rateTreatment,
                     destination=ifs_rapid_tests[i]))
+            i += 1
 
     # add events to infection compartments after treatment failure
+    i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
-            i = covert_symp_susp.get_row_index(symp_state=s, susp_profile=p)
-            compart_name = Is[i].name
+            compart_name = Fs[i].name
             # treatment
             Fs[i].add_event(EpiIndepEvent(
                 name='Re-Tx | ' + compart_name,
                 rate_param=params.rateRetreatment,
                 destination=S
             ))
+            i += 1
 
     # ------------- population the model ---------------
     # populate the model
@@ -375,11 +379,11 @@ def build_model(model):
     chance_nodes.extend(ifs_tx_outcomes)
     chance_nodes.extend(ifs_rapid_tests)
 
-    list_of_sum_time_series = [pop_size, n_infected, new_cases, cases_symptomatic]
-    list_of_sum_time_series.extend(cases_resistant_by_profile)
+    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_symptomatic]
+    list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
     list_of_ratio_time_series = [prevalence, gono_rate, percent_cases_symptomatic]
-    list_of_ratio_time_series.extend(perc_cases_resistant_by_profile)
+    list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     model.populate(compartments=all_comparts,
                    chance_nodes=chance_nodes,
