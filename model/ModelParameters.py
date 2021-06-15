@@ -1,4 +1,5 @@
-from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, TenToPower, LinearCombination
+from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, \
+    TenToPower, OneMinusSum
 from apace.Inputs import EpiParameters
 from definitions import RestProfile, AB, SympStat, REST_PROFILES
 
@@ -14,7 +15,7 @@ class Parameters(EpiParameters):
 
         one_over_364 = 1/364
         self.precI0BySymp = [None] * len(SympStat)
-        self.percI0BySuspProfile = [None] * len(RestProfile)
+        self.percI0ByRestProfile = [None] * (len(RestProfile) - 1)
         self.ratioInf = [None] * len(RestProfile)
         self.exponProbRes = [None] * len(AB)
 
@@ -27,11 +28,10 @@ class Parameters(EpiParameters):
         self.prevI0 = Uniform(0.03, 0.06)
         self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.25)
 
-        # percent of I0 by susceptibility profile
-        self.percI0BySuspProfile[RestProfile.PEN.value] = Uniform(0.0, 0.04)
-        self.percI0BySuspProfile[RestProfile.CFX.value] = Uniform(0.0, 0.005)
-        self.percI0BySuspProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
-        self.percI0BySuspProfile[RestProfile.SUS.value] = None  # will calculate later
+        # percent of I0 by resistance profile
+        self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.0, 0.04)
+        self.percI0ByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.005)
+        self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
 
         # infectivity parameters
         self.transm = Uniform(2, 4)  # baseline infectivity
@@ -54,7 +54,7 @@ class Parameters(EpiParameters):
         self.oneMinusSpec = None
         self.prevS0 = None
         self.percI0Res = None
-        self.pervI0Sus = None
+        self.percI0Sus = None
         self.probResEmerge = [None] * len(AB)
         self.rateNaturalRecovery = None
         self.rateScreened = None
@@ -77,8 +77,7 @@ class Parameters(EpiParameters):
         self.precI0BySymp[SympStat.ASYM.value] = OneMinus(par=self.precI0BySymp[SympStat.SYMP.value])
 
         # find the prevalence of I0 that are susceptible to all antibiotics
-        self.percI0Res = LinearCombination(parameters=self.percI0BySuspProfile[:-1])
-        self.percI0BySuspProfile[RestProfile.SUS.value] = OneMinus(par=self.percI0Res)
+        self.percI0Sus = OneMinusSum(parameters=self.percI0ByRestProfile)
 
         # probability for the emergence of resistance for a drug
         for p in range(len(AB)):
@@ -100,7 +99,12 @@ class Parameters(EpiParameters):
         i = 0
         for s in range(len(SympStat)):
             for p in range(len(RestProfile)):
-                self.sizeIBySympAndSusp[i] = Product([self.sizeI, self.precI0BySymp[s], self.percI0BySuspProfile[p]])
+                if p == RestProfile.SUS.value:
+                    self.sizeIBySympAndSusp[i] = Product(
+                        [self.sizeI, self.precI0BySymp[s], self.percI0Sus])
+                else:
+                    self.sizeIBySympAndSusp[i] = Product(
+                        [self.sizeI, self.precI0BySymp[s], self.percI0ByRestProfile[p]])
                 i += 1
 
     def build_dict_of_params(self):
@@ -114,7 +118,7 @@ class Parameters(EpiParameters):
              'Annual survey size': self.annulSurveySize,
              'Initial prevalence': self.prevI0,
              'Initial % I by symptom states': self.precI0BySymp,
-             'Initial % I by susceptibility profile': self.percI0BySuspProfile,
+             'Initial % I by resistance profile': self.percI0ByRestProfile,
              # ----
              'Transmission parameter': self.transm,
              'Relative infectivity by susceptibility profile': self.ratioInf,
@@ -130,8 +134,7 @@ class Parameters(EpiParameters):
 
         self.dictOfParams['Survey size (over observation periods)'] = self.surveySize
         self.dictOfParams['Initial % Susceptible'] = self.prevS0
-        self.dictOfParams['Initial % I resistant to any drug'] = self.percI0Res
-        self.dictOfParams['Initial % I by susceptibility profile'] = self.percI0BySuspProfile
+        self.dictOfParams['Initial % I susceptible to all drugs'] = self.percI0Sus
 
         self.dictOfParams['Prob of resistance by antibiotics'] = self.probResEmerge
 
