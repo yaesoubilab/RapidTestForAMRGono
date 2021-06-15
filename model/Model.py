@@ -30,7 +30,7 @@ def build_model(model):
     ifs_symp_from_emerg_res = [None] * len(RestProfile)
     ifs_tx_outcomes = [None] * covert_symp_susp_antibio.length
     ifs_rapid_tests = [None] * covert_symp_susp.length
-    Is_symp = []
+    if_symp = []
     if_rest_to = [[]] * len(RestProfile)
 
     # S
@@ -49,10 +49,6 @@ def build_model(model):
                                 size_par=params.sizeIBySympAndSusp[i],
                                 if_empty_to_eradicate=True,
                                 infectivity_params=infectivity_params)
-            # if symptomatic
-            if s == SympStat.SYMP.value:
-                Is_symp.append(Is[i])
-
             # Fs: infectious compartments after treatment failure
             Fs[i] = Compartment(name='F ' + str_symp_susp,
                                 if_empty_to_eradicate=True,
@@ -198,6 +194,10 @@ def build_model(model):
             ifs_rapid_tests[i] = ChanceNode(name=name,
                                             destination_compartments=[dest_pos, dest_neg],
                                             probability_params=prob_pos)
+            # if symptomatic
+            if s == SympStat.SYMP.value:
+                if_symp.append(ifs_rapid_tests[i])
+            # by resistance profile
             if_rest_to[p].append(ifs_rapid_tests[i])
             i += 1
 
@@ -219,7 +219,7 @@ def build_model(model):
     pop_size = SumPrevalence(name='Population size', compartments=all_comparts)
 
     # number infected
-    infected_comparts = [Is]
+    infected_comparts = Is
     infected_comparts.extend(Fs)
     n_infected = SumPrevalence(name='Number infected',
                                compartments=infected_comparts)
@@ -230,7 +230,7 @@ def build_model(model):
 
     # rate of gonorrhea cases
     new_cases = SumIncidence(name='Number of gonorrhea cases',
-                             compartments=ifs_symp_from_S)
+                             compartments=ifs_tx_outcomes)
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
                                 numerator_sum_time_series=new_cases,
                                 denominator_sum_time_series=pop_size,
@@ -238,7 +238,7 @@ def build_model(model):
 
     # % cases symptomatic
     cases_symptomatic = SumIncidence(name='Number of cases symptomatic',
-                                     compartments=Is_symp)
+                                     compartments=if_symp)
     percent_cases_symptomatic = RatioTimeSeries(name='Proportion of cases symptomatic',
                                                 numerator_sum_time_series=cases_symptomatic,
                                                 denominator_sum_time_series=new_cases,
@@ -249,16 +249,16 @@ def build_model(model):
     perc_cases_resistant_by_profile = []
 
     for p in range(len(RestProfile)):
-        cases = SumIncidence(name='Number of cases resistant to ' + REST_PROFILES[p],
-                             compartments=if_rest_to[p])
+        resistant_cases = SumIncidence(name='Number of cases resistant to ' + REST_PROFILES[p],
+                                       compartments=if_rest_to[p])
         perc_cases = RatioTimeSeries(
             name='Proportion of cases resistant to ' + REST_PROFILES[p],
-            numerator_sum_time_series=cases,
+            numerator_sum_time_series=resistant_cases,
             denominator_sum_time_series=new_cases,
             if_surveyed=True,
             survey_size_param=params.surveySize)
 
-        cases_resistant_by_profile.append(cases)
+        cases_resistant_by_profile.append(resistant_cases)
         perc_cases_resistant_by_profile.append(perc_cases)
 
     # ------------- calibration targets ---------------
