@@ -32,12 +32,23 @@ def build_model(model):
     ifs_rapid_tests = [None] * covert_symp_susp.length
     if_symp = []
     if_rest_to = []
+    if_successful_main_tx = None
+    if_counting_tx_m = None
     for p in RestProfile:
         if_rest_to.append([])
 
     # S
     S = Compartment(name='S', size_par=params.sizeS,
                     susceptibility_params=[Constant(value=1)]*len(RestProfile))
+
+    # change node to count successful main Tx
+    if_successful_main_tx = ChanceNode(name='Counting successful main Tx',
+                                       destination_compartments=[S, S],
+                                       probability_params=Constant(1))
+    # chance node to count Tx-M
+    if_counting_tx_m = ChanceNode(name='Counting Tx-M',
+                                  destination_compartments=[S, S],
+                                  probability_params=Constant(1))
 
     # Is (infectious) and Fs (infectious after treatment failure)
     i = 0
@@ -107,7 +118,7 @@ def build_model(model):
                 # if drug-susceptible
                 if p == RestProfile.SUS.value:
                     # failure due to the emergence of resistance
-                    dest_succ = S
+                    dest_succ = if_successful_main_tx
                     prob_fail = params.probResEmerge[a]
 
                     # if resistance emerges while receiving PEN
@@ -149,7 +160,7 @@ def build_model(model):
                     elif (p == RestProfile.PEN.value and a == AB.CFX.value) or \
                             (p == RestProfile.CFX.value and a == AB.PEN.value):
                         # success or resistance
-                        dest_succ = S
+                        dest_succ = if_successful_main_tx
                         prob_fail = params.probResEmerge[a]
 
                         # decide where to go next depending on the symptom status
@@ -207,6 +218,8 @@ def build_model(model):
     # set up prevalence, incidence, and cumulative incidence to collect
     if sets.ifCollectTrajsOfCompartments:
         S.setup_history(collect_prev=True)
+        if_successful_main_tx.setup_history(collect_incd=True)
+        if_counting_tx_m.setup_history(collect_incd=True)
         for i in Is:
             i.setup_history(collect_prev=True)
         for f in Fs:
@@ -264,6 +277,11 @@ def build_model(model):
 
         n_cases_by_resistance_profile.append(n_resistant_cases)
         perc_cases_by_resistance_profile.append(perc_cases_resistant)
+
+    # number successfully treated with main antibiotics and M
+    num_successfully_treated = SumIncidence(name='Successfully treated',
+                                            compartments=[if_successful_main_tx, if_counting_tx_m])
+
 
     # ------------- calibration targets ---------------
     if sets.calcLikelihood:
@@ -369,13 +387,14 @@ def build_model(model):
             Fs[i].add_event(EpiIndepEvent(
                 name='Re-Tx | ' + compart_name,
                 rate_param=params.rateRetreatment,
-                destination=S
+                destination=if_counting_tx_m
             ))
             i += 1
 
     # ------------- population the model ---------------
     # populate the model
     chance_nodes = ifs_symp_from_S
+    chance_nodes.extend([if_successful_main_tx, if_counting_tx_m])
     chance_nodes.extend(ifs_re_tx)
     chance_nodes.extend(ifs_symp_from_emerg_res)
     chance_nodes.extend(ifs_tx_outcomes)
