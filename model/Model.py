@@ -31,8 +31,6 @@ def build_model(model):
     ifs_tx_outcomes = [None] * covert_symp_susp_antibio.length
     ifs_rapid_tests = [None] * covert_symp_susp.length
     ifs_resist_after_re_tx_cfx = [None] * len(SympStat)
-    if_successful_tx_cfx = None
-    if_successful_tx_other_than_cfx = None
 
     ifs_symp = []   # chance nodes counting symptomatic cases
     ifs_rest_to = []  # chance nodes counting resistance to different profiles
@@ -71,22 +69,13 @@ def build_model(model):
                                         destination_compartments=[dest_symp, dest_asym],
                                         probability_params=params.probSym)
 
-    # change node to count successful Tx-CFX
-    if_successful_tx_cfx = ChanceNode(name='Counting successful Tx-CFX',
-                                      destination_compartments=[S, S],
-                                      probability_params=Constant(1))
-    # chance node to count successful Tx with antibiotics other than CFX
-    if_successful_tx_other_than_cfx = ChanceNode(name='Counting Tx with antibiotics other than CFX',
-                                                 destination_compartments=[S, S],
-                                                 probability_params=Constant(1))
-
     # if resistance emerges after re-tx with CFX
     for s in range(len(SympStat)):
         dest_rest = Fs[covert_symp_susp.get_row_index(symp_state=s, rest_profile=RestProfile.PEN_CFX.value)]
-        dest_succ = if_successful_tx_cfx
-        ifs_resist_after_re_tx_cfx = ChanceNode(name='If resistance after re-Tx-CFX',
-                                                destination_compartments=[dest_rest, dest_succ],
-                                                probability_params=params.probResEmerge[AB.CFX.value])
+        dest_succ = S
+        ifs_resist_after_re_tx_cfx[s] = ChanceNode(name='If resistance after re-Tx-CFX',
+                                                   destination_compartments=[dest_rest, dest_succ],
+                                                   probability_params=params.probResEmerge[AB.CFX.value])
 
     # if re-tx after ineffective treatment or resistance development
     i = 0
@@ -128,10 +117,7 @@ def build_model(model):
                 # if drug-susceptible
                 if p == RestProfile.SUS.value:
                     # failure due to the emergence of resistance
-                    if a == AB.CFX.value:
-                        dest_succ = if_successful_tx_cfx
-                    else:
-                        dest_succ = if_successful_tx_other_than_cfx
+                    dest_succ = S
                     prob_fail = params.probResEmerge[a]
 
                     # if resistance emerges while receiving PEN
@@ -173,10 +159,7 @@ def build_model(model):
                     elif (p == RestProfile.PEN.value and a == AB.CFX.value) or \
                             (p == RestProfile.CFX.value and a == AB.PEN.value):
                         # success or resistance
-                        if a == AB.CFX.value:
-                            dest_succ = if_successful_tx_cfx
-                        else:
-                            dest_succ = if_successful_tx_other_than_cfx
+                        dest_succ = S
                         prob_fail = params.probResEmerge[a]
 
                         # decide where to go next depending on the symptom status
@@ -234,8 +217,6 @@ def build_model(model):
     # set up prevalence, incidence, and cumulative incidence to collect
     if sets.ifCollectTrajsOfCompartments:
         S.setup_history(collect_prev=True)
-        if_successful_tx_cfx.setup_history(collect_incd=True)
-        if_successful_tx_other_than_cfx.setup_history(collect_incd=True)
         for i in Is:
             i.setup_history(collect_prev=True)
         for f in Fs:
@@ -277,7 +258,7 @@ def build_model(model):
                                                 denominator_sum_time_series=n_cases,
                                                 if_surveyed=True)
 
-    # cases resistant to drug A
+    # cases resistant to different drugs
     n_cases_by_resistance_profile = []
     perc_cases_by_resistance_profile = []
 
@@ -295,8 +276,10 @@ def build_model(model):
         perc_cases_by_resistance_profile.append(perc_cases_resistant)
 
     # number successfully treated with main antibiotics and M
-    n_successfully_treated = SumIncidence(name='Successfully treated',
-                                          compartments=[if_successful_tx_cfx, if_successful_tx_other_than_cfx])
+    list_succ_tx = ifs_rest_to[RestProfile.SUS.value]
+    list_succ_tx.extend(ifs_rest_to[RestProfile.PEN.value])
+    n_treatable_with_cfx = SumIncidence(name='Num of cases treatable with CFX',
+                                        compartments=list_succ_tx)
 
     # ------------- calibration targets ---------------
     if sets.calcLikelihood:
@@ -402,7 +385,7 @@ def build_model(model):
             if p == RestProfile.PEN.value:
                 dest = ifs_resist_after_re_tx_cfx[s]
             else:
-                dest = if_successful_tx_other_than_cfx
+                dest = S
             # treatment
             Fs[i].add_event(EpiIndepEvent(
                 name='Re-Tx | ' + compart_name,
@@ -414,13 +397,12 @@ def build_model(model):
     # ------------- populate the model ---------------
     # populate the model
     chance_nodes = ifs_symp_from_S
-    chance_nodes.extend([if_successful_tx_cfx, if_successful_tx_other_than_cfx])
     chance_nodes.extend(ifs_re_tx)
     chance_nodes.extend(ifs_symp_from_emerg_rest)
     chance_nodes.extend(ifs_tx_outcomes)
     chance_nodes.extend(ifs_rapid_tests)
 
-    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_symptomatic, n_successfully_treated]
+    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_symptomatic, n_treatable_with_cfx]
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
     list_of_ratio_time_series = [prevalence, gono_rate, percent_cases_symptomatic]
