@@ -29,6 +29,10 @@ class GonoSettings(ModelSettings):
         # projection period
         self.storeProjectedOutcomes = True
 
+        # sensitivity and specificity
+        self.sensitivity = 1
+        self.specificity = 0
+
         # calibration targets
         if self.calcLikelihood:
             self.prevMean = []
@@ -56,3 +60,8 @@ class GonoSettings(ModelSettings):
                                                       l=D.PercSymptomatic[0][2],
                                                       u=D.PercSymptomatic[0][3],
                                                       multiplier=0.01))
+
+    def update_settings(self, sensitivity, specificity):
+
+        self.sensitivity = sensitivity
+        self.specificity = specificity

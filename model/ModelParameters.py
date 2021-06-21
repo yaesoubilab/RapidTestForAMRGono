@@ -20,8 +20,8 @@ class Parameters(EpiParameters):
         self.exponProbRes = [None] * len(AB)
 
         # rapid test characteristics
-        self.sens = Constant(1)
-        self.spec = Constant(0)
+        self.sens = Constant(model_sets.sensitivity)
+        self.spec = Constant(model_sets.specificity)
 
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)

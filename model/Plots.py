@@ -1,3 +1,4 @@
+import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio, SIM_DURATION
 from model import Data as D
@@ -100,3 +101,20 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                   list_plot_info=list_plot_info,
                                   figure_size=(6, 4.5), show_subplot_labels=True,
                                   file_name=calibration_filename)
+
+
+def plot_scenarios(scenario_names):
+
+    # read scenarios into a dataframe
+    scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/scenario_analysis.csv')
+
+    # get an specific outcome from an specific scenario
+    print('Scenario name: ', 'Rate of gonorrhea cases | Proportion of cases treatable with CFX' )
+    for name in scenario_names:
+        rate = scenarios_df.get_mean_interval(scenario_name=name,
+                                              outcome_name='Rate of gonorrhea cases',
+                                              deci=3)
+        life = scenarios_df.get_mean_interval(scenario_name=name,
+                                              outcome_name='Proportion of cases treatable with CFX',
+                                              deci=3)
+        print('{}: {} | {}'.format(name, rate, life))

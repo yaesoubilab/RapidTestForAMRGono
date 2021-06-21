@@ -1,6 +1,7 @@
 import os
 from enum import Enum
 
+import numpy as np
 from scipy.stats import norm
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -84,3 +85,13 @@ def get_survey_size(mean, l, u, multiplier=1):
     z = norm.ppf(1-0.05/2)
 
     return var * pow(z/hw, 2)
+
+
+def get_scenario_names(n_breaks):
+    scenario_names = []
+    values = np.linspace(0, 1, n_breaks)
+    for sens in reversed(values):
+        for spec in values:
+            scenario_names.append('(p={:.2f}, q={:.2f})'.format(sens, spec))
+
+    return scenario_names

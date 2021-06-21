@@ -3,7 +3,7 @@ import apace.Calibration as calib
 from apace.MultiEpidemics import MultiEpidemics
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
-from model.PlotTrajs import plot
+from model.Plots import plot
 
 
 def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_weights=True,
