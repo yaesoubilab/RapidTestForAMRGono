@@ -93,7 +93,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
             y_multiplier=100, y_range=(0, 100))
         )
 
-    calibration_filename = 'figures/(calibration) ' + filename
+    calibration_filename = 'figures/(summary) ' + filename
 
     list_plot_info=[prev, gono_rate, perc_symp]
     list_plot_info.extend(perc_cases_by_rest_profile)
