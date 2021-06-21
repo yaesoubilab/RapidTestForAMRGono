@@ -33,7 +33,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     Is = []
     Fs = []
     covert_symp_susp = ConvertSympAndSuspAndAntiBio(
-        n_symp_stats=len(SympStat), n_susp_profiles=len(RestProfile))
+        n_symp_stats=len(SympStat), n_rest_profiles=len(RestProfile))
     i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):

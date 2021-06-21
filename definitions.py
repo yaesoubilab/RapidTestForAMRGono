@@ -32,27 +32,27 @@ class RestProfile(Enum):
 
 
 class ConvertSympAndSuspAndAntiBio:
-    # to convert (symptom state, susceptibility profile, antibiotic) to an index and vice versa
+    # to convert (symptom state, resistance profile, antibiotic) to an index and vice versa
 
-    def __init__(self, n_symp_stats, n_susp_profiles, n_antibiotics=None):
+    def __init__(self, n_symp_stats, n_rest_profiles, n_antibiotics=None):
         self.nSympStats = n_symp_stats
-        self.nSuspProfiles = n_susp_profiles
+        self.nRestProfiles = n_rest_profiles
         self.nAntiBiotics = n_antibiotics
         if n_antibiotics in (None, 0):
-            self.length = n_symp_stats * n_susp_profiles
+            self.length = n_symp_stats * n_rest_profiles
         else:
-            self.length = n_symp_stats * n_susp_profiles * n_antibiotics
+            self.length = n_symp_stats * n_rest_profiles * n_antibiotics
 
-    def get_row_index(self, symp_state, susp_profile, antibiotic=None):
+    def get_row_index(self, symp_state, rest_profile, antibiotic=None):
         if self.nAntiBiotics in (None, 0):
-            return self.nSuspProfiles * symp_state + susp_profile
+            return self.nRestProfiles * symp_state + rest_profile
         else:
-            return (self.nSuspProfiles * self.nAntiBiotics) * symp_state \
-                   + self.nAntiBiotics * susp_profile + antibiotic
+            return (self.nRestProfiles * self.nAntiBiotics) * symp_state \
+                   + self.nAntiBiotics * rest_profile + antibiotic
 
     def get_symp_and_profile(self, i):
         if self.nAntiBiotics in (None, 0):
-            return int(i / self.nSuspProfiles), i % self.nSympStats
+            return int(i / self.nRestProfiles), i % self.nSympStats
         else:
             return None
 
@@ -62,8 +62,8 @@ class ConvertSympAndSuspAndAntiBio:
     def get_str_symp_susp(self, symp_state, susp_profile):
         return '{}-{}'.format(SYMP_STATES[symp_state], REST_PROFILES[susp_profile])
 
-    def get_str_symp_susp_antibio(self, symp_state, susp_profile, antibiotic):
-        return '{}-{}|Tx with {}'.format(SYMP_STATES[symp_state], REST_PROFILES[susp_profile], ANTIBIOTICS[antibiotic])
+    def get_str_symp_rest_antibio(self, symp_state, rest_profile, antibiotic):
+        return '{}-{}|Tx with {}'.format(SYMP_STATES[symp_state], REST_PROFILES[rest_profile], ANTIBIOTICS[antibiotic])
 
 
 def get_survey_size(mean, l, u, multiplier=1):
