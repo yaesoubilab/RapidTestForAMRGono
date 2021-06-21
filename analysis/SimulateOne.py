@@ -11,7 +11,7 @@ model = EpiModel(id=1, settings=sets)
 build_model(model)
 
 # simulate
-model.simulate()
+model.simulate(seed=1478610112)
 # print trajectories
 model.export_trajectories(delete_existing_files=True)
 

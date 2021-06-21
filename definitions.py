@@ -5,6 +5,8 @@ from scipy.stats import norm
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+SIM_DURATION = 25
+
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after
 # calculating the prevalence of all other drugs

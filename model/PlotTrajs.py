@@ -1,5 +1,5 @@
 import apace.analysis.Trajectories as A
-from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio
+from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio, SIM_DURATION
 from model import Data as D
 
 
@@ -19,7 +19,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
 
     # defaults
     A.TIME_0 = 0  # 2014
-    A.X_RANGE = (0, 11)
+    A.X_RANGE = (0, SIM_DURATION+1)
     A.X_TICKS = [A.TIME_0, 5]  # x-axis ticks (min at 0 with interval of 5)
     A.X_LABEL = 'Year'  # x-axis label
     A.TRAJ_TRANSPARENCY = 0.25
@@ -60,7 +60,6 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                   file_name=validation_filename)
 
     # ------------- Calibration Figure ---------------
-
     prev = A.TrajPlotInfo(outcome_name='Prevalence',
                           title='Prevalence (%)',
                           x_multiplier=obs_prev_multiplier, y_multiplier=100,
@@ -95,7 +94,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
 
     calibration_filename = 'figures/(summary) ' + filename
 
-    list_plot_info=[prev, gono_rate, perc_symp]
+    list_plot_info = [prev, gono_rate, perc_symp]
     list_plot_info.extend(perc_cases_by_rest_profile)
     sim_outcomes.plot_multi_panel(n_rows=2, n_cols=3,
                                   list_plot_info=list_plot_info,

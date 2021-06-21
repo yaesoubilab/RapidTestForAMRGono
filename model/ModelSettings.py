@@ -1,5 +1,5 @@
 from apace.Inputs import ModelSettings
-from definitions import get_survey_size
+from definitions import get_survey_size, SIM_DURATION
 from model import Data as D
 
 
@@ -15,7 +15,7 @@ class GonoSettings(ModelSettings):
 
         # model settings
         self.deltaT = 7 / 364  # 1 day
-        self.simulationDuration = 10  # years
+        self.simulationDuration = SIM_DURATION  # years
         self.simulationOutputPeriod = 1  # simulation output period
         self.observationPeriod = 1
         self.storeParameterValues = True

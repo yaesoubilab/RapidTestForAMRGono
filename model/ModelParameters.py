@@ -26,7 +26,7 @@ class Parameters(EpiParameters):
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
-        self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.25)
+        self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.1)
 
         # percent of I0 by resistance profile
         self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.05, 0.15)
@@ -34,7 +34,7 @@ class Parameters(EpiParameters):
         self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
 
         # infectivity parameters
-        self.transm = Uniform(1, 3)  # baseline infectivity
+        self.transm = Uniform(0.5, 3)  # baseline infectivity
         self.ratioInf[RestProfile.PEN.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.PEN_CFX.value] = Uniform(0.8, 1)
