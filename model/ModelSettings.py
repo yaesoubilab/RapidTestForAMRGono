@@ -27,7 +27,7 @@ class GonoSettings(ModelSettings):
         self.calibPeriod = 5  # years
 
         # projection period
-        self.disruptionPeriod = 2  # years
+        self.storeProjectedOutcomes = True
 
         # calibration targets
         if self.calcLikelihood:

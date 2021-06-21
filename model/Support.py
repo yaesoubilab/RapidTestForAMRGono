@@ -7,12 +7,13 @@ from model.PlotTrajs import plot
 
 
 def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_weights=True,
-                                figure_filename='traj.png'):
+                                if_run_in_parallel=True, figure_filename='traj.png'):
     """
     :param n: (int) number of trajectories to simulate
     :param seeds: (list) of seeds
     :param weights: (list) probability weights over seeds
     :param sample_seeds_by_weights: (bool) set to False to only use seeds with positive weights
+    :param if_run_in_parallel: (bool if run in parallel
     :param figure_filename: (string) filename to save the figures as
     :return:
     """
@@ -28,7 +29,7 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
                          seeds=seeds,
                          weights=weights,
                          sample_seeds_by_weights=sample_seeds_by_weights,
-                         if_run_in_parallel=True)
+                         if_run_in_parallel=if_run_in_parallel)
 
     # save ids, seeds, runtime,
     multi_model.save_summary()

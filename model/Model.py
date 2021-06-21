@@ -248,7 +248,8 @@ def build_model(model):
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
                                 numerator_sum_time_series=n_cases,
                                 denominator_sum_time_series=pop_size,
-                                if_surveyed=True)
+                                if_surveyed=True,
+                                collect_stat_after_warm_up=True)
 
     # % cases symptomatic
     n_cases_symptomatic = SumIncidence(name='Number of cases symptomatic',
@@ -280,6 +281,11 @@ def build_model(model):
     list_succ_tx.extend(ifs_rest_to[RestProfile.PEN.value])
     n_treatable_with_cfx = SumIncidence(name='Num of cases treatable with CFX',
                                         compartments=list_succ_tx)
+    perc_treatable_with_cfx = RatioTimeSeries(
+        name='Proportion of cases treatable with CFX',
+        numerator_sum_time_series=n_treatable_with_cfx,
+        denominator_sum_time_series=n_cases,
+        collect_stat_after_warm_up=True)
 
     # ------------- calibration targets ---------------
     if sets.calcLikelihood:
@@ -405,7 +411,7 @@ def build_model(model):
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_symptomatic, n_treatable_with_cfx]
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
-    list_of_ratio_time_series = [prevalence, gono_rate, percent_cases_symptomatic]
+    list_of_ratio_time_series = [prevalence, gono_rate, percent_cases_symptomatic, perc_treatable_with_cfx]
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     model.populate(compartments=all_comparts,
