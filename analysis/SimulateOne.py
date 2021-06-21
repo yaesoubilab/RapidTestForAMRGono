@@ -1,7 +1,7 @@
 from apace.Epidemic import EpiModel
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
-from model.PlotTrajs import plot
+from model.Plots import plot
 
 # get model settings
 sets = GonoSettings()
