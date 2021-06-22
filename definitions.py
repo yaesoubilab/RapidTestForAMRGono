@@ -8,6 +8,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SIM_DURATION = 25
 END_OF_WARM_UP = 6
+END_OF_CALIB = 10
 N_BREAKS_SENSITIVITY = 1
 N_BREAKS_SPECIFICITY = 11
 
@@ -73,6 +74,9 @@ class ConvertSympAndSuspAndAntiBio:
 
 
 def get_survey_size(mean, l, u, multiplier=1):
+
+    if mean is None:
+        return None
 
     mean *= multiplier
     l *= multiplier

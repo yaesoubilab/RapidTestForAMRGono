@@ -297,7 +297,7 @@ def build_model(model):
                                            survey_sizes=sets.prevN)
         # gonorrhea rate
         gono_rate.add_feasible_conditions(feasible_conditions=FeasibleConditions(
-            feasible_min=0.025, feasible_max=0.1))
+            feasible_min=0.0, feasible_max=1))
         gono_rate.add_calibration_targets(ratios=sets.gonoRateMean,
                                           survey_sizes=sets.gonoRateN)
         # % cases symptomatic

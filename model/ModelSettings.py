@@ -1,6 +1,6 @@
 from apace.Inputs import ModelSettings
-from definitions import get_survey_size, SIM_DURATION, END_OF_WARM_UP
-from model import Data as D
+from definitions import get_survey_size, SIM_DURATION, END_OF_WARM_UP, END_OF_CALIB
+from model.Data import Prevalence, GonorrheaRate, PercSymptomatic
 
 
 class GonoSettings(ModelSettings):
@@ -25,7 +25,6 @@ class GonoSettings(ModelSettings):
         # calibration settings
         self.calcLikelihood = if_calibrating
         self.periodBeforeCalibration = 1
-        self.calibPeriod = None # WARM_UP + 5   # years
 
         # projection period
         self.storeProjectedOutcomes = True
@@ -36,31 +35,49 @@ class GonoSettings(ModelSettings):
 
         # calibration targets
         if self.calcLikelihood:
+            self.simulationDuration = END_OF_CALIB
             self.prevMean = []
             self.prevN = []
             self.gonoRateMean = []
             self.gonoRateN = []
             self.percSympMean = []
             self.percSympN = []
-            for i in range(5):
+
+            n_periods_to_keep_constant = 5
+            for i in range(len(Prevalence)+n_periods_to_keep_constant-1):
+
+                j = min(i, END_OF_WARM_UP - 1)
+
                 # mean and N of prevalence estimate
-                self.prevMean.append(D.Prevalence[0][1] * 0.01)
-                self.prevN.append(get_survey_size(mean=D.Prevalence[0][1],
-                                                  l=D.Prevalence[0][2],
-                                                  u=D.Prevalence[0][3],
-                                                  multiplier=0.01))
-                # mean and N of rate estimate
-                self.gonoRateMean.append(D.GonorrheaRate[0][1] * 0.00001)
-                self.gonoRateN.append(get_survey_size(mean=D.GonorrheaRate[0][1],
-                                                      l=D.GonorrheaRate[0][1]*0.9,
-                                                      u=D.GonorrheaRate[0][1]*1.1,
-                                                      multiplier=0.00001))
-                # mean and N of the estimate for the percentage of cases symptomatic
-                self.percSympMean.append(D.PercSymptomatic[0][1] * 0.01)
-                self.percSympN.append(get_survey_size(mean=D.PercSymptomatic[0][1],
-                                                      l=D.PercSymptomatic[0][2],
-                                                      u=D.PercSymptomatic[0][3],
+                if Prevalence[j][1] is None:
+                    self.prevMean.append(None)
+                    self.prevN.append(None)
+                else:
+                    self.prevMean.append(Prevalence[j][1] * 0.01)
+                    self.prevN.append(get_survey_size(mean=Prevalence[j][1],
+                                                      l=Prevalence[j][2],
+                                                      u=Prevalence[j][3],
                                                       multiplier=0.01))
+                # mean and N of rate estimate
+                if GonorrheaRate[j][1] is None:
+                    self.gonoRateMean.append(None)
+                    self.gonoRateN.append(None)
+                else:
+                    self.gonoRateMean.append(GonorrheaRate[j][1] * 0.00001)
+                    self.gonoRateN.append(get_survey_size(mean=GonorrheaRate[j][1],
+                                                          l=GonorrheaRate[j][1]*0.9,
+                                                          u=GonorrheaRate[j][1]*1.1,
+                                                          multiplier=0.00001))
+                # mean and N of the estimate for the percentage of cases symptomatic
+                if PercSymptomatic[j][1] is None:
+                    self.percSympMean.append(None)
+                    self.percSympN.append(None)
+                else:
+                    self.percSympMean.append(PercSymptomatic[j][1] * 0.01)
+                    self.percSympN.append(get_survey_size(mean=PercSymptomatic[j][1],
+                                                          l=PercSymptomatic[j][2],
+                                                          u=PercSymptomatic[j][3],
+                                                          multiplier=0.01))
 
     def update_settings(self, sensitivity, specificity):
 

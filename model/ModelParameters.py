@@ -30,8 +30,8 @@ class Parameters(EpiParameters):
 
         # percent of I0 by resistance profile
         self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.05, 0.15)
-        self.percI0ByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.005)
-        self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.005)
+        self.percI0ByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.001)
+        self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.001)
 
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
