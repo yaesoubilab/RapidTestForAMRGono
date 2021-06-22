@@ -1,5 +1,6 @@
 import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
+import apace.analysis.VisualizeScenarios as V
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio, SIM_DURATION
 from model import Data as D
 
@@ -103,10 +104,10 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                   file_name=calibration_filename)
 
 
-def plot_scenarios(scenario_names):
+def plot_scenarios(scenario_names, fig_file_name):
 
     # read scenarios into a dataframe
-    scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/scenario_analysis.csv')
+    scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/simulated_scenarios.csv')
 
     # get an specific outcome from an specific scenario
     print('\nScenario name: ', 'Rate of gonorrhea cases | Proportion of cases treatable with CFX' )
@@ -118,3 +119,38 @@ def plot_scenarios(scenario_names):
                                               outcome_name='Proportion of cases treatable with CFX',
                                               deci=3)
         print('{}: {} | {}'.format(name, rate, life))
+
+    # plot CEA
+    S.ERROR_BAR_ALPHA = 0.2
+    # read scenarios into a dataframe
+    df_scenarios = S.ScenarioDataFrame(
+        csv_file_name='outputs/scenarios/simulated_scenarios.csv')
+
+    # sets of scenarios to display on the cost-effectiveness plain
+    scenarios = S.SetOfScenarios(
+        name='Changing specificity',
+        scenario_df=df_scenarios,
+        color='blue',
+        marker='o',
+        conditions_on_variables=[
+            S.ConditionOnVariable(var_name='sensitivity', values=[1]),
+            S.ConditionOnVariable(var_name='specificity', if_included_in_label=True,
+                                  label_format='{:.2f}')],
+        if_find_frontier=False,
+        if_show_fitted_curve=True,
+        labels_shift_x=0.03,
+        labels_shift_y=0.00)
+
+    list_of_scenario_sets = [scenarios]
+    V.plot_sets_of_scenarios(list_of_scenario_sets=list_of_scenario_sets,
+                             name_of_base_scenario='(p=1.00, q=0.00)',
+                             effect_outcome='Proportion of cases treatable with CFX',
+                             cost_outcome='Rate of gonorrhea cases',
+                             labels=('Change in proportion of cases treatable with CFX ',
+                                     'Change in annual rate of gonorrhea'),
+                             health_measure='u',
+                             x_range=None, y_range=None, cost_multiplier=1,
+                             file_name=fig_file_name,
+                             fig_size=(4, 4))
+
+

@@ -7,6 +7,8 @@ from scipy.stats import norm
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SIM_DURATION = 25
+N_BREAKS_SENSITIVITY = 1
+N_BREAKS_SPECIFICITY = 5
 
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after

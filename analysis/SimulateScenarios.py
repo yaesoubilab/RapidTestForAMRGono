@@ -1,13 +1,12 @@
 import model.Plots as P
 from apace.ScenarioSimulation import ScenarioSimulator
-from definitions import get_scenario_names, get_list_sensitivity_specificity
+from definitions import get_scenario_names, get_list_sensitivity_specificity, \
+    N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
 N_OF_SIMS = 20
 RUN_IN_PARALLEL = True
-N_BREAKS_SENSITIVITY = 1
-N_BREAKS_SPECIFICITY = 5
 
 
 def simulate_scenarios():
@@ -41,7 +40,7 @@ def simulate_scenarios():
     scenario_sim.export_results()
 
     # plot the CEA figure and other analyses
-    P.plot_scenarios(scenario_names=scenario_names)
+    P.plot_scenarios(scenario_names=scenario_names, fig_file_name='Changing specificity.png')
 
 
 if __name__ == "__main__":
