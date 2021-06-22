@@ -221,6 +221,8 @@ def build_model(model):
             i.setup_history(collect_prev=True)
         for f in Fs:
             f.setup_history(collect_prev=True)
+        for r in ifs_rapid_tests:
+            r.setup_history(collect_incd=True)
         for t in ifs_tx_outcomes:
             t.setup_history(collect_incd=True)
 
@@ -264,7 +266,7 @@ def build_model(model):
     perc_cases_by_resistance_profile = []
 
     for p in range(len(RestProfile)):
-        n_resistant_cases = SumIncidence(name='Number of cases resistant to ' + REST_PROFILES[p],
+        n_resistant_cases = SumIncidence(name='Number of cases ' + REST_PROFILES[p],
                                          compartments=ifs_rest_to[p])
         perc_cases_resistant = RatioTimeSeries(
             name='Proportion of cases resistant to ' + REST_PROFILES[p],
@@ -277,8 +279,7 @@ def build_model(model):
         perc_cases_by_resistance_profile.append(perc_cases_resistant)
 
     # number successfully treated with main antibiotics and M
-    list_succ_tx = ifs_rest_to[RestProfile.SUS.value]
-    list_succ_tx.extend(ifs_rest_to[RestProfile.PEN.value])
+    list_succ_tx = ifs_rest_to[RestProfile.SUS.value] + ifs_rest_to[RestProfile.PEN.value]
     n_treatable_with_cfx = SumIncidence(name='Num of cases treatable with CFX',
                                         compartments=list_succ_tx)
     perc_treatable_with_cfx = RatioTimeSeries(
