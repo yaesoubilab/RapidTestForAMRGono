@@ -1,14 +1,13 @@
-import numpy as np
-
 import model.Plots as P
 from apace.ScenarioSimulation import ScenarioSimulator
-from definitions import get_scenario_names
+from definitions import get_scenario_names, get_list_sensitivity_specificity
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-N_OF_SIMS = 5
+N_OF_SIMS = 20
 RUN_IN_PARALLEL = True
-N_BREAKS = 5
+N_BREAKS_SENSITIVITY = 1
+N_BREAKS_SPECIFICITY = 5
 
 
 def simulate_scenarios():
@@ -18,19 +17,16 @@ def simulate_scenarios():
     sets.exportTrajectories = False
 
     # names of the scenarios to evaluate
-    scenario_names = get_scenario_names(n_breaks=N_BREAKS)
+    scenario_names = get_scenario_names(n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
+                                        n_breaks_specificity=N_BREAKS_SPECIFICITY)
 
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
     var_names = ['sensitivity', 'specificity']
 
     # variable values
     # rows correspond to scenario names defined above, and columns correspond to variable names defined above
-    scenario_definitions = []
-    values = np.linspace(0, 1, N_BREAKS)
-    for sens in reversed(values):
-        for spec in values:
-            scenario_definitions.append([sens, spec])
-
+    scenario_definitions = get_list_sensitivity_specificity(n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
+                                                            n_breaks_specificity=N_BREAKS_SPECIFICITY)
     scenario_sim = ScenarioSimulator(model_settings=sets,
                                      scenario_names=scenario_names,
                                      variable_names=var_names,

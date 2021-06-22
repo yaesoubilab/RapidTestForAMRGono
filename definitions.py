@@ -87,11 +87,31 @@ def get_survey_size(mean, l, u, multiplier=1):
     return var * pow(z/hw, 2)
 
 
-def get_scenario_names(n_breaks):
+def get_list_sensitivity_specificity(n_breaks_sensitivity, n_breaks_specificity):
+
+    values = []
+    if n_breaks_sensitivity == 1:
+        values_sen = [1]
+    else:
+        values_sen = np.linspace(0, 1, n_breaks_sensitivity)
+    if n_breaks_specificity == 1:
+        values_spe = [0]
+    else:
+        values_spe = np.linspace(0, 1, n_breaks_specificity)
+
+    for sens in reversed(values_sen):
+        for spec in values_spe:
+            values.append([sens, spec])
+
+    return values
+
+
+def get_scenario_names(n_breaks_sensitivity, n_breaks_specificity):
+
     scenario_names = []
-    values = np.linspace(0, 1, n_breaks)
-    for sens in reversed(values):
-        for spec in values:
-            scenario_names.append('(p={:.2f}, q={:.2f})'.format(sens, spec))
+    values_p_q = get_list_sensitivity_specificity(n_breaks_sensitivity=n_breaks_sensitivity,
+                                                  n_breaks_specificity=n_breaks_specificity)
+    for v in values_p_q:
+        scenario_names.append('(p={:.2f}, q={:.2f})'.format(v[0], v[1]))
 
     return scenario_names

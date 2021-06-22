@@ -109,7 +109,7 @@ def plot_scenarios(scenario_names):
     scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/scenario_analysis.csv')
 
     # get an specific outcome from an specific scenario
-    print('Scenario name: ', 'Rate of gonorrhea cases | Proportion of cases treatable with CFX' )
+    print('\nScenario name: ', 'Rate of gonorrhea cases | Proportion of cases treatable with CFX' )
     for name in scenario_names:
         rate = scenarios_df.get_mean_interval(scenario_name=name,
                                               outcome_name='Rate of gonorrhea cases',
