@@ -5,7 +5,7 @@ from definitions import get_scenario_names, get_list_sensitivity_specificity, \
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-N_OF_SIMS = 20
+N_OF_SIMS = 25
 RUN_IN_PARALLEL = True
 
 
@@ -40,7 +40,8 @@ def simulate_scenarios():
     scenario_sim.export_results()
 
     # plot the CEA figure and other analyses
-    P.plot_scenarios(scenario_names=scenario_names, fig_file_name='Changing specificity.png')
+    P.plot_scenarios(scenario_names=scenario_names,
+                     fig_file_name='outputs/scenarios/Changing specificity.png')
 
 
 if __name__ == "__main__":

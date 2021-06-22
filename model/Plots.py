@@ -147,9 +147,9 @@ def plot_scenarios(scenario_names, fig_file_name):
                              effect_outcome='Proportion of cases treatable with CFX',
                              cost_outcome='Rate of gonorrhea cases',
                              labels=('Change in proportion of cases treatable with CFX ',
-                                     'Change in annual rate of gonorrhea'),
+                                     'Change in annual rate of gonorrhea\n(per 100,000 population)'),
                              health_measure='u',
-                             x_range=None, y_range=None, cost_multiplier=1,
+                             x_range=None, y_range=None, cost_multiplier=100000,
                              file_name=fig_file_name,
                              fig_size=(4, 4))
 
