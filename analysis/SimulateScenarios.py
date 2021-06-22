@@ -41,7 +41,7 @@ def simulate_scenarios():
 
     # plot the CEA figure and other analyses
     P.plot_scenarios(scenario_names=scenario_names,
-                     fig_file_name='outputs/scenarios/Changing specificity.png')
+                     fig_file_name='figures/Changing specificity.png')
 
 
 if __name__ == "__main__":

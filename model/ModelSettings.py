@@ -1,5 +1,5 @@
 from apace.Inputs import ModelSettings
-from definitions import get_survey_size, SIM_DURATION
+from definitions import get_survey_size, SIM_DURATION, END_OF_WARM_UP
 from model import Data as D
 
 
@@ -16,6 +16,7 @@ class GonoSettings(ModelSettings):
         # model settings
         self.deltaT = 7 / 364  # 1 day
         self.simulationDuration = SIM_DURATION  # years
+        self.endOfWarmUpPeriod = END_OF_WARM_UP
         self.simulationOutputPeriod = 1  # simulation output period
         self.observationPeriod = 1
         self.storeParameterValues = True
@@ -24,7 +25,7 @@ class GonoSettings(ModelSettings):
         # calibration settings
         self.calcLikelihood = if_calibrating
         self.periodBeforeCalibration = 1
-        self.calibPeriod = 5  # years
+        self.calibPeriod = None # WARM_UP + 5   # years
 
         # projection period
         self.storeProjectedOutcomes = True
