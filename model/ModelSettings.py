@@ -51,8 +51,8 @@ class GonoSettings(ModelSettings):
                 # mean and N of rate estimate
                 self.gonoRateMean.append(D.GonorrheaRate[0][1] * 0.00001)
                 self.gonoRateN.append(get_survey_size(mean=D.GonorrheaRate[0][1],
-                                                      l=D.GonorrheaRate[0][1]*0.8,
-                                                      u=D.GonorrheaRate[0][1]*1.2,
+                                                      l=D.GonorrheaRate[0][1]*0.9,
+                                                      u=D.GonorrheaRate[0][1]*1.1,
                                                       multiplier=0.00001))
                 # mean and N of the estimate for the percentage of cases symptomatic
                 self.percSympMean.append(D.PercSymptomatic[0][1] * 0.01)

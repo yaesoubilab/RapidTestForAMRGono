@@ -5,9 +5,9 @@ from model.Support import estimate_parameters, simulate_calibrated_model
 
 
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 5000    # total number of trajectories to simulate as part of calibration
-N_OF_TRAJS_TO_USE_FOR_SIMULATION = 100   # number of trajectories with the highest likelihood to keep
-N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 100  # number of parameter values to resample for parameter estimation
+N_OF_CALIBRATION_ITERATIONS = 200    # total number of trajectories to simulate as part of calibration
+N_OF_TRAJS_TO_USE_FOR_SIMULATION = 20   # number of trajectories with the highest likelihood to keep
+N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 20  # number of parameter values to resample for parameter estimation
 
 if __name__ == "__main__":
 
@@ -22,6 +22,9 @@ if __name__ == "__main__":
         function_to_populate_model=M.build_model,
         num_of_iterations=N_OF_CALIBRATION_ITERATIONS,
         if_run_in_parallel=RUN_IN_PARALLEL)
+
+    # run time
+    print('Run time: {:.2f} seconds for {} trajectories.'.format(calibration.runTime, N_OF_CALIBRATION_ITERATIONS))
 
     # save calibration results
     calibration.save_results(filename='outputs/calibration/calibration_summary.csv')
