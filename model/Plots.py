@@ -72,7 +72,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     gono_rate = A.TrajPlotInfo(outcome_name='Rate of gonorrhea cases',
                                title='Rate of gonorrhea cases\n(Per 100,000 MSM population)',
                                x_multiplier=obs_incd_multiplier, y_multiplier=100000,
-                               y_range=(0, 10000),
+                               y_range=(0, 12500),
                                calibration_info=A.CalibrationTargetPlotInfo(
                                    rows_of_data=D.GonorrheaRate)
                                )

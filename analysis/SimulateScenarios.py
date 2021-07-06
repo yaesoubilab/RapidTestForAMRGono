@@ -1,3 +1,4 @@
+import apace.Calibration as calib
 import model.Plots as P
 from apace.ScenarioSimulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sensitivity_specificity, \
@@ -5,7 +6,7 @@ from definitions import get_scenario_names, get_list_sensitivity_specificity, \
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-N_OF_SIMS = 100
+N_OF_SIMS = 50
 RUN_IN_PARALLEL = True
 
 
@@ -26,6 +27,10 @@ def simulate_scenarios():
     # rows correspond to scenario names defined above, and columns correspond to variable names defined above
     scenario_definitions = get_list_sensitivity_specificity(n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
                                                             n_breaks_specificity=N_BREAKS_SPECIFICITY)
+
+    # get the seeds and probability weights
+    seeds, weights = calib.get_seeds_and_probs('outputs/calibration/calibration_summary.csv')
+
     scenario_sim = ScenarioSimulator(model_settings=sets,
                                      scenario_names=scenario_names,
                                      variable_names=var_names,
@@ -33,6 +38,7 @@ def simulate_scenarios():
 
     scenario_sim.simulate(function_to_populate_model=build_model,
                           num_of_sims=N_OF_SIMS,
+                          seeds=seeds, weights=weights, sample_seeds_by_weights=False,
                           if_run_in_parallel=RUN_IN_PARALLEL,
                           print_summary_stats=True)
 
