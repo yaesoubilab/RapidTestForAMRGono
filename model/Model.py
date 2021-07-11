@@ -279,11 +279,10 @@ def build_model(model):
                                                 denominator_sum_time_series=n_cases,
                                                 if_surveyed=True)
 
-    # cases resistant to different drugs
+    # cases by resistance profile
     n_cases_by_resistance_profile = []
     perc_cases_by_resistance_profile = []
-
-    for p in range(len(RestProfile)):
+    for p in range(n_rest_profiles):
         n_resistant_cases = SumIncidence(name='Number of cases ' + REST_PROFILES[p],
                                          compartments=ifs_rest_to[p])
         perc_cases_resistant = RatioTimeSeries(
@@ -296,10 +295,21 @@ def build_model(model):
         n_cases_by_resistance_profile.append(n_resistant_cases)
         perc_cases_by_resistance_profile.append(perc_cases_resistant)
 
+    # cases by resistance to specific CFX (including resistance to both PEN and CFX)
+    n_cases_CFX_R = SumIncidence(
+        name='Number of cases CFX-R or CFX+PEN-R',
+        compartments=ifs_rest_to[RestProfile.CFX.value] + ifs_rest_to[RestProfile.PEN_CFX.value])
+    perc_cases_CFX_R = RatioTimeSeries(
+            name='Proportion of cases CFX-R or CFX+PEN-R',
+            numerator_sum_time_series=n_cases_CFX_R,
+            denominator_sum_time_series=n_cases,
+            if_surveyed=True,
+            survey_size_param=params.surveySize)
+
     # number treatable with main antibiotic (CFX)
-    list_succ_tx_CFX = ifs_rest_to[RestProfile.SUS.value] + ifs_rest_to[RestProfile.PEN.value]
-    n_treatable_with_cfx = SumIncidence(name='Num of cases treatable with CFX',
-                                        compartments=list_succ_tx_CFX)
+    n_treatable_with_cfx = SumIncidence(
+        name='Num of cases treatable with CFX',
+        compartments=ifs_rest_to[RestProfile.SUS.value] + ifs_rest_to[RestProfile.PEN.value])
     perc_treatable_with_cfx = RatioTimeSeries(
         name='Proportion of cases treatable with CFX',
         numerator_sum_time_series=n_treatable_with_cfx,
@@ -324,48 +334,48 @@ def build_model(model):
         percent_cases_symptomatic.add_calibration_targets(ratios=sets.percSympMean,
                                                           survey_sizes=sets.percSympN)
 
-    if False:
-        # ------------- interventions ---------------
-        # interventions (first line therapy with A or M)
-        first_line_tx_with_A = InterventionAffectingEvents(name='1st line therapy with Drug A')
-        first_line_tx_with_M = InterventionAffectingEvents(name='1st line therapy with Drug M')
+    # ------------- interventions ---------------
+    # interventions
+    first_line_tx_with_CFX = InterventionAffectingEvents(name='1st line therapy with CFX')
+    first_line_tx_with_M = InterventionAffectingEvents(name='1st line therapy with M')
 
-        # ------------- features ---------------
-        # features
-        f_perc_resist_A = FeatureSurveillance(name='Surveyed % of cases resistant',
-                                              ratio_time_series_with_surveillance=percent_cases_rest_A)
-        f_if_M_ever_switched_on = FeatureIntervention(name='If Drug M ever switched on',
-                                                      intervention=first_line_tx_with_M,
-                                                      feature_type='if ever switched on')
+    # ------------- features ---------------
+    # features
+    f_perc_resist_CFX = FeatureSurveillance(name='Surveyed % of cases resistant to CFX',
+                                            ratio_time_series_with_surveillance=perc_cases_CFX_R)
+    f_if_M_ever_switched_on = FeatureIntervention(name='If Drug M ever switched on',
+                                                  intervention=first_line_tx_with_M,
+                                                  feature_type='if ever switched on')
 
-        # ------------- conditions ---------------
-        # conditions
-        threshold = 0.1
-        A_in_condition = ConditionOnFeatures(name='If % resistant is below threshold',
-                                             features=[f_perc_resist_A],
-                                             signs=['l'],
-                                             thresholds=[threshold])
-        A_out_condition = ConditionOnFeatures(name='If % resistant passes threshold',
-                                              features=[f_perc_resist_A],
-                                              signs=['ge'],
-                                              thresholds=[threshold])
-        M_is_never_used = ConditionOnFeatures(name='If M is ever used as 1st-line therapy',
-                                              features=[f_if_M_ever_switched_on],
-                                              signs=['e'],
-                                              thresholds=[0])
+    # ------------- conditions ---------------
+    # conditions
+    threshold = 0.05
+    CFX_in_condition = ConditionOnFeatures(name='If % resistant is below threshold',
+                                           features=[f_perc_resist_CFX],
+                                           signs=['l'],
+                                           thresholds=[threshold])
+    CFX_out_condition = ConditionOnFeatures(name='If % resistant passes threshold',
+                                            features=[f_perc_resist_CFX],
+                                            signs=['ge'],
+                                            thresholds=[threshold])
+    M_is_never_used = ConditionOnFeatures(name='If M is ever used as 1st-line therapy',
+                                          features=[f_if_M_ever_switched_on],
+                                          signs=['e'],
+                                          thresholds=[0])
 
-        turn_on_tx_with_A = ConditionOnConditions(name='', conditions=[A_in_condition, M_is_never_used])
+    turn_on_tx_with_CFX = ConditionOnConditions(name='',
+                                                conditions=[CFX_in_condition, M_is_never_used])
 
-        # ------------- decision rules ---------------
-        # add decision rules to interventions
-        first_line_tx_with_A.add_decision_rule(
-            decision_rule=ConditionBasedDecisionRule(default_switch_value=1,
-                                                     condition_to_turn_on=turn_on_tx_with_A,
-                                                     condition_to_turn_off=A_out_condition))
-        first_line_tx_with_M.add_decision_rule(
-            decision_rule=ConditionBasedDecisionRule(default_switch_value=0,
-                                                     condition_to_turn_on=A_out_condition,
-                                                     condition_to_turn_off=ConditionAlwaysFalse()))
+    # ------------- decision rules ---------------
+    # add decision rules to interventions
+    first_line_tx_with_CFX.add_decision_rule(
+        decision_rule=ConditionBasedDecisionRule(default_switch_value=1,
+                                                 condition_to_turn_on=turn_on_tx_with_CFX,
+                                                 condition_to_turn_off=CFX_out_condition))
+    first_line_tx_with_M.add_decision_rule(
+        decision_rule=ConditionBasedDecisionRule(default_switch_value=0,
+                                                 condition_to_turn_on=CFX_out_condition,
+                                                 condition_to_turn_off=ConditionAlwaysFalse()))
 
     # ------------- attach epidemic events ---------------
     # attached epidemic events to compartments
@@ -427,17 +437,19 @@ def build_model(model):
     chance_nodes.extend(ifs_tx_outcomes)
     chance_nodes.extend(ifs_rapid_tests)
 
-    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_symptomatic, n_treatable_with_cfx]
+    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
+                               n_cases_symptomatic, n_treatable_with_cfx]
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
-    list_of_ratio_time_series = [prevalence, gono_rate, percent_cases_symptomatic, perc_treatable_with_cfx]
+    list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CFX_R,
+                                 percent_cases_symptomatic, perc_treatable_with_cfx]
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     model.populate(compartments=all_comparts,
                    chance_nodes=chance_nodes,
                    list_of_sum_time_series=list_of_sum_time_series,
                    list_of_ratio_time_series=list_of_ratio_time_series,
-                   interventions=None, # [first_line_tx_with_A, first_line_tx_with_M],
+                   interventions=[first_line_tx_with_CFX, first_line_tx_with_M],
                    features=None, # [f_perc_resist_A, f_if_M_ever_switched_on],
                    conditions=None, # [A_in_condition, A_out_condition, M_is_never_used, ],
                    parameters=params)
