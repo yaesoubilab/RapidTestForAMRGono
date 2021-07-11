@@ -15,7 +15,7 @@ N_BREAKS_SPECIFICITY = 11
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after
 # calculating the prevalence of all other drugs
-REST_PROFILES = ['PEN-R', 'CFX-R', 'PEN+CFX-R', 'SUS']
+REST_PROFILES = ['PEN-I/R', 'CFX-R', 'PEN-I/R+CFX-R', 'SUSP']
 ANTIBIOTICS = ['PEN', 'CFX']
 
 
@@ -98,11 +98,11 @@ def get_list_sensitivity_specificity(n_breaks_sensitivity, n_breaks_specificity)
 
     values = []
     if n_breaks_sensitivity == 1:
-        values_sen = [1]
+        values_sen = [0]
     else:
         values_sen = np.linspace(0, 1, n_breaks_sensitivity)
     if n_breaks_specificity == 1:
-        values_spe = [0]
+        values_spe = [1]
     else:
         values_spe = np.linspace(0, 1, n_breaks_specificity)
 

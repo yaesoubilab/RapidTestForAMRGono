@@ -35,7 +35,7 @@ class Parameters(EpiParameters):
 
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
-        self.ratioInf[RestProfile.PEN.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.PEN.value] = Uniform(0.9, 1)
         self.ratioInf[RestProfile.CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.PEN_CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.SUS.value] = Constant(1)
@@ -61,7 +61,7 @@ class Parameters(EpiParameters):
         self.rateTreatment = None
         self.rateRetreatment = None
         self.surveySize = None
-        self.infectivityBySuspProfile = [None] * len(RestProfile)
+        self.infectivityByRestProfile = [None] * len(RestProfile)
         self.sizeS = None
         self.sizeI = None
         self.sizeIBySympAndSusp = None
@@ -90,7 +90,7 @@ class Parameters(EpiParameters):
 
         # infectivity by susceptibility profile
         for p in range(len(RestProfile)):
-            self.infectivityBySuspProfile[p] = Product([self.transm, self.ratioInf[p]])
+            self.infectivityByRestProfile[p] = Product([self.transm, self.ratioInf[p]])
 
         # size of compartments
         self.sizeS = Product([self.popSize, self.prevS0])
@@ -144,7 +144,7 @@ class Parameters(EpiParameters):
         self.dictOfParams['Rate of seeking retreatment'] = self.rateRetreatment
 
         for p in range(len(RestProfile)):
-            self.dictOfParams['Infectivity of ' + REST_PROFILES[p]] = self.infectivityBySuspProfile[p]
+            self.dictOfParams['Infectivity of ' + REST_PROFILES[p]] = self.infectivityByRestProfile[p]
 
         self.dictOfParams['Size of S'] = self.sizeS
         self.dictOfParams['Size of I'] = self.sizeI

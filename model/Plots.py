@@ -89,7 +89,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     for p in range(len(REST_PROFILES) - 1):
         perc_cases_by_rest_profile.append(A.TrajPlotInfo(
             outcome_name='Proportion of cases resistant to '+REST_PROFILES[p],
-            title='Proportion of cases \nwith {} gonorrhea (%)'.format(REST_PROFILES[p]),
+            title='Proportion of cases with\n{} gonorrhea (%)'.format(REST_PROFILES[p]),
             x_multiplier=obs_incd_multiplier,
             y_multiplier=100, y_range=(0, 100))
         )

@@ -30,8 +30,8 @@ class GonoSettings(ModelSettings):
         self.storeProjectedOutcomes = True
 
         # sensitivity and specificity
-        self.sensitivity = 1
-        self.specificity = 0
+        self.sensitivity = 0
+        self.specificity = 1
 
         # calibration targets
         if self.calcLikelihood:
