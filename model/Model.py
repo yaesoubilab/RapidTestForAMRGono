@@ -363,7 +363,7 @@ def build_model(model):
                                           signs=['e'],
                                           thresholds=[0])
 
-    turn_on_tx_with_CFX = ConditionOnConditions(name='',
+    turn_on_tx_with_CFX = ConditionOnConditions(name='Turn on Tx-CFX',
                                                 conditions=[CFX_in_condition, M_is_never_used])
 
     # ------------- decision rules ---------------
@@ -400,15 +400,27 @@ def build_model(model):
                 destination=S))
             # screened
             Is[i].add_event(EpiIndepEvent(
-                name='Screening | ' + compart_name,
+                name='Screening then CFX| ' + compart_name,
                 rate_param=params.rateScreened,
-                destination=ifs_rapid_tests[i]))
+                destination=ifs_rapid_tests[i],
+                interv_to_activate=first_line_tx_with_CFX))
+            Is[i].add_event(EpiIndepEvent(
+                name='Screening then M| ' + compart_name,
+                rate_param=params.rateScreened,
+                destination=S,
+                interv_to_activate=first_line_tx_with_M))
             # seeking treatment
             if s == SympStat.SYMP.value:
                 Is[i].add_event(EpiIndepEvent(
-                    name='Seeking treatment | ' + compart_name,
+                    name='Seeking treatment then CFX | ' + compart_name,
                     rate_param=params.rateTreatment,
-                    destination=ifs_rapid_tests[i]))
+                    destination=ifs_rapid_tests[i],
+                    interv_to_activate=first_line_tx_with_CFX))
+                Is[i].add_event(EpiIndepEvent(
+                    name='Seeking treatment then M | ' + compart_name,
+                    rate_param=params.rateTreatment,
+                    destination=S,
+                    interv_to_activate=first_line_tx_with_M))
             i += 1
 
     # add events to infection compartments after treatment failure
@@ -450,6 +462,6 @@ def build_model(model):
                    list_of_sum_time_series=list_of_sum_time_series,
                    list_of_ratio_time_series=list_of_ratio_time_series,
                    interventions=[first_line_tx_with_CFX, first_line_tx_with_M],
-                   features=None, # [f_perc_resist_A, f_if_M_ever_switched_on],
-                   conditions=None, # [A_in_condition, A_out_condition, M_is_never_used, ],
+                   features=[f_perc_resist_CFX, f_if_M_ever_switched_on],
+                   conditions=[CFX_in_condition, CFX_out_condition, M_is_never_used, turn_on_tx_with_CFX],
                    parameters=params)
