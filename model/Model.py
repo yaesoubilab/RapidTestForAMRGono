@@ -75,10 +75,10 @@ def build_model(model):
     counting_success_PEN_or_CFX = ChanceNode(name='Successful Tx with PEN or CFX',
                                              destination_compartments=[S, S],
                                              probability_params=Constant(1))
-    # counting successful treatments with CFX
-    counting_success_tx_M = ChanceNode(name='Successful Tx with M',
-                                       destination_compartments=[S, S],
-                                       probability_params=Constant(1))
+    # counting successful re-treatments with CFX
+    counting_success_re_tx_M = ChanceNode(name='Successful re-Tx with M',
+                                          destination_compartments=[S, S],
+                                          probability_params=Constant(1))
 
     # if symptomatic after infection
     for p in range(n_rest_profiles):
@@ -262,7 +262,7 @@ def build_model(model):
         for t in ifs_tx_outcomes:
             t.setup_history(collect_incd=True)
         counting_success_PEN_or_CFX.setup_history(collect_incd=True)
-        counting_success_tx_M.setup_history(collect_incd=True)
+        counting_success_re_tx_M.setup_history(collect_incd=True)
 
     # ------------- summation statistics ---------------
     # population size
@@ -329,7 +329,7 @@ def build_model(model):
     # treated with any antibiotics
     n_treated = SumIncidence(
         name='Cases treated',
-        compartments=[counting_success_PEN_or_CFX] + ifs_counting_tx_M)
+        compartments=[counting_success_PEN_or_CFX, counting_success_re_tx_M] + ifs_counting_tx_M)
     n_treated_PEN_or_CFX = SumIncidence(name='Treated with PEN or CFX',
                                         compartments=[counting_success_PEN_or_CFX])
     perc_treated_with_PEN_or_CFX = RatioTimeSeries(
@@ -454,7 +454,7 @@ def build_model(model):
             if p == RestProfile.PEN.value:
                 dest = ifs_resist_after_re_tx_cfx[s]
             else:
-                dest = S
+                dest = counting_success_re_tx_M
             # treatment
             Fs[i].add_event(EpiIndepEvent(
                 name='Re-Tx | ' + compart_name,
@@ -471,7 +471,7 @@ def build_model(model):
     chance_nodes.extend(ifs_tx_outcomes)
     chance_nodes.extend(ifs_rapid_tests)
     chance_nodes.extend(ifs_counting_tx_M)
-    chance_nodes.append(counting_success_PEN_or_CFX)
+    chance_nodes.extend([counting_success_PEN_or_CFX, counting_success_re_tx_M])
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
                                n_cases_sympt, n_treated, n_treated_PEN_or_CFX]
