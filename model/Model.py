@@ -264,15 +264,15 @@ def build_model(model):
     # number infected
     infected_comparts = Is
     infected_comparts.extend(Fs)
-    n_infected = SumPrevalence(name='Number infected',
+    n_infected = SumPrevalence(name='Infected',
                                compartments=infected_comparts)
     prevalence = RatioTimeSeries(name='Prevalence',
                                  numerator_sum_time_series=n_infected,
                                  denominator_sum_time_series=pop_size,
                                  if_surveyed=True)
 
-    # rate of gonorrhea cases
-    n_cases = SumIncidence(name='Number of gonorrhea cases',
+    # rate of new gonorrhea cases
+    n_cases = SumIncidence(name='New cases',
                            compartments=ifs_rapid_tests + ifs_counting_tx_M)
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
                                 numerator_sum_time_series=n_cases,
@@ -281,18 +281,18 @@ def build_model(model):
                                 collect_stat_after_warm_up=True)
 
     # % cases symptomatic
-    n_cases_symptomatic = SumIncidence(name='Number of cases symptomatic',
-                                       compartments=ifs_symp)
-    percent_cases_symptomatic = RatioTimeSeries(name='Proportion of cases symptomatic',
-                                                numerator_sum_time_series=n_cases_symptomatic,
-                                                denominator_sum_time_series=n_cases,
-                                                if_surveyed=True)
+    n_cases_sympt = SumIncidence(name='New cases symptomatic',
+                                 compartments=ifs_symp)
+    perc_cases_sympt = RatioTimeSeries(name='Proportion of cases symptomatic',
+                                       numerator_sum_time_series=n_cases_sympt,
+                                       denominator_sum_time_series=n_cases,
+                                       if_surveyed=True)
 
     # cases by resistance profile
     n_cases_by_resistance_profile = []
     perc_cases_by_resistance_profile = []
     for p in range(n_rest_profiles):
-        n_resistant_cases = SumIncidence(name='Number of cases ' + REST_PROFILES[p],
+        n_resistant_cases = SumIncidence(name='Cases ' + REST_PROFILES[p],
                                          compartments=ifs_rest_to[p])
         perc_cases_resistant = RatioTimeSeries(
             name='Proportion of cases resistant to ' + REST_PROFILES[p],
@@ -306,7 +306,7 @@ def build_model(model):
 
     # cases by resistance to specific CFX (including resistance to both PEN and CFX)
     n_cases_CFX_R = SumIncidence(
-        name='Number of cases CFX-R or CFX+PEN-R',
+        name='Cases CFX-R or CFX+PEN-R',
         compartments=ifs_rest_to[RestProfile.CFX.value] + ifs_rest_to[RestProfile.PEN_CFX.value])
     perc_cases_CFX_R = RatioTimeSeries(
             name='Proportion of cases CFX-R or CFX+PEN-R',
@@ -317,7 +317,7 @@ def build_model(model):
 
     # number treatable with main antibiotic (CFX)
     n_treatable_with_cfx = SumIncidence(
-        name='Num of cases treatable with CFX',
+        name='Cases treatable with CFX',
         compartments=ifs_rest_to[RestProfile.SUS.value] + ifs_rest_to[RestProfile.PEN.value])
     perc_treatable_with_cfx = RatioTimeSeries(
         name='Proportion of cases treatable with CFX',
@@ -338,9 +338,9 @@ def build_model(model):
         gono_rate.add_calibration_targets(ratios=sets.gonoRateMean,
                                           survey_sizes=sets.gonoRateN)
         # % cases symptomatic
-        percent_cases_symptomatic.add_feasible_conditions(feasible_conditions=FeasibleConditions(
+        perc_cases_sympt.add_feasible_conditions(feasible_conditions=FeasibleConditions(
             feasible_min=0.5, feasible_max=1))
-        percent_cases_symptomatic.add_calibration_targets(ratios=sets.percSympMean,
+        perc_cases_sympt.add_calibration_targets(ratios=sets.percSympMean,
                                                           survey_sizes=sets.percSympN)
 
     # ------------- interventions ---------------
@@ -460,11 +460,11 @@ def build_model(model):
     chance_nodes.extend(ifs_counting_tx_M)
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
-                               n_cases_symptomatic, n_treatable_with_cfx]
+                               n_cases_sympt, n_treatable_with_cfx]
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
     list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CFX_R,
-                                 percent_cases_symptomatic, perc_treatable_with_cfx]
+                                 perc_cases_sympt, perc_treatable_with_cfx]
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     model.populate(compartments=all_comparts,
