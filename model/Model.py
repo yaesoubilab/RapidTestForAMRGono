@@ -350,11 +350,11 @@ def build_model(model):
     # ------------- conditions ---------------
     # conditions
     threshold = 0.05
-    CFX_in_condition = ConditionOnFeatures(name='If % resistant is below threshold',
+    CFX_in_condition = ConditionOnFeatures(name='If % resistant to CFX is below threshold',
                                            features=[f_perc_resist_CFX],
                                            signs=['l'],
                                            thresholds=[threshold])
-    CFX_out_condition = ConditionOnFeatures(name='If % resistant passes threshold',
+    CFX_out_condition = ConditionOnFeatures(name='If % resistant to CFX passes threshold',
                                             features=[f_perc_resist_CFX],
                                             signs=['ge'],
                                             thresholds=[threshold])
