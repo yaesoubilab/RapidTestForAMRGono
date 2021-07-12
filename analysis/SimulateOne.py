@@ -5,6 +5,8 @@ from model.Plots import plot
 
 # get model settings
 sets = GonoSettings()
+sets.update_settings(sensitivity=0, specificity=1)  # base: (0, 1)
+
 # make an (empty) epidemic model
 model = EpiModel(id=1, settings=sets)
 # populate the SIR model

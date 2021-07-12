@@ -116,7 +116,7 @@ def plot_scenarios(scenario_names, fig_file_name):
                                               outcome_name='Rate of gonorrhea cases',
                                               deci=3)
         life = scenarios_df.get_mean_interval(scenario_name=name,
-                                              outcome_name='Proportion of cases treatable with CFX',
+                                              outcome_name='Proportion of cases treated with PEN or CFX',
                                               deci=3)
         print('{}: {} | {}'.format(name, rate, life))
 
@@ -133,9 +133,8 @@ def plot_scenarios(scenario_names, fig_file_name):
         color='blue',
         marker='o',
         conditions_on_variables=[
-            S.ConditionOnVariable(var_name='sensitivity', values=[1]),
-            S.ConditionOnVariable(var_name='specificity', if_included_in_label=True,
-                                  label_format='{:.2f}')],
+            S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
+            S.ConditionOnVariable(var_name='specificity', values=[1])],
         if_find_frontier=False,
         if_show_fitted_curve=True,
         labels_shift_x=0.03,
@@ -143,10 +142,10 @@ def plot_scenarios(scenario_names, fig_file_name):
 
     list_of_scenario_sets = [scenarios]
     V.plot_sets_of_scenarios(list_of_scenario_sets=list_of_scenario_sets,
-                             name_of_base_scenario='(p=1.00, q=0.00)',
-                             effect_outcome='Proportion of cases treatable with CFX',
+                             name_of_base_scenario='(p=0.00, q=1.00)',
+                             effect_outcome='Proportion of cases treated with PEN or CFX',
                              cost_outcome='Rate of gonorrhea cases',
-                             labels=('Change in annual proportion of cases\ntreatable with CFX',
+                             labels=('Change in annual proportion of cases\ntreated with PEN or CFX',
                                      'Change in annual rate of gonorrhea\n(per 100,000 population)'),
                              health_measure='u',
                              x_range=None, y_range=None, cost_multiplier=100000,
