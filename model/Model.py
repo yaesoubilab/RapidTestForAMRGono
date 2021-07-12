@@ -71,6 +71,15 @@ def build_model(model):
             # increment i
             i += 1
 
+    # counting successful treatments with any drug
+    counting_success_PEN_or_CFX = ChanceNode(name='Successful Tx with PEN or CFX',
+                                             destination_compartments=[S, S],
+                                             probability_params=Constant(1))
+    # counting successful treatments with CFX
+    counting_success_tx_M = ChanceNode(name='Successful Tx with M',
+                                       destination_compartments=[S, S],
+                                       probability_params=Constant(1))
+
     # if symptomatic after infection
     for p in range(n_rest_profiles):
         name = 'If symptomatic to ' + covert_symp_susp.get_str_susp(susp_profile=p)
@@ -83,7 +92,7 @@ def build_model(model):
     # if resistance emerges after re-tx with CFX
     for s in range(len(SympStat)):
         dest_rest = Fs[covert_symp_susp.get_row_index(symp_state=s, rest_profile=RestProfile.PEN_CFX.value)]
-        dest_succ = S
+        dest_succ = counting_success_PEN_or_CFX
         ifs_resist_after_re_tx_cfx[s] = ChanceNode(name='If resistance after re-Tx-CFX',
                                                    destination_compartments=[dest_rest, dest_succ],
                                                    probability_params=params.probResEmerge[AB.CFX.value])
@@ -130,7 +139,7 @@ def build_model(model):
                 # if drug-susceptible
                 if p == RestProfile.SUS.value:
                     # failure due to the emergence of resistance
-                    dest_succ = S
+                    dest_succ = counting_success_PEN_or_CFX
                     prob_fail = params.probResEmerge[a]
 
                     # if resistance emerges while receiving PEN
@@ -172,7 +181,7 @@ def build_model(model):
                     elif (p == RestProfile.PEN.value and a == AB.CFX.value) or \
                             (p == RestProfile.CFX.value and a == AB.PEN.value):
                         # success or resistance
-                        dest_succ = S
+                        dest_succ = counting_success_PEN_or_CFX
                         prob_fail = params.probResEmerge[a]
 
                         # decide where to go next depending on the symptom status
@@ -252,6 +261,8 @@ def build_model(model):
             r.setup_history(collect_incd=True)
         for t in ifs_tx_outcomes:
             t.setup_history(collect_incd=True)
+        counting_success_PEN_or_CFX.setup_history(collect_incd=True)
+        counting_success_tx_M.setup_history(collect_incd=True)
 
     # ------------- summation statistics ---------------
     # population size
@@ -315,14 +326,16 @@ def build_model(model):
             if_surveyed=True,
             survey_size_param=params.surveySize)
 
-    # number treatable with main antibiotic (CFX)
-    n_treatable_with_cfx = SumIncidence(
-        name='Cases treatable with CFX',
-        compartments=ifs_rest_to[RestProfile.SUS.value] + ifs_rest_to[RestProfile.PEN.value])
-    perc_treatable_with_cfx = RatioTimeSeries(
-        name='Proportion of cases treatable with CFX',
-        numerator_sum_time_series=n_treatable_with_cfx,
-        denominator_sum_time_series=n_cases,
+    # treated with any antibiotics
+    n_treated = SumIncidence(
+        name='Cases treated',
+        compartments=[counting_success_PEN_or_CFX] + ifs_counting_tx_M)
+    n_treated_PEN_or_CFX = SumIncidence(name='Treated with PEN or CFX',
+                                        compartments=[counting_success_PEN_or_CFX])
+    perc_treated_with_PEN_or_CFX = RatioTimeSeries(
+        name='Proportion of cases treated with PEN or CFX',
+        numerator_sum_time_series=n_treated_PEN_or_CFX,
+        denominator_sum_time_series=n_treated,
         collect_stat_after_warm_up=True)
 
     # ------------- calibration targets ---------------
@@ -458,13 +471,14 @@ def build_model(model):
     chance_nodes.extend(ifs_tx_outcomes)
     chance_nodes.extend(ifs_rapid_tests)
     chance_nodes.extend(ifs_counting_tx_M)
+    chance_nodes.append(counting_success_PEN_or_CFX)
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
-                               n_cases_sympt, n_treatable_with_cfx]
+                               n_cases_sympt, n_treated, n_treated_PEN_or_CFX]
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
     list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CFX_R,
-                                 perc_cases_sympt, perc_treatable_with_cfx]
+                                 perc_cases_sympt, perc_treated_with_PEN_or_CFX]
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     model.populate(compartments=all_comparts,
