@@ -29,7 +29,7 @@ class Parameters(EpiParameters):
         self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile
-        self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.05, 0.15)
+        self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
         self.percI0ByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.001)
         self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.001)
 
