@@ -7,8 +7,8 @@ from scipy.stats import norm
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SIM_DURATION = 25
-END_OF_WARM_UP = 6
-END_OF_CALIB = 10
+END_OF_WARM_UP = 1 # 6
+END_OF_CALIB = 6
 N_BREAKS_SENSITIVITY = 11
 N_BREAKS_SPECIFICITY = 1
 

@@ -342,19 +342,19 @@ def build_model(model):
     if sets.calcLikelihood:
         # prevalence
         prevalence.add_feasible_conditions(feasible_conditions=FeasibleConditions(
-            feasible_min=0.01, feasible_max=0.1))
+            feasible_min=0.025, feasible_max=0.065))
         prevalence.add_calibration_targets(ratios=sets.prevMean,
                                            survey_sizes=sets.prevN)
         # gonorrhea rate
         gono_rate.add_feasible_conditions(feasible_conditions=FeasibleConditions(
-            feasible_min=0.0, feasible_max=1))
+            feasible_min=0.045, feasible_max=0.085))
         gono_rate.add_calibration_targets(ratios=sets.gonoRateMean,
                                           survey_sizes=sets.gonoRateN)
         # % cases symptomatic
         perc_cases_sympt.add_feasible_conditions(feasible_conditions=FeasibleConditions(
             feasible_min=0.5, feasible_max=1))
         perc_cases_sympt.add_calibration_targets(ratios=sets.percSympMean,
-                                                          survey_sizes=sets.percSympN)
+                                                 survey_sizes=sets.percSympN)
 
     # ------------- interventions ---------------
     # interventions

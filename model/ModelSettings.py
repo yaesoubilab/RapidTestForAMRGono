@@ -24,7 +24,6 @@ class GonoSettings(ModelSettings):
 
         # calibration settings
         self.calcLikelihood = if_calibrating
-        self.periodBeforeCalibration = 1
 
         # projection period
         self.storeProjectedOutcomes = True
@@ -46,7 +45,7 @@ class GonoSettings(ModelSettings):
             n_periods_to_keep_constant = 5
             for i in range(len(Prevalence)+n_periods_to_keep_constant-1):
 
-                j = min(i, END_OF_WARM_UP - 1)
+                j = min(i, 1)
 
                 # mean and N of prevalence estimate
                 if Prevalence[j][1] is None:
