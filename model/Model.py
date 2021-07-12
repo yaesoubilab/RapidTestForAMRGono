@@ -37,6 +37,7 @@ def build_model(model):
     ifs_symp_from_emerg_rest = [None] * len(RestProfile)
     ifs_tx_outcomes = [None] * covert_symp_susp_antibio.length
     ifs_rapid_tests = [None] * covert_symp_susp.length
+    ifs_counting_tx_M = [None] * covert_symp_susp.length
     ifs_resist_after_re_tx_cfx = [None] * len(SympStat)
 
     ifs_symp = []   # chance nodes counting symptomatic cases
@@ -203,7 +204,6 @@ def build_model(model):
     i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
-            name = 'Rapid test in ' + covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
 
             # indices of destination
             # if results is positive (i.e., susceptibility to PEN)
@@ -221,14 +221,21 @@ def build_model(model):
             else:
                 prob_pos = params.sens
 
-            ifs_rapid_tests[i] = ChanceNode(name=name,
+            ifs_rapid_tests[i] = ChanceNode(name='Rapid test in ' +
+                                                 covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p),
                                             destination_compartments=[dest_pos, dest_neg],
                                             probability_params=prob_pos)
+            ifs_counting_tx_M[i] = ChanceNode(name='Counting Tx-M from ' +
+                                                   covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p),
+                                              destination_compartments=[S, S],
+                                              probability_params=Constant(1))
             # if symptomatic
             if s == SympStat.SYMP.value:
                 ifs_symp.append(ifs_rapid_tests[i])
+                ifs_symp.append(ifs_counting_tx_M[i])
             # by resistance profile
             ifs_rest_to[p].append(ifs_rapid_tests[i])
+            ifs_rest_to[p].append(ifs_counting_tx_M[i])
             i += 1
 
     # ------------- compartment histories ---------------
@@ -240,6 +247,8 @@ def build_model(model):
         for f in Fs:
             f.setup_history(collect_prev=True)
         for r in ifs_rapid_tests:
+            r.setup_history(collect_incd=True)
+        for r in ifs_counting_tx_M:
             r.setup_history(collect_incd=True)
         for t in ifs_tx_outcomes:
             t.setup_history(collect_incd=True)
@@ -264,7 +273,7 @@ def build_model(model):
 
     # rate of gonorrhea cases
     n_cases = SumIncidence(name='Number of gonorrhea cases',
-                           compartments=ifs_rapid_tests)
+                           compartments=ifs_rapid_tests + ifs_counting_tx_M)
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
                                 numerator_sum_time_series=n_cases,
                                 denominator_sum_time_series=pop_size,
@@ -407,7 +416,7 @@ def build_model(model):
             Is[i].add_event(EpiIndepEvent(
                 name='Screening then M| ' + compart_name,
                 rate_param=params.rateScreened,
-                destination=S,
+                destination=ifs_counting_tx_M[i],
                 interv_to_activate=first_line_tx_with_M))
             # seeking treatment
             if s == SympStat.SYMP.value:
@@ -419,7 +428,7 @@ def build_model(model):
                 Is[i].add_event(EpiIndepEvent(
                     name='Seeking treatment then M | ' + compart_name,
                     rate_param=params.rateTreatment,
-                    destination=S,
+                    destination=ifs_counting_tx_M[i],
                     interv_to_activate=first_line_tx_with_M))
             i += 1
 
@@ -448,6 +457,7 @@ def build_model(model):
     chance_nodes.extend(ifs_symp_from_emerg_rest)
     chance_nodes.extend(ifs_tx_outcomes)
     chance_nodes.extend(ifs_rapid_tests)
+    chance_nodes.extend(ifs_counting_tx_M)
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
                                n_cases_symptomatic, n_treatable_with_cfx]
