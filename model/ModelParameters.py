@@ -26,7 +26,7 @@ class Parameters(EpiParameters):
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
-        self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.1)
+        self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile
         self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.05, 0.15)
