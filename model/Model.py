@@ -1,10 +1,9 @@
 from SimPy.Parameters import Constant
 from apace.CalibrationSupport import FeasibleConditions
-from apace.Compartment import Compartment, ChanceNode
 from apace.Control import InterventionAffectingEvents, ConditionBasedDecisionRule
-from apace.Event import EpiIndepEvent, EpiDepEvent
 from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention, \
     ConditionOnFeatures, ConditionOnConditions, ConditionAlwaysFalse
+from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio
 from model.ModelParameters import Parameters
