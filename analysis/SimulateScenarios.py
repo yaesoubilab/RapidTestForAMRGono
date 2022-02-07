@@ -6,7 +6,7 @@ from definitions import get_scenario_names, get_list_sensitivity_specificity, \
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-N_OF_SIMS = 250
+N_OF_SIMS = 25
 RUN_IN_PARALLEL = True
 
 
@@ -29,7 +29,7 @@ def simulate_scenarios():
                                                             n_breaks_specificity=N_BREAKS_SPECIFICITY)
 
     # get the seeds and probability weights
-    seeds, weights = calib.get_seeds_and_probs('outputs/calibration/calibration_summary.csv')
+    seeds, lns, weights = calib.get_seeds_lnl_probs('outputs/calibration/calibration_summary.csv')
 
     scenario_sim = ScenarioSimulator(model_settings=sets,
                                      scenario_names=scenario_names,

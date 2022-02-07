@@ -54,7 +54,7 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True):
 
     # ------- simulate the calibrated model ----------
     # get the seeds and probability weights
-    seeds, weights = calib.get_seeds_and_probs('outputs/calibration/calibration_summary.csv')
+    seeds, ln, weights = calib.get_seeds_lnl_probs('outputs/calibration/calibration_summary.csv')
 
     # simulate the calibrated model
     simulate_multi_trajectories(n=n_of_sims,
@@ -72,9 +72,11 @@ def estimate_parameters(n_of_resamples):
     # calculate posterior distributions and plot figures
     estimator = P.ParameterAnalyzer()
     estimator.resample_param_values(csvfile_param_values_and_weights='outputs/calibration/calibration_summary.csv',
-                                    n=n_of_resamples, weight_col=2,
+                                    n=n_of_resamples,
+                                    weight_col=3,
                                     sample_by_weight=False,
-                                    csvfile_resampled_params='outputs/calibration/resampled_parameter_values.csv', seed=0)
+                                    csvfile_resampled_params='outputs/calibration/resampled_parameter_values.csv',
+                                    seed=0)
 
     param_list = ['Transmission parameter',
                   'Relative infectivity by susceptibility profile-0',
