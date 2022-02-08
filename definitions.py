@@ -14,9 +14,9 @@ N_BREAKS_SPECIFICITY = 1
 
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after
-# calculating the prevalence of all other drugs
-REST_PROFILES = ['PEN-I/R', 'CFX-R', 'PEN-I/R+CFX-R', 'SUSP']
-ANTIBIOTICS = ['PEN', 'CFX']
+# calculating the prevalence of other drugs
+REST_PROFILES = ['CIP', 'TET', 'CFX', 'CIP+TET', 'CIP+CFX', 'TET+CFX', 'CIP+TET+CFX', 'SUSP']
+ANTIBIOTICS = ['CIP', 'TET', 'CFX']
 
 
 class SympStat(Enum):
@@ -25,17 +25,22 @@ class SympStat(Enum):
 
 
 class AB(Enum):
-    PEN = 0
-    CFX = 1
+    CIP = 0
+    TET = 1
+    CFX = 2
 
 
 class RestProfile(Enum):
     # we put SUS last because its prevalence is calculated after calculating the prevalence
-    # of all other drugs
-    PEN = 0
-    CFX = 1
-    PEN_CFX = 2
-    SUS = 3
+    # of other drugs
+    CIP = 0
+    TET = 1
+    CFX = 2
+    CIP_TET = 3
+    CIP_CFX = 4
+    TET_CFX = 5
+    CIP_TET_CFX = 6
+    SUS = 7
 
 
 class ConvertSympAndSuspAndAntiBio:

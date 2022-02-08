@@ -29,19 +29,24 @@ class Parameters(EpiParameters):
         self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile
-        self.percI0ByRestProfile[RestProfile.PEN.value] = Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
+        # TODO: update these numbers
+        self.percI0ByRestProfile[RestProfile.CIP.value] = Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
+        self.percI0ByRestProfile[RestProfile.TET.value] = Uniform(0.15, 0.21)
         self.percI0ByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.001)
-        self.percI0ByRestProfile[RestProfile.PEN_CFX.value] = Uniform(0.0, 0.001)
+        self.percI0ByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.0, 0.001)
+        self.percI0ByRestProfile[RestProfile.CIP_CFX.value] = Uniform(0.0, 0.001)
+        self.percI0ByRestProfile[RestProfile.TET_CFX.value] = Uniform(0.0, 0.001)
+        self.percI0ByRestProfile[RestProfile.CIP_TET_CFX.value] = Uniform(0.0, 0.001)
 
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
-        self.ratioInf[RestProfile.PEN.value] = Uniform(0.9, 1)
+        self.ratioInf[RestProfile.CIP.value] = Uniform(0.9, 1)
         self.ratioInf[RestProfile.CFX.value] = Uniform(0.8, 1)
-        self.ratioInf[RestProfile.PEN_CFX.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.CIP_CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.SUS.value] = Constant(1)
 
         # exponent of the probability for the emergence of resistance for a drug
-        self.exponProbRes[AB.PEN.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
         self.exponProbRes[AB.CFX.value] = Uniform(-5, -3)
 
         self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)

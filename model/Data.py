@@ -14,3 +14,13 @@ PercSymptomatic = [
     [1, 67.9, 63.0, 72.9],
 ]
 
+PercResistProfile = {
+    'CIP': [],
+    'TET': [],
+    'CFX': [],
+    'CIP+TET': [],
+    'CIP+CFX': [],
+    'TET+CFX': [],
+    'CIP+TET+CFX': [],
+    'SUSP': []
+}
