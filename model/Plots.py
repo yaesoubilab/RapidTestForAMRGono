@@ -39,7 +39,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
-            str_symp_susp = covert_symp_susp.get_str_symp_susp(symp_state=s, susp_profile=p)
+            str_symp_susp = covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             # Is
             Is.append(A.TrajPlotInfo(outcome_name='In: I ' + str_symp_susp,
                                      title='I ' + str_symp_susp,

@@ -1,7 +1,7 @@
 from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, \
     TenToPower, OneMinusSum
 from apace.Inputs import EpiParameters
-from definitions import RestProfile, AB, SympStat, REST_PROFILES
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio
 
 
 class Parameters(EpiParameters):
@@ -14,8 +14,8 @@ class Parameters(EpiParameters):
         EpiParameters.__init__(self)
 
         one_over_364 = 1/364
-        self.precI0BySymp = [None] * len(SympStat)
-        self.percI0ByRestProfile = [None] * (len(RestProfile) - 1)
+        self.precIBySymp = [None] * len(SympStat)
+        self.percIByRestProfile = [None] * (len(RestProfile) - 1)
         self.ratioInf = [None] * len(RestProfile)
         self.exponProbRes = [None] * len(AB)
 
@@ -26,27 +26,33 @@ class Parameters(EpiParameters):
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
-        self.precI0BySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
+        self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile
         # TODO: update these numbers
-        self.percI0ByRestProfile[RestProfile.CIP.value] = Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
-        self.percI0ByRestProfile[RestProfile.TET.value] = Uniform(0.15, 0.21)
-        self.percI0ByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.001)
-        self.percI0ByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.0, 0.001)
-        self.percI0ByRestProfile[RestProfile.CIP_CFX.value] = Uniform(0.0, 0.001)
-        self.percI0ByRestProfile[RestProfile.TET_CFX.value] = Uniform(0.0, 0.001)
-        self.percI0ByRestProfile[RestProfile.CIP_TET_CFX.value] = Uniform(0.0, 0.001)
+        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
+        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.15, 0.21)
+        self.percIByRestProfile[RestProfile.CFX.value] = Uniform(0.0, 0.001)
+        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.0, 0.001)
+        self.percIByRestProfile[RestProfile.CIP_CFX.value] = Uniform(0.0, 0.001)
+        self.percIByRestProfile[RestProfile.TET_CFX.value] = Uniform(0.0, 0.001)
+        self.percIByRestProfile[RestProfile.CIP_TET_CFX.value] = Uniform(0.0, 0.001)
 
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
+        # relative infectivity of resistance profiles to susceptible
         self.ratioInf[RestProfile.CIP.value] = Uniform(0.9, 1)
-        self.ratioInf[RestProfile.CFX.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.TET.value] = Uniform(0.9, 1)
+        self.ratioInf[RestProfile.CFX.value] = Uniform(0.9, 1)
+        self.ratioInf[RestProfile.CIP_TET.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.CIP_CFX.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.TET_CFX.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.CIP_TET_CFX.value] = Uniform(0.7, 1)
         self.ratioInf[RestProfile.SUS.value] = Constant(1)
 
         # exponent of the probability for the emergence of resistance for a drug
         self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.TET.value] = Uniform(-5, -3)
         self.exponProbRes[AB.CFX.value] = Uniform(-5, -3)
 
         self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
@@ -57,9 +63,9 @@ class Parameters(EpiParameters):
 
         # calculate dependent parameters
         self.oneMinusSpec = None
-        self.prevS0 = None
-        self.percI0Res = None
-        self.percI0Sus = None
+        self.prevS = None
+        self.percIRes = None
+        self.percISus = None
         self.probResEmerge = [None] * len(AB)
         self.rateNaturalRecovery = None
         self.rateScreened = None
@@ -69,20 +75,20 @@ class Parameters(EpiParameters):
         self.infectivityByRestProfile = [None] * len(RestProfile)
         self.sizeS = None
         self.sizeI = None
-        self.sizeIBySympAndSusp = None
+        self.sizeIBySympAndRest = None
 
         self.calculate_dependent_params(model_sets)
         self.build_dict_of_params()
 
     def calculate_dependent_params(self, model_sets):
 
-        self.oneMinusSpec = OneMinus(par=self.spec)
+        self.oneMinusSpec = OneMinus(par=self.spec)  # 1 - specificity
         self.surveySize = Product([self.annulSurveySize, Constant(model_sets.observationPeriod)])
-        self.prevS0 = OneMinus(par=self.prevI0)
-        self.precI0BySymp[SympStat.ASYM.value] = OneMinus(par=self.precI0BySymp[SympStat.SYMP.value])
+        self.prevS = OneMinus(par=self.prevI0)
+        self.precIBySymp[SympStat.ASYM.value] = OneMinus(par=self.precIBySymp[SympStat.SYMP.value])
 
         # find the prevalence of I0 that are susceptible to all antibiotics
-        self.percI0Sus = OneMinusSum(parameters=self.percI0ByRestProfile)
+        self.percISus = OneMinusSum(parameters=self.percIByRestProfile)
 
         # probability for the emergence of resistance for a drug
         for p in range(len(AB)):
@@ -98,19 +104,21 @@ class Parameters(EpiParameters):
             self.infectivityByRestProfile[p] = Product([self.transm, self.ratioInf[p]])
 
         # size of compartments
-        self.sizeS = Product([self.popSize, self.prevS0])
+        self.sizeS = Product([self.popSize, self.prevS])
         self.sizeI = Product([self.popSize, self.prevI0])
-        self.sizeIBySympAndSusp = [None] * len(SympStat) * len(RestProfile)
-        i = 0
+        self.sizeIBySympAndRest = [None] * len(SympStat) * len(RestProfile)
+
+        indexer = ConvertSympAndSuspAndAntiBio(n_symp_stats=len(SympStat),
+                                               n_rest_profiles=len(RestProfile))
         for s in range(len(SympStat)):
             for p in range(len(RestProfile)):
+                i = indexer.get_row_index(symp_state=s, rest_profile=p)
                 if p == RestProfile.SUS.value:
-                    self.sizeIBySympAndSusp[i] = Product(
-                        [self.sizeI, self.precI0BySymp[s], self.percI0Sus])
+                    self.sizeIBySympAndRest[i] = Product(
+                        [self.sizeI, self.precIBySymp[s], self.percISus])
                 else:
-                    self.sizeIBySympAndSusp[i] = Product(
-                        [self.sizeI, self.precI0BySymp[s], self.percI0ByRestProfile[p]])
-                i += 1
+                    self.sizeIBySympAndRest[i] = Product(
+                        [self.sizeI, self.precIBySymp[s], self.percIByRestProfile[p]])
 
     def build_dict_of_params(self):
 
@@ -122,8 +130,8 @@ class Parameters(EpiParameters):
              'Pop size': self.popSize,
              'Annual survey size': self.annulSurveySize,
              'Initial prevalence': self.prevI0,
-             'Initial % I by symptom states': self.precI0BySymp,
-             'Initial % I by resistance profile': self.percI0ByRestProfile,
+             'Initial % I by symptom states': self.precIBySymp,
+             'Initial % I by resistance profile': self.percIByRestProfile,
              # ----
              'Transmission parameter': self.transm,
              'Relative infectivity by susceptibility profile': self.ratioInf,
@@ -138,8 +146,8 @@ class Parameters(EpiParameters):
              })
 
         self.dictOfParams['Survey size (over observation periods)'] = self.surveySize
-        self.dictOfParams['Initial % Susceptible'] = self.prevS0
-        self.dictOfParams['Initial % I susceptible to all drugs'] = self.percI0Sus
+        self.dictOfParams['Initial % Susceptible'] = self.prevS
+        self.dictOfParams['Initial % I susceptible to all drugs'] = self.percISus
 
         self.dictOfParams['Prob of resistance by antibiotics'] = self.probResEmerge
 
@@ -153,7 +161,7 @@ class Parameters(EpiParameters):
 
         self.dictOfParams['Size of S'] = self.sizeS
         self.dictOfParams['Size of I'] = self.sizeI
-        self.dictOfParams['Size of I by Symp/Susp'] = self.sizeIBySympAndSusp
+        self.dictOfParams['Size of I by Symp/Rest'] = self.sizeIBySympAndRest
 
 
 

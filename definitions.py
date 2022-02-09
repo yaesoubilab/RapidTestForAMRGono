@@ -71,8 +71,8 @@ class ConvertSympAndSuspAndAntiBio:
     def get_str_susp(self, susp_profile):
         return REST_PROFILES[susp_profile]
 
-    def get_str_symp_susp(self, symp_state, susp_profile):
-        return '{}-{}'.format(SYMP_STATES[symp_state], REST_PROFILES[susp_profile])
+    def get_str_symp_susp(self, symp_state, rest_profile):
+        return '{}-{}'.format(SYMP_STATES[symp_state], REST_PROFILES[rest_profile])
 
     def get_str_symp_rest_antibio(self, symp_state, rest_profile, antibiotic):
         return '{}-{}|Tx with {}'.format(SYMP_STATES[symp_state], REST_PROFILES[rest_profile], ANTIBIOTICS[antibiotic])
