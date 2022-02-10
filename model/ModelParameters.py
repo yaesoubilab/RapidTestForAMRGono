@@ -20,8 +20,10 @@ class Parameters(EpiParameters):
         self.exponProbRes = [None] * len(AB)
 
         # rapid test characteristics
-        self.sens = Constant(model_sets.sensitivity)
-        self.spec = Constant(model_sets.specificity)
+        self.sensCIP = Constant(model_sets.sensCIP)
+        self.specCIP = Constant(model_sets.specCIP)
+        self.sensTET = Constant(model_sets.sensTET)
+        self.specTET = Constant(model_sets.specTET)
 
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
@@ -62,7 +64,8 @@ class Parameters(EpiParameters):
         self.tToRetreatment = Uniform(1 * one_over_364, 14 * one_over_364)
 
         # calculate dependent parameters
-        self.oneMinusSpec = None
+        self.oneMinusSpecCIP = None
+        self.oneMinusSpecTET = None
         self.prevS = None
         self.percIRes = None
         self.percISus = None
@@ -82,7 +85,9 @@ class Parameters(EpiParameters):
 
     def calculate_dependent_params(self, model_sets):
 
-        self.oneMinusSpec = OneMinus(par=self.spec)  # 1 - specificity
+        self.oneMinusSpecCIP = OneMinus(par=self.specCIP)  # 1 - specificity
+        self.oneMinusSpecTET = OneMinus(par=self.specCIP)  # 1 - specificity
+
         self.surveySize = Product([self.annulSurveySize, Constant(model_sets.observationPeriod)])
         self.prevS = OneMinus(par=self.prevI0)
         self.precIBySymp[SympStat.ASYM.value] = OneMinus(par=self.precIBySymp[SympStat.SYMP.value])
@@ -123,9 +128,12 @@ class Parameters(EpiParameters):
     def build_dict_of_params(self):
 
         self.dictOfParams = dict(
-            {'Sensitivity': self.sens,
-             'Specificity': self.spec,
-             '1-Specificity': self.oneMinusSpec,
+            {'Sensitivity for CIP': self.sensCIP,
+             'Specificity for CIP': self.specCIP,
+             '1-Specificity for CIP': self.oneMinusSpecCIP,
+             'Sensitivity for TET': self.sensTET,
+             'Specificity for TET': self.specTET,
+             '1-Specificity for TET': self.oneMinusSpecTET,
              # ----
              'Pop size': self.popSize,
              'Annual survey size': self.annulSurveySize,

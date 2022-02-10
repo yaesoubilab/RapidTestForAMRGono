@@ -29,8 +29,10 @@ class GonoSettings(ModelSettings):
         self.storeProjectedOutcomes = True
 
         # sensitivity and specificity
-        self.sensitivity = 0
-        self.specificity = 1
+        self.sensCIP = 0
+        self.specCIP = 1
+        self.sensTET = 0
+        self.specTET = 1
 
         # calibration targets
         if self.calcLikelihood:
@@ -78,7 +80,9 @@ class GonoSettings(ModelSettings):
                                                           u=PercSymptomatic[j][3],
                                                           multiplier=0.01))
 
-    def update_settings(self, sensitivity, specificity):
+    def update_settings(self, sens_CIP, spec_CIP, sens_TET, spec_TET):
 
-        self.sensitivity = sensitivity
-        self.specificity = specificity
+        self.sensCIP = sens_CIP
+        self.specCIP = spec_CIP
+        self.sensTET = sens_TET
+        self.specTET = spec_TET

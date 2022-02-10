@@ -87,11 +87,11 @@ def get_profile_after_resit_or_failure(rest_profile, antibiotic):
     elif a == AB.CFX:
         if p == RestProfile.SUS:
             next_p = RestProfile.CFX
-        elif rest_profile == RestProfile.CIP:
+        elif p == RestProfile.CIP:
             next_p = RestProfile.CIP_CFX
-        elif rest_profile == RestProfile.TET:
+        elif p == RestProfile.TET:
             next_p = RestProfile.TET_CFX
-        elif rest_profile == RestProfile.CIP_TET:
+        elif p == RestProfile.CIP_TET:
             next_p = RestProfile.CIP_TET_CFX
         else:
             reason_for_failure = TreatmentOutcome.INEFFECTIVE
