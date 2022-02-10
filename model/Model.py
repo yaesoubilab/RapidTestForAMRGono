@@ -5,7 +5,8 @@ from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention
     ConditionOnFeatures, ConditionOnConditions, ConditionAlwaysFalse
 from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
-from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, TreatmentOutcome, \
+    ConvertSympAndSuspAndAntiBio, get_profile_after_resit_or_failure
 from model.ModelParameters import Parameters
 
 
@@ -99,14 +100,7 @@ def build_model(model):
                 i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
 
                 # profile after the rise of resistance to CFX
-                if p == RestProfile.CIP.value:
-                    next_p = RestProfile.CIP_CFX
-                elif p == RestProfile.TET.value:
-                    next_p = RestProfile.TET_CFX
-                elif p == RestProfile.CIP_TET:
-                    next_p = RestProfile.CIP_TET_CFX
-                else:
-                    raise Exception('Invalid value of resitance profile.')
+                next_p = get_profile_after_resit_or_failure(rest_profile=p, antibiotic=AB.CFX)
 
                 dest_rest = Fs[covert_symp_susp.get_row_index(symp_state=s, rest_profile=next_p)]
                 dest_succ = counting_success_CIP_TET_CFX
@@ -147,81 +141,43 @@ def build_model(model):
                                                  probability_params=params.probSym)
 
     # chance nodes for treatment outcomes
-    for s in range(len(SympStat)):
-        for p in range(len(RestProfile)):
+    for s in range(n_symp_states):
+        for p in range(n_rest_profiles):
             for a in range(len(AB)):
+
                 i = covert_symp_susp_antibio.get_row_index(symp_state=s, rest_profile=p, antibiotic=a)
                 name = 'Tx outcome for ' + covert_symp_susp_antibio.get_str_symp_rest_antibio(
                     symp_state=s, rest_profile=p, antibiotic=a)
 
-                # if drug-susceptible
-                if p == RestProfile.SUS.value:
-                    # failure due to the emergence of resistance
-                    dest_succ = counting_success_CIP_TET_CFX
+                # destination if treatment is successful
+                dest_succ = counting_success_CIP_TET_CFX
+
+                # new profile if treatment fails
+                p_next, reason_for_failure = get_profile_after_resit_or_failure(rest_profile=p, antibiotic=a)
+
+                # failure due to the emergence of resistance
+                if reason_for_failure == TreatmentOutcome.RESISTANCE:
+
                     prob_fail = params.probResEmerge[a]
 
-                    # if resistance emerges while receiving PEN
-                    if a == AB.PEN.value:
-                        # decide where to go next depending on the symptom status
-                        if s == SympStat.SYMP.value:
-                            dest_fail = ifs_re_tx[
-                                covert_symp_susp.get_row_index(symp_state=s, rest_profile=RestProfile.PEN.value)]
-                        elif s == SympStat.ASYM.value:
-                            dest_fail = ifs_symp_from_emerg_rest[RestProfile.PEN.value]
-                        else:
-                            raise ValueError('Invalid symptom status.')
-
-                    # if resistance emerges while receiving CFX
-                    elif a == AB.CFX.value:
-                        # decide where to go next depending on the symptom status
-                        if s == SympStat.SYMP.value:
-                            dest_fail = ifs_re_tx[
-                                covert_symp_susp.get_row_index(symp_state=s, rest_profile=RestProfile.CFX.value)]
-                        elif s == SympStat.ASYM.value:
-                            dest_fail = ifs_symp_from_emerg_rest[RestProfile.CFX.value]
-                        else:
-                            raise ValueError('Invalid symptom status.')
+                    if s == SympStat.SYMP.value:
+                        dest_fail = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=s, rest_profile=p_next)]
+                    elif s == SympStat.ASYM.value:
+                        dest_fail = ifs_symp_from_emerg_rest[p_next]
                     else:
-                        raise ValueError('Invalid antibiotic.')
+                        raise ValueError('Invalid symptom status.')
 
-                # if resistance to PEN or CFX
-                elif p in (RestProfile.PEN.value, RestProfile.CFX.value):
-                    # failure due to ineffective treatment
-                    if (p == RestProfile.PEN.value and a == AB.PEN.value) or \
-                            (p == RestProfile.CFX.value and a == AB.CFX.value):
-                        # failure due to ineffective treatment
-                        j = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
-                        dest_succ = ifs_re_tx[j]
-                        dest_fail = ifs_re_tx[j]
-                        prob_fail = Constant(1)
+                # failure due to ineffective treatment
+                elif reason_for_failure == TreatmentOutcome.INEFFECTIVE:
 
-                    # failure due to the emergence of resistance
-                    elif (p == RestProfile.PEN.value and a == AB.CFX.value) or \
-                            (p == RestProfile.CFX.value and a == AB.PEN.value):
-                        # success or resistance
-                        dest_succ = counting_success_CIP_TET_CFX
-                        prob_fail = params.probResEmerge[a]
+                    prob_fail = Constant(1)
 
-                        # decide where to go next depending on the symptom status
-                        if s == SympStat.SYMP.value:
-                            dest_fail = ifs_re_tx[
-                                covert_symp_susp.get_row_index(symp_state=s, rest_profile=RestProfile.PEN_CFX.value)]
-                        elif s == SympStat.ASYM.value:
-                            dest_fail = ifs_symp_from_emerg_rest[RestProfile.PEN_CFX.value]
-                        else:
-                            raise ValueError('Invalid symptom status.')
-                    else:
-                        raise ValueError('Invalid antibiotic.')
-
-                # if resistance to PEN and CFX
-                elif p == RestProfile.PEN_CFX.value:
-                    # failure
                     j = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
                     dest_succ = ifs_re_tx[j]
                     dest_fail = ifs_re_tx[j]
-                    prob_fail = Constant(1)
+
                 else:
-                    raise ValueError('Invalid treatment outcome.')
+                    raise ValueError('Invalid reason for failure.')
 
                 ifs_tx_outcomes[i] = ChanceNode(name=name,
                                                 destination_compartments=[dest_fail, dest_succ],

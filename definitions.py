@@ -43,6 +43,64 @@ class RestProfile(Enum):
     SUS = 7
 
 
+class TreatmentOutcome(Enum):
+    SUCCESS = 0
+    RESISTANCE = 1
+    INEFFECTIVE = 2
+
+
+def get_profile_after_resit_or_failure(rest_profile, antibiotic):
+    """
+    :param rest_profile:
+    :param antibiotic:
+    :return: (resistance profile after treatment, reason for treatment failure)
+    """
+
+    p = RestProfile(rest_profile)
+    a = AB(antibiotic)
+    # default values
+    next_p = p
+    reason_for_failure = TreatmentOutcome.RESISTANCE
+
+    if a == AB.CIP:
+        if p == RestProfile.SUS:
+            next_p = RestProfile.CIP
+        elif p == RestProfile.TET:
+            next_p = RestProfile.CIP_TET
+        elif p == RestProfile.CFX:
+            next_p = RestProfile.CIP_CFX
+        elif p == RestProfile.TET_CFX:
+            next_p = RestProfile.CIP_TET_CFX
+        else:
+            reason_for_failure = TreatmentOutcome.INEFFECTIVE
+    elif a == AB.TET:
+        if p == RestProfile.SUS:
+            next_p = RestProfile.TET
+        elif p == RestProfile.CIP:
+            next_p = RestProfile.CIP_TET
+        elif p == RestProfile.CFX:
+            next_p = RestProfile.TET_CFX
+        elif p == RestProfile.CIP_CFX:
+            next_p = RestProfile.CIP_TET_CFX
+        else:
+            reason_for_failure = TreatmentOutcome.INEFFECTIVE
+    elif a == AB.CFX:
+        if p == RestProfile.SUS:
+            next_p = RestProfile.CFX
+        elif rest_profile == RestProfile.CIP:
+            next_p = RestProfile.CIP_CFX
+        elif rest_profile == RestProfile.TET:
+            next_p = RestProfile.TET_CFX
+        elif rest_profile == RestProfile.CIP_TET:
+            next_p = RestProfile.CIP_TET_CFX
+        else:
+            reason_for_failure = TreatmentOutcome.INEFFECTIVE
+    else:
+        raise Exception('Invalid value for antibiotic.')
+
+    return next_p.value, reason_for_failure
+
+
 class ConvertSympAndSuspAndAntiBio:
     # to convert (symptom state, resistance profile, antibiotic) to an index and vice versa
 
