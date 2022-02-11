@@ -51,15 +51,14 @@ def plot(prev_multiplier=52, incd_multiplier=1,
             # increment i
             i += 1
 
-    validation_filename = 'figures/(validation) ' + filename
-
-    list_plot_info = Is
-    list_plot_info.extend(Fs)
-    list_plot_info.extend([S])
-    sim_outcomes.plot_multi_panel(n_rows=5, n_cols=4,
-                                  list_plot_info=list_plot_info,
+    sim_outcomes.plot_multi_panel(n_rows=4, n_cols=4,
+                                  list_plot_info=Is,
                                   figure_size=(7, 7),
-                                  file_name=validation_filename)
+                                  file_name='figures/(valid-Is) ' + filename)
+    sim_outcomes.plot_multi_panel(n_rows=4, n_cols=4,
+                                  list_plot_info=Fs,
+                                  figure_size=(7, 7),
+                                  file_name='figures/(valid-Fs) ' + filename)
 
     # ------------- Calibration Figure ---------------
     prev = A.TrajPlotInfo(outcome_name='Prevalence',
@@ -86,10 +85,10 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                )
 
     perc_cases_by_rest_profile = []
-    for p in range(len(REST_PROFILES) - 1):
+    for p in range(len(REST_PROFILES) - 2):
         perc_cases_by_rest_profile.append(A.TrajPlotInfo(
             outcome_name='Proportion of cases resistant to '+REST_PROFILES[p],
-            title='Proportion of cases with\n{} gonorrhea (%)'.format(REST_PROFILES[p]),
+            title='Proportion of cases with\n{}-R gonorrhea (%)'.format(REST_PROFILES[p]),
             x_multiplier=obs_incd_multiplier,
             y_multiplier=100, y_range=(0, 100))
         )
@@ -98,9 +97,9 @@ def plot(prev_multiplier=52, incd_multiplier=1,
 
     list_plot_info = [prev, gono_rate, perc_symp]
     list_plot_info.extend(perc_cases_by_rest_profile)
-    sim_outcomes.plot_multi_panel(n_rows=2, n_cols=3,
+    sim_outcomes.plot_multi_panel(n_rows=3, n_cols=3,
                                   list_plot_info=list_plot_info,
-                                  figure_size=(6, 4.5), show_subplot_labels=True,
+                                  figure_size=(3*2, 3*2), show_subplot_labels=True,
                                   file_name=calibration_filename)
 
 

@@ -152,8 +152,8 @@ def build_model(model):
 
             # if treatment failure is because of the development of resistance
             if reason_for_failure == TreatmentOutcome.RESISTANCE:
-                # destinations
 
+                # destinations
                 if s == SympStat.SYMP.value:
                     dest_rest = ifs_re_tx[
                         covert_symp_susp.get_row_index(symp_state=s, rest_profile=next_p)]
@@ -332,17 +332,20 @@ def build_model(model):
                 #     interv_to_activate=first_line_tx_with_M))
 
     # add events to infection compartments after treatment failure
-    for s in range(len(SympStat)):
-        for p in range(len(RestProfile)):
+    for s in range(n_symp_states):
+        for p in range(n_rest_profiles):
 
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
             compart_name = Fs[i].name
 
-            # TODO: fix this
-            # destination
-            if p == RestProfile.PEN.value:
-                dest = ifs_resist_after_re_tx_cfx[s]
-            else:
+            # treatment outcomes
+            next_p, reason_for_failure = get_profile_after_resit_or_failure(
+                rest_profile=p, antibiotic=AB.CFX)
+
+            # if treatment failure is because of the development of resistance
+            if reason_for_failure == TreatmentOutcome.RESISTANCE:
+                dest = ifs_resist_after_re_tx_cfx[p]
+            elif reason_for_failure == TreatmentOutcome.INEFFECTIVE:
                 dest = counting_tx_M
 
             # treatment
