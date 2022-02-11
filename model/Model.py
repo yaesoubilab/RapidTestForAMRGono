@@ -1,8 +1,6 @@
 from SimPy.Parameters import Constant
 from apace.CalibrationSupport import FeasibleConditions
-from apace.Control import InterventionAffectingEvents, ConditionBasedDecisionRule
-from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention, \
-    ConditionOnFeatures, ConditionOnConditions, ConditionAlwaysFalse
+from apace.Control import InterventionAffectingEvents
 from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, TreatmentOutcome, \
@@ -36,7 +34,6 @@ def build_model(model):
     ifs_rapid_tests = [None] * covert_symp_susp.length
     ifs_re_tx = [None] * covert_symp_susp.length
     ifs_symp_from_emerg_rest = [None] * len(RestProfile)
-    ifs_tx_outcomes = [None] * covert_symp_susp_antibio.length
     ifs_resist_after_re_tx_cfx = [None] * covert_symp_susp.length
 
     ifs_symp = []   # chance nodes counting symptomatic cases
@@ -175,6 +172,12 @@ def build_model(model):
                     destination_compartments=[Fs[i], Fs[i]],
                     probability_params=Constant(1))
 
+            # if symptomatic
+            if s == SympStat.SYMP.value:
+                ifs_symp.append(ifs_rapid_tests[i])
+            # by resistance profile
+            ifs_rest_to[p].append(ifs_rapid_tests[i])
+
     # ------------- compartment histories ---------------
     # set up prevalence, incidence, and cumulative incidence to collect
     if sets.ifCollectTrajsOfCompartments:
@@ -183,10 +186,9 @@ def build_model(model):
             i.setup_history(collect_prev=True)
         for f in Fs:
             f.setup_history(collect_prev=True)
-        # for r in ifs_CIP_rapid_tests:
-        #     r.setup_history(collect_incd=True)
-        for t in ifs_tx_outcomes:
-            t.setup_history(collect_incd=True)
+        for r in ifs_rapid_tests:
+            r.setup_history(collect_incd=True)
+
     counting_success_CIP_TET_CFX.setup_history(collect_incd=True)
     counting_tx_M.setup_history(collect_incd=True)
 
@@ -205,7 +207,7 @@ def build_model(model):
 
     # rate of new gonorrhea cases
     n_cases = SumIncidence(name='New cases',
-                           compartments=ifs_CIP_rapid_tests)
+                           compartments=ifs_rapid_tests)
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
                                 numerator_sum_time_series=n_cases,
                                 denominator_sum_time_series=pop_size,
@@ -236,10 +238,13 @@ def build_model(model):
         n_cases_by_resistance_profile.append(n_resistant_cases)
         perc_cases_by_resistance_profile.append(perc_cases_resistant)
 
-    # cases by resistance to specific CFX (including resistance to both PEN and CFX)
+    # cases by resistance to CFX
     n_cases_CFX_R = SumIncidence(
-        name='Cases CFX-R or CFX+PEN-R',
-        compartments=ifs_rest_to[RestProfile.CFX.value] + ifs_rest_to[RestProfile.PEN_CFX.value])
+        name='Cases CFX-R, CIP_CFX-R, TET_CFX-R, or CIP_TET_CFX-R',
+        compartments=ifs_rest_to[RestProfile.CFX.value] +
+                     ifs_rest_to[RestProfile.CIP_CFX.value] +
+                     ifs_rest_to[RestProfile.TET.value] +
+                     ifs_rest_to[RestProfile.CIP_TET_CFX.value])
     perc_cases_CFX_R = RatioTimeSeries(
             name='Proportion of cases CFX-R or CFX+PEN-R',
             numerator_sum_time_series=n_cases_CFX_R,
@@ -250,12 +255,12 @@ def build_model(model):
     # treated with any antibiotics
     n_treated = SumIncidence(
         name='Cases treated',
-        compartments=[counting_success_CIP_TET_CFX, counting_tx_M] + ifs_counting_tx_M)
-    n_treated_PEN_or_CFX = SumIncidence(name='Treated with PEN or CFX',
-                                        compartments=[counting_success_CIP_TET_CFX])
-    perc_treated_with_PEN_or_CFX = RatioTimeSeries(
-        name='Proportion of cases treated with PEN or CFX',
-        numerator_sum_time_series=n_treated_PEN_or_CFX,
+        compartments=[counting_success_CIP_TET_CFX, counting_tx_M])
+    n_treated_CIP_PEN_CFX = SumIncidence(name='Treated with CIP, TET, or CFX',
+                                         compartments=[counting_success_CIP_TET_CFX])
+    perc_treated_with_CIP_PEN_CFX = RatioTimeSeries(
+        name='Proportion of cases treated with CIP, TET, or CFX',
+        numerator_sum_time_series=n_treated_CIP_PEN_CFX,
         denominator_sum_time_series=n_treated,
         collect_stat_after_warm_up=True)
 
@@ -279,61 +284,22 @@ def build_model(model):
 
     # ------------- interventions ---------------
     # interventions
-    first_line_tx_with_CFX = InterventionAffectingEvents(name='1st line therapy with CFX')
-    first_line_tx_with_M = InterventionAffectingEvents(name='1st line therapy with M')
-
-    # ------------- features ---------------
-    # features
-    f_perc_resist_CFX = FeatureSurveillance(name='Surveyed % of cases resistant to CFX',
-                                            ratio_time_series_with_surveillance=perc_cases_CFX_R)
-    f_if_M_ever_switched_on = FeatureIntervention(name='If Drug M ever switched on',
-                                                  intervention=first_line_tx_with_M,
-                                                  feature_type='if ever switched on')
-
-    # ------------- conditions ---------------
-    # conditions
-    threshold = 0.05
-    CFX_in_condition = ConditionOnFeatures(name='If % resistant to CFX is below threshold',
-                                           features=[f_perc_resist_CFX],
-                                           signs=['l'],
-                                           thresholds=[threshold])
-    CFX_out_condition = ConditionOnFeatures(name='If % resistant to CFX passes threshold',
-                                            features=[f_perc_resist_CFX],
-                                            signs=['ge'],
-                                            thresholds=[threshold])
-    M_is_never_used = ConditionOnFeatures(name='If M is ever used as 1st-line therapy',
-                                          features=[f_if_M_ever_switched_on],
-                                          signs=['e'],
-                                          thresholds=[0])
-
-    turn_on_tx_with_CFX = ConditionOnConditions(name='Turn on Tx-CFX',
-                                                conditions=[CFX_in_condition, M_is_never_used])
-
-    # ------------- decision rules ---------------
-    # add decision rules to interventions
-    first_line_tx_with_CFX.add_decision_rule(
-        decision_rule=ConditionBasedDecisionRule(default_switch_value=1,
-                                                 condition_to_turn_on=turn_on_tx_with_CFX,
-                                                 condition_to_turn_off=CFX_out_condition))
-    first_line_tx_with_M.add_decision_rule(
-        decision_rule=ConditionBasedDecisionRule(default_switch_value=0,
-                                                 condition_to_turn_on=CFX_out_condition,
-                                                 condition_to_turn_off=ConditionAlwaysFalse()))
+    first_line_tx = InterventionAffectingEvents(name='1st line therapy')
 
     # ------------- attach epidemic events ---------------
     # attached epidemic events to compartments
     # add events to S
-    inf_events = []
-    for p in range(len(RestProfile)):
+    for p in range(n_rest_profiles):
         S.add_event(EpiDepEvent(
                 name='Infection | ' + REST_PROFILES[p],
                 destination=ifs_symp_from_S[p],
                 generating_pathogen=p))
 
     # add events to infection compartments
-    i = 0
-    for s in range(len(SympStat)):
-        for p in range(len(RestProfile)):
+    for s in range(n_symp_states):
+        for p in range(n_rest_profiles):
+
+            i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
             compart_name = Is[i].name
 
             # natural recovery
@@ -343,70 +309,65 @@ def build_model(model):
                 destination=S))
             # screened
             Is[i].add_event(EpiIndepEvent(
-                name='Screening then CFX| ' + compart_name,
+                name='Screening | ' + compart_name,
                 rate_param=params.rateScreened,
-                destination=ifs_CIP_rapid_tests[i],
-                interv_to_activate=first_line_tx_with_CFX))
-            Is[i].add_event(EpiIndepEvent(
-                name='Screening then M| ' + compart_name,
-                rate_param=params.rateScreened,
-                destination=ifs_counting_tx_M[i],
-                interv_to_activate=first_line_tx_with_M))
+                destination=ifs_rapid_tests[i],
+                interv_to_activate=first_line_tx))
+            # Is[i].add_event(EpiIndepEvent(
+            #     name='Screening then M| ' + compart_name,
+            #     rate_param=params.rateScreened,
+            #     destination=ifs_counting_tx_M[i],
+            #     interv_to_activate=first_line_tx_with_M))
             # seeking treatment
             if s == SympStat.SYMP.value:
                 Is[i].add_event(EpiIndepEvent(
-                    name='Seeking treatment then CFX | ' + compart_name,
+                    name='Seeking treatment | ' + compart_name,
                     rate_param=params.rateTreatment,
-                    destination=ifs_CIP_rapid_tests[i],
-                    interv_to_activate=first_line_tx_with_CFX))
-                Is[i].add_event(EpiIndepEvent(
-                    name='Seeking treatment then M | ' + compart_name,
-                    rate_param=params.rateTreatment,
-                    destination=ifs_counting_tx_M[i],
-                    interv_to_activate=first_line_tx_with_M))
-            i += 1
+                    destination=ifs_rapid_tests[i],
+                    interv_to_activate=first_line_tx))
+                # Is[i].add_event(EpiIndepEvent(
+                #     name='Seeking treatment then M | ' + compart_name,
+                #     rate_param=params.rateTreatment,
+                #     destination=ifs_counting_tx_M[i],
+                #     interv_to_activate=first_line_tx_with_M))
 
     # add events to infection compartments after treatment failure
-    i = 0
     for s in range(len(SympStat)):
         for p in range(len(RestProfile)):
+
+            i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
             compart_name = Fs[i].name
+
+            # TODO: fix this
             # destination
             if p == RestProfile.PEN.value:
                 dest = ifs_resist_after_re_tx_cfx[s]
             else:
                 dest = counting_tx_M
+
             # treatment
             Fs[i].add_event(EpiIndepEvent(
                 name='Re-Tx | ' + compart_name,
                 rate_param=params.rateRetreatment,
                 destination=dest
             ))
-            i += 1
 
     # ------------- populate the model ---------------
     # populate the model
-    chance_nodes = ifs_symp_from_S
-    chance_nodes.extend(ifs_re_tx)
-    chance_nodes.extend(ifs_symp_from_emerg_rest)
-    chance_nodes.extend(ifs_tx_outcomes)
-    chance_nodes.extend(ifs_CIP_rapid_tests)
-    chance_nodes.extend(ifs_counting_tx_M)
-    chance_nodes.extend([counting_success_CIP_TET_CFX, counting_tx_M])
+    chance_nodes = ifs_symp_from_S + ifs_re_tx + ifs_symp_from_emerg_rest + ifs_rapid_tests \
+                   + [counting_success_CIP_TET_CFX, counting_tx_M]
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
-                               n_cases_sympt, n_treated, n_treated_PEN_or_CFX]
+                               n_cases_sympt, n_treated, n_treated_CIP_PEN_CFX]
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
     list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CFX_R,
-                                 perc_cases_sympt, perc_treated_with_PEN_or_CFX]
+                                 perc_cases_sympt, perc_treated_with_CIP_PEN_CFX]
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     model.populate(compartments=all_comparts,
                    chance_nodes=chance_nodes,
                    list_of_sum_time_series=list_of_sum_time_series,
                    list_of_ratio_time_series=list_of_ratio_time_series,
-                   interventions=[first_line_tx_with_CFX, first_line_tx_with_M],
-                   features=[f_perc_resist_CFX, f_if_M_ever_switched_on],
-                   conditions=[CFX_in_condition, CFX_out_condition, M_is_never_used, turn_on_tx_with_CFX],
+                   interventions=[first_line_tx],
                    parameters=params)
