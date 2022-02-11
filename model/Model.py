@@ -156,8 +156,13 @@ def build_model(model):
             # if treatment failure is because of the development of resistance
             if reason_for_failure == TreatmentOutcome.RESISTANCE:
                 # destinations
-                dest_rest = ifs_symp_from_emerg_rest[
-                    covert_symp_susp.get_row_index(symp_state=s, rest_profile=next_p)]
+
+                if s == SympStat.SYMP.value:
+                    dest_rest = ifs_re_tx[
+                        covert_symp_susp.get_row_index(symp_state=s, rest_profile=next_p)]
+                else:
+                    dest_rest = ifs_symp_from_emerg_rest[next_p]
+
                 dest_succ = counting_success_CIP_TET_CFX
                 ifs_rapid_tests[i] = ChanceNode(
                     name=name,
