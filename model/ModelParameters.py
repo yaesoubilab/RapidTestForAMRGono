@@ -32,10 +32,10 @@ class Parameters(EpiParameters):
 
         # percent of I0 by resistance profile
         # TODO: update these numbers
-        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0, 0) # Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
-        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0, 0) # Uniform(0.15, 0.21)
+        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.002, 0.007) # Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
+        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.448, 0.672) # Uniform(0.15, 0.21)
         self.percIByRestProfile[RestProfile.CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
-        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
+        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.126, 0.189) # Uniform(0.0, 0.001)
         self.percIByRestProfile[RestProfile.CIP_CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
         self.percIByRestProfile[RestProfile.TET_CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
         self.percIByRestProfile[RestProfile.CIP_TET_CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
@@ -43,19 +43,19 @@ class Parameters(EpiParameters):
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
         # relative infectivity of resistance profiles to susceptible
-        self.ratioInf[RestProfile.CIP.value] = Uniform(0, 0) # Uniform(0.9, 1)
-        self.ratioInf[RestProfile.TET.value] = Uniform(0, 0) # Uniform(0.9, 1)
-        self.ratioInf[RestProfile.CFX.value] = Uniform(0, 0) # Uniform(0.9, 1)
-        self.ratioInf[RestProfile.CIP_TET.value] = Uniform(0, 0) # Uniform(0.8, 1)
-        self.ratioInf[RestProfile.CIP_CFX.value] = Uniform(0, 0) # Uniform(0.8, 1)
-        self.ratioInf[RestProfile.TET_CFX.value] = Uniform(0, 0) # Uniform(0.8, 1)
-        self.ratioInf[RestProfile.CIP_TET_CFX.value] = Uniform(0, 0) # Uniform(0.7, 1)
+        self.ratioInf[RestProfile.CIP.value] = Uniform(0.9, 1)
+        self.ratioInf[RestProfile.TET.value] = Uniform(0.9, 1)
+        self.ratioInf[RestProfile.CFX.value] = Uniform(0.9, 1)
+        self.ratioInf[RestProfile.CIP_TET.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.CIP_CFX.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.TET_CFX.value] = Uniform(0.8, 1)
+        self.ratioInf[RestProfile.CIP_TET_CFX.value] = Uniform(0.7, 1)
         self.ratioInf[RestProfile.SUS.value] = Constant(1)
 
         # exponent of the probability for the emergence of resistance for a drug
         self.exponProbRes[AB.CIP.value] = Uniform(-100, -100) # Uniform(-5, -3)
         self.exponProbRes[AB.TET.value] = Uniform(-100, -100) # Uniform(-5, -3)
-        self.exponProbRes[AB.CFX.value] = Uniform(-1, -1)
+        self.exponProbRes[AB.CFX.value] = Uniform(-100, -100)
 
         self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
         self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)
