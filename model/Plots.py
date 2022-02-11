@@ -4,6 +4,8 @@ import apace.analysis.VisualizeScenarios as V
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio, SIM_DURATION
 from model import Data as D
 
+A.SUBPLOT_W_SPACE = 0.25
+
 
 def plot(prev_multiplier=52, incd_multiplier=1,
          obs_prev_multiplier=1, obs_incd_multiplier=1,
