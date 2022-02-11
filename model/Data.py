@@ -15,12 +15,36 @@ PercSymptomatic = [
 ]
 
 PercResistProfile = {
-    'CIP': [],
-    'TET': [],
-    'CFX': [],
-    'CIP+TET': [],
-    'CIP+CFX': [],
-    'TET+CFX': [],
-    'CIP+TET+CFX': [],
-    'SUSP': []
+    'CIP': [
+        [0, None, None, None],
+        [1, 0.4, 0.2, 0.7]
+    ],
+    'TET': [
+        [0, None, None, None],
+        [1, 56.0, 44.8, 67.2]
+    ],
+    'CFX': [
+        [0, None, None, None],
+        [1, 0.0]
+    ],
+    'CIP+TET': [
+        [0, None, None, None],
+        [1, 15.8, 12.6, 18.9]
+    ],
+    'CIP+CFX': [
+        [0, None, None, None],
+        [1, 0.0]
+    ],
+    'TET+CFX': [
+        [0, None, None, None],
+        [1, 0.0]
+    ],
+    'CIP+TET+CFX': [
+        [0, None, None, None],
+        [1, 0.0]
+    ],
+    'SUSP': [
+        [0, None, None, None],
+        [1, 27.8, 22.2, 33.3]
+    ],
 }
