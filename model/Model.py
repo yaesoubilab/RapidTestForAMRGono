@@ -128,7 +128,7 @@ def build_model(model):
                                       destination_compartments=[dest_yes, dest_no],
                                       probability_params=prob_yes)
 
-    # chance nodes for if symptomatic after emergence of resistance during treatment
+    # chance nodes for if symptomatic after emergence of resistance after 1st line treatment
     for p in range(n_rest_profiles):
         name = 'If symptomatic after moving to {} due to the emergence of resistance'.format(
             covert_symp_susp.get_str_susp(susp_profile=p))
@@ -150,13 +150,14 @@ def build_model(model):
             next_p, reason_for_failure = get_profile_after_resit_or_failure(
                 rest_profile=p, antibiotic=AB.CFX)
 
+            next_i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=next_p)
+
             # if treatment failure is because of the development of resistance
             if reason_for_failure == TreatmentOutcome.RESISTANCE:
 
                 # destinations
                 if s == SympStat.SYMP.value:
-                    dest_rest = ifs_re_tx[
-                        covert_symp_susp.get_row_index(symp_state=s, rest_profile=next_p)]
+                    dest_rest = ifs_re_tx[next_i]
                 else:
                     dest_rest = ifs_symp_from_emerg_rest[next_p]
 
@@ -167,9 +168,16 @@ def build_model(model):
                     probability_params=params.probResEmerge[AB.CFX.value])
 
             elif reason_for_failure == TreatmentOutcome.INEFFECTIVE:
+                # destinations
+                # will always seek treatment if symptomatic after treatment failure
+                # will never seek treatment if asymptomatic after treatment failure
+                if s == SympStat.SYMP.value:
+                    dest = Fs[i]
+                else:
+                    dest = Is[next_i]
                 ifs_rapid_tests[i] = ChanceNode(
                     name=name,
-                    destination_compartments=[Fs[i], Fs[i]],
+                    destination_compartments=[dest, dest],
                     probability_params=Constant(1))
 
             # if symptomatic
@@ -338,13 +346,15 @@ def build_model(model):
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
             compart_name = Fs[i].name
 
-            # treatment outcomes
+            # receive CFX if susceptible to CFX and otherwise, will receive M
+            # treatment outcome from receiving CFX
             next_p, reason_for_failure = get_profile_after_resit_or_failure(
                 rest_profile=p, antibiotic=AB.CFX)
 
-            # if treatment failure is because of the development of resistance
+            # if susceptible to CFX, then will check if resistance could be developed
             if reason_for_failure == TreatmentOutcome.RESISTANCE:
                 dest = ifs_resist_after_re_tx_cfx[p]
+            # if resistant to CFX, then will receive M
             elif reason_for_failure == TreatmentOutcome.INEFFECTIVE:
                 dest = counting_tx_M
 
