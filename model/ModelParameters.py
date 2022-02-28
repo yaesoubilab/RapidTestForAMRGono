@@ -57,9 +57,9 @@ class Parameters(EpiParameters):
         self.ratioInf[RestProfile.SUS.value] = Constant(1)
 
         # exponent of the probability for the emergence of resistance for a drug
-        self.exponProbRes[AB.CIP.value] = Uniform(-100, -100) # Uniform(-5, -3)
-        self.exponProbRes[AB.TET.value] = Uniform(-100, -100) # Uniform(-5, -3)
-        self.exponProbRes[AB.CFX.value] = Uniform(-100, -100)
+        self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.TET.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.CFX.value] = Uniform(-5, -3)
 
         self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
         self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)

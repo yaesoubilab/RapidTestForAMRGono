@@ -297,9 +297,9 @@ def build_model(model):
 
             # if symptomatic
             if s == SympStat.SYMP.value:
-                counting_symp.append(ifs_tx_outcome[i])
+                counting_symp.append(ifs_will_receive_rapid_test[i])
             # by resistance profile
-            counting_rest_to[p].append(ifs_tx_outcome[i])
+            counting_rest_to[p].append(ifs_will_receive_rapid_test[i])
 
     # ------------- compartment histories ---------------
     # set up prevalence, incidence, and cumulative incidence to collect
@@ -351,7 +351,7 @@ def build_model(model):
     n_cases_by_resistance_profile = []
     perc_cases_by_resistance_profile = []
     for p in range(n_rest_profiles):
-        n_resistant_cases = SumIncidence(name='Cases ' + REST_PROFILES[p],
+        n_resistant_cases = SumIncidence(name='Cases resistant to ' + REST_PROFILES[p],
                                          compartments=counting_rest_to[p])
         perc_cases_resistant = RatioTimeSeries(
             name='Proportion of cases resistant to ' + REST_PROFILES[p],
