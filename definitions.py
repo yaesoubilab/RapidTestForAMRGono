@@ -133,7 +133,8 @@ class ConvertSympAndSuspAndAntiBio:
         return '{}-{}'.format(SYMP_STATES[symp_state], REST_PROFILES[rest_profile])
 
     def get_str_symp_rest_antibio(self, symp_state, rest_profile, antibiotic):
-        return '{}-{}|Tx with {}'.format(SYMP_STATES[symp_state], REST_PROFILES[rest_profile], ANTIBIOTICS[antibiotic])
+        return 'Tx-{} in {}-{}'.format(
+            ANTIBIOTICS[antibiotic], SYMP_STATES[symp_state], REST_PROFILES[rest_profile])
 
 
 def get_survey_size(mean, l, u, multiplier=1):

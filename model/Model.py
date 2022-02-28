@@ -3,7 +3,7 @@ from apace.CalibrationSupport import FeasibleConditions
 from apace.Control import InterventionAffectingEvents
 from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
-from definitions import RestProfile, AB, SympStat, REST_PROFILES, TreatmentOutcome, \
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, ANTIBIOTICS, TreatmentOutcome, \
     ConvertSympAndSuspAndAntiBio, get_profile_after_resit_or_failure
 from model.ModelParameters import Parameters
 
@@ -87,6 +87,13 @@ def build_model(model):
     counting_tx_M = ChanceNode(name='Tx with M',
                                destination_compartments=[S, S],
                                probability_params=Constant(1))
+    # counting successful Tx with each antibiotic
+    counting_tx_success_by_ab = [None] * len(AB)
+    for a in range(len(AB)):
+        counting_tx_success_by_ab[a] = ChanceNode(
+            name='Counting tx with ' + ANTIBIOTICS[a],
+            destination_compartments=[counting_success_CIP_TET_CFX, counting_success_CIP_TET_CFX],
+            probability_params=Constant(1))
 
     # if symptomatic after infection
     for p in range(n_rest_profiles):
@@ -113,16 +120,16 @@ def build_model(model):
 
                 # destinations
                 dest_rest = Fs[covert_symp_susp.get_row_index(symp_state=s, rest_profile=next_p)]
-                dest_succ = counting_success_CIP_TET_CFX
+                dest_succ = counting_tx_success_by_ab[AB.CFX.value]
                 ifs_resist_after_re_tx_cfx[i] = ChanceNode(
-                    name='If resistance after re-Tx-CFX in '+str_symp_susp,
+                    name='If resistance after re-tx with CFX in '+str_symp_susp,
                     destination_compartments=[dest_rest, dest_succ],
                     probability_params=params.probResEmerge[AB.CFX.value])
 
     # if re-tx after ineffective treatment or resistance development
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
-            name = 'If re-tx after ineffective tx/resistance development in ' \
+            name = 'If re-tx after ineff tx/rest dev in ' \
                    + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
 
@@ -142,7 +149,7 @@ def build_model(model):
 
     # chance nodes for if symptomatic after emergence of resistance after 1st line treatment
     for p in range(n_rest_profiles):
-        name = 'If symptomatic after moving to {} due to the emergence of resistance'.format(
+        name = 'If symp after moving to {} due to rest dev'.format(
             covert_symp_susp.get_str_susp(susp_profile=p))
 
         dest_symp = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=SympStat.SYMP.value, rest_profile=p)]
@@ -151,13 +158,12 @@ def build_model(model):
                                                  destination_compartments=[dest_symp, dest_asym],
                                                  probability_params=params.probSym)
 
-    # rapid test (for now everyone will receive CFX)
-    # TODO: debug this
+    # treatment outcomes
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
             for a in range(len(AB)):
 
-                name = 'Tx ' + covert_symp_susp_antibio.get_str_symp_rest_antibio(
+                name = 'Outcome of ' + covert_symp_susp_antibio.get_str_symp_rest_antibio(
                     symp_state=s, rest_profile=p, antibiotic=a)
                 i = covert_symp_susp_antibio.get_row_index(symp_state=s, rest_profile=p, antibiotic=a)
 
@@ -176,18 +182,18 @@ def build_model(model):
                     else:
                         dest_rest = ifs_symp_from_emerg_rest[next_p]
 
-                    dest_succ = counting_success_CIP_TET_CFX
+                    dest_succ = counting_tx_success_by_ab[a]
                     ifs_tx_outcome[i] = ChanceNode(
                         name=name,
                         destination_compartments=[dest_rest, dest_succ],
-                        probability_params=params.probResEmerge[AB.CFX.value])
+                        probability_params=params.probResEmerge[a])
 
                 elif reason_for_failure == TreatmentOutcome.INEFFECTIVE:
                     # destinations
                     # will always seek treatment if symptomatic after treatment failure
                     # will never seek treatment if asymptomatic after treatment failure
                     if s == SympStat.SYMP.value:
-                        dest = Fs[i]
+                        dest = Fs[covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)]
                     else:
                         dest = Is[next_i]
                     ifs_tx_outcome[i] = ChanceNode(
@@ -195,7 +201,6 @@ def build_model(model):
                         destination_compartments=[dest, dest],
                         probability_params=Constant(1))
 
-    # TODO: debug this
     # if susceptible to both CIP and TET
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
@@ -217,7 +222,7 @@ def build_model(model):
     # after positive result for rapid CIP test (susceptibility to CIP)
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
-            name = 'TET test after CIP test returned positive | ' + \
+            name = 'Result of TET test after CIP test returned positive | ' \
                    + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
 
@@ -238,7 +243,7 @@ def build_model(model):
     # after negative result for rapid CIP test (reduced susceptibility to CIP)
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
-            name = 'TET test after CIP test returned negative | ' + \
+            name = 'Result of TET test after CIP test returned negative | ' + \
                    + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
 
@@ -308,6 +313,8 @@ def build_model(model):
         for r in ifs_tx_outcome:
             r.setup_history(collect_incd=True)
 
+    for a in range(len(AB)):
+        counting_tx_success_by_ab.setup_history(collect_incd=True)
     counting_success_CIP_TET_CFX.setup_history(collect_incd=True)
     counting_tx_M.setup_history(collect_incd=True)
 
@@ -481,7 +488,7 @@ def build_model(model):
     chance_nodes = ifs_will_receive_rapid_test + ifs_rapid_CIP_outcome \
                    + ifs_rapid_TET_outcome_after_susp_CIP + ifs_rapid_TET_outcome_after_reduced_susp_CIP \
                    + ifs_CIP_or_TET + ifs_tx_outcome \
-                   + ifs_symp_from_S + ifs_re_tx + ifs_symp_from_emerg_rest \
+                   + ifs_symp_from_S + ifs_re_tx + ifs_symp_from_emerg_rest + counting_tx_success_by_ab\
                    + [counting_success_CIP_TET_CFX, counting_tx_M]
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
