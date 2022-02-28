@@ -6,9 +6,10 @@ from model.Data import Prevalence, GonorrheaRate, PercSymptomatic
 class GonoSettings(ModelSettings):
     """ settings of the gonorrhea model """
 
-    def __init__(self, if_calibrating=False):
+    def __init__(self, if_calibrating=False, collect_traj_of_comparts = True):
         """
         :param if_calibrating: (bool) if calibrating the model
+        :param collect_traj_of_comparts: (bool) if collect the trajectories of all compartments
         """
 
         ModelSettings.__init__(self)
@@ -20,7 +21,7 @@ class GonoSettings(ModelSettings):
         self.simulationOutputPeriod = 1  # simulation output period
         self.observationPeriod = 1
         self.storeParameterValues = True
-        self.ifCollectTrajsOfCompartments = True  # if collect the trajectories of all compartments
+        self.ifCollectTrajsOfCompartments = collect_traj_of_comparts
 
         # calibration settings
         self.calcLikelihood = if_calibrating

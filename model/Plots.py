@@ -1,7 +1,7 @@
 import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
 import apace.analysis.VisualizeScenarios as V
-from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio, SIM_DURATION
+from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio, SIM_DURATION, ANTIBIOTICS
 from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25
@@ -105,6 +105,20 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                   list_plot_info=list_plot_info,
                                   figure_size=(3*2.2, 3*2.4), show_subplot_labels=True,
                                   file_name=calibration_filename)
+
+    # ------------- Successful treatment with different antibiotics ---------------
+    Txs = []
+    for a in ANTIBIOTICS:
+        Txs.append(A.TrajPlotInfo(outcome_name='To: Counting tx with ' + a,
+                                  title='Successful Tx-' + a,
+                                  x_multiplier=incd_multiplier))
+    Txs.append(A.TrajPlotInfo(outcome_name='To: Tx with M',
+                              title='Successful Tx-M',
+                              x_multiplier=incd_multiplier))
+    sim_outcomes.plot_multi_panel(n_rows=2, n_cols=3,
+                                  list_plot_info=Txs,
+                                  figure_size=(3*2.2, 2*2.2), show_subplot_labels=True,
+                                  file_name='figures/(valid-Tx) ' + filename)
 
 
 def plot_scenarios(scenario_names, fig_file_name):

@@ -237,13 +237,13 @@ def build_model(model):
             ifs_rapid_TET_outcome_after_susp_CIP[i] = ChanceNode(
                         name=name,
                         destination_compartments=[dest_pos_result, dest_neg_result],
-                        probability_params=params.posTETTest[i])
+                        probability_params=params.posTETTest[p])
 
     # result of rapid susceptibility test for TET
     # after negative result for rapid CIP test (reduced susceptibility to CIP)
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
-            name = 'Result of TET test after CIP test returned negative | ' + \
+            name = 'Result of TET test after CIP test returned negative | ' \
                    + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
 
@@ -259,13 +259,12 @@ def build_model(model):
             ifs_rapid_TET_outcome_after_reduced_susp_CIP[i] = ChanceNode(
                 name=name,
                 destination_compartments=[dest_pos_result, dest_neg_result],
-                probability_params=params.posTETTest[i])
+                probability_params=params.posTETTest[p])
 
     # result of rapid susceptibility test for CIP
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
-            name = 'CIP test | ' + \
-                   + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
+            name = 'Result of CIP test | ' + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
 
             # if CIP test result is positive (susceptibility to CIP)
@@ -276,12 +275,12 @@ def build_model(model):
             ifs_rapid_CIP_outcome[i] = ChanceNode(
                 name=name,
                 destination_compartments=[dest_pos_result, dest_neg_result],
-                probability_params=params.posCIPTest[i])
+                probability_params=params.posCIPTest[p])
 
     # if will receive a rapid test
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
-            name = 'If will receive a rapid test | ' + \
+            name = 'If will receive a rapid test | ' \
                    + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
 
@@ -314,7 +313,7 @@ def build_model(model):
             r.setup_history(collect_incd=True)
 
     for a in range(len(AB)):
-        counting_tx_success_by_ab.setup_history(collect_incd=True)
+        counting_tx_success_by_ab[a].setup_history(collect_incd=True)
     counting_success_CIP_TET_CFX.setup_history(collect_incd=True)
     counting_tx_M.setup_history(collect_incd=True)
 
