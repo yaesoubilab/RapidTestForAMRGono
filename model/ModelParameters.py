@@ -35,14 +35,14 @@ class Parameters(EpiParameters):
         self.prevI0 = Uniform(0.03, 0.06)
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
-        # percent of I0 by resistance profile
-        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.002, 0.007) # Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
-        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.448, 0.672) # Uniform(0.15, 0.21)
-        self.percIByRestProfile[RestProfile.CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
-        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.126, 0.189) # Uniform(0.0, 0.001)
-        self.percIByRestProfile[RestProfile.CIP_CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
-        self.percIByRestProfile[RestProfile.TET_CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
-        self.percIByRestProfile[RestProfile.CIP_TET_CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
+        # percent of I0 by resistance profile (comes from the Excel file ResistanceData.xlms)
+        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.002, 0.007)
+        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.448, 0.672)
+        self.percIByRestProfile[RestProfile.CFX.value] = Uniform(0, 0)
+        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.126, 0.189)
+        self.percIByRestProfile[RestProfile.CIP_CFX.value] = Uniform(0, 0)
+        self.percIByRestProfile[RestProfile.TET_CFX.value] = Uniform(0, 0)
+        self.percIByRestProfile[RestProfile.CIP_TET_CFX.value] = Uniform(0, 0)
 
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
