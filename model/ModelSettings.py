@@ -34,6 +34,9 @@ class GonoSettings(ModelSettings):
         self.sensTET = 0
         self.specTET = 1
 
+        # probability of receiving CIP if someone is susceptible to both CIP and TET
+        self.probTxCIPIfSuspToCIPAndTET = 0.5
+
         # calibration targets
         if self.calcLikelihood:
             self.simulationDuration = END_OF_CALIB

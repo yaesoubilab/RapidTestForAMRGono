@@ -3,7 +3,7 @@ from apace.CalibrationSupport import FeasibleConditions
 from apace.Control import InterventionAffectingEvents
 from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
-from definitions import RestProfile, AB, SympStat, REST_PROFILES, ANTIBIOTICS, TreatmentOutcome, \
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, TreatmentOutcome, \
     ConvertSympAndSuspAndAntiBio, get_profile_after_resit_or_failure
 from model.ModelParameters import Parameters
 
@@ -31,8 +31,11 @@ def build_model(model):
     Is = [None] * covert_symp_susp.length
     Fs = [None] * covert_symp_susp.length
     ifs_symp_from_S = [None] * len(RestProfile)
-    ifs_CIP_or_TET = [None] * covert_symp_susp.length  # if use CIP or TET when susceptible to both
+    # chance node to model if using CIP or TET when susceptible to both
+    ifs_CIP_or_TET = [None] * covert_symp_susp.length
+    # chance nodes to model treatment by resistance profile, symptom status, and antibiotic for tx
     ifs_tx = [None] * covert_symp_susp_antibio.length
+    # chance nodes to model if will seek retreatment by resistance profile and symptom status
     ifs_re_tx = [None] * covert_symp_susp.length
     ifs_symp_from_emerg_rest = [None] * len(RestProfile)
     ifs_resist_after_re_tx_cfx = [None] * covert_symp_susp.length
@@ -146,9 +149,9 @@ def build_model(model):
         for p in range(n_rest_profiles):
             for a in range(len(AB)):
 
-                name = 'Tx with {} | '.format(ANTIBIOTICS[a]) \
-                       + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
-                i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
+                name = 'Tx ' + covert_symp_susp_antibio.get_str_symp_rest_antibio(
+                    symp_state=s, rest_profile=p, antibiotic=a)
+                i = covert_symp_susp_antibio.get_row_index(symp_state=s, rest_profile=p, antibiotic=a)
 
                 # treatment outcomes
                 next_p, reason_for_failure = get_profile_after_resit_or_failure(
@@ -189,6 +192,24 @@ def build_model(model):
                     counting_symp.append(ifs_tx[i])
                 # by resistance profile
                 counting_rest_to[p].append(ifs_tx[i])
+
+    # TODO: debug this
+    # if susceptible to both CIP and TET
+    for s in range(n_symp_states):
+        for p in range(n_rest_profiles):
+            name = 'If Tx-CIP if test susceptible to CIP and TET | ' \
+                   + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
+            i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
+
+            dest_cip = ifs_tx[covert_symp_susp_antibio.get_row_index(
+                symp_state=s, rest_profile=p, antibiotic=AB.CIP.value)]
+            dest_tet = ifs_tx[covert_symp_susp_antibio.get_row_index(
+                symp_state=s, rest_profile=p, antibiotic=AB.TET.value)]
+
+            ifs_CIP_or_TET[i] = ChanceNode(
+                        name=name,
+                        destination_compartments=[dest_cip, dest_tet],
+                        probability_params=params.probTxCIPIfSuspToCIPAndTET)
 
     # ------------- compartment histories ---------------
     # set up prevalence, incidence, and cumulative incidence to collect

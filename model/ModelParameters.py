@@ -25,13 +25,15 @@ class Parameters(EpiParameters):
         self.sensTET = Constant(model_sets.sensTET)
         self.specTET = Constant(model_sets.specTET)
 
+        # probability of receiving CIP if someone is susceptible to both CIP and TET
+        self.probTxCIPIfSuspToCIPAndTET = Constant(model_sets.probTxCIPIfSuspToCIPAndTET)
+
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile
-        # TODO: update these numbers
         self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.002, 0.007) # Uniform(0.15, 0.21) # (190 + 77) / 1479 = 18.1%
         self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.448, 0.672) # Uniform(0.15, 0.21)
         self.percIByRestProfile[RestProfile.CFX.value] = Uniform(0, 0) # Uniform(0.0, 0.001)
@@ -134,6 +136,8 @@ class Parameters(EpiParameters):
              'Sensitivity for TET': self.sensTET,
              'Specificity for TET': self.specTET,
              '1-Specificity for TET': self.oneMinusSpecTET,
+             # ---
+             'Prob Tx-CIP if susceptible to CIP and TET': self.probTxCIPIfSuspToCIPAndTET,
              # ----
              'Pop size': self.popSize,
              'Annual survey size': self.annulSurveySize,
