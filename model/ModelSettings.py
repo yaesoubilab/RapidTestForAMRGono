@@ -34,6 +34,9 @@ class GonoSettings(ModelSettings):
         self.sensTET = 0
         self.specTET = 1
 
+        # probability of receiving a rapid test
+        self.probRapidTest = 1
+
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5
 

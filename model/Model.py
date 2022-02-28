@@ -31,11 +31,19 @@ def build_model(model):
     Is = [None] * covert_symp_susp.length
     Fs = [None] * covert_symp_susp.length
     ifs_symp_from_S = [None] * len(RestProfile)
-    # chance node to model if using CIP or TET when susceptible to both
+
+    # chance nodes to model rapid susceptibility test for CIP and TET
+    ifs_will_receive_rapid_test = [None] * covert_symp_susp.length
+    ifs_rapid_CIP_outcome = [None] * covert_symp_susp.length
+    ifs_rapid_TET_outcome_after_susp_CIP = [None] * covert_symp_susp.length
+    ifs_rapid_TET_outcome_after_reduced_susp_CIP = [None] * covert_symp_susp.length
+
+    # chance nodes to model if using CIP or TET when susceptible to both
     ifs_CIP_or_TET = [None] * covert_symp_susp.length
-    # chance nodes to model treatment by resistance profile, symptom status, and antibiotic for tx
-    ifs_tx = [None] * covert_symp_susp_antibio.length
-    # chance nodes to model if will seek retreatment by resistance profile and symptom status
+    # chance nodes to model treatment outcome by resistance profile, symptom status, and antibiotic for tx
+    ifs_tx_outcome = [None] * covert_symp_susp_antibio.length
+
+    # chance nodes to model if will seek re-treatment by resistance profile and symptom status
     ifs_re_tx = [None] * covert_symp_susp.length
     ifs_symp_from_emerg_rest = [None] * len(RestProfile)
     ifs_resist_after_re_tx_cfx = [None] * covert_symp_susp.length
@@ -169,7 +177,7 @@ def build_model(model):
                         dest_rest = ifs_symp_from_emerg_rest[next_p]
 
                     dest_succ = counting_success_CIP_TET_CFX
-                    ifs_tx[i] = ChanceNode(
+                    ifs_tx_outcome[i] = ChanceNode(
                         name=name,
                         destination_compartments=[dest_rest, dest_succ],
                         probability_params=params.probResEmerge[AB.CFX.value])
@@ -182,16 +190,10 @@ def build_model(model):
                         dest = Fs[i]
                     else:
                         dest = Is[next_i]
-                    ifs_tx[i] = ChanceNode(
+                    ifs_tx_outcome[i] = ChanceNode(
                         name=name,
                         destination_compartments=[dest, dest],
                         probability_params=Constant(1))
-
-                # if symptomatic
-                if s == SympStat.SYMP.value:
-                    counting_symp.append(ifs_tx[i])
-                # by resistance profile
-                counting_rest_to[p].append(ifs_tx[i])
 
     # TODO: debug this
     # if susceptible to both CIP and TET
@@ -201,15 +203,99 @@ def build_model(model):
                    + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
 
-            dest_cip = ifs_tx[covert_symp_susp_antibio.get_row_index(
+            dest_cip = ifs_tx_outcome[covert_symp_susp_antibio.get_row_index(
                 symp_state=s, rest_profile=p, antibiotic=AB.CIP.value)]
-            dest_tet = ifs_tx[covert_symp_susp_antibio.get_row_index(
+            dest_tet = ifs_tx_outcome[covert_symp_susp_antibio.get_row_index(
                 symp_state=s, rest_profile=p, antibiotic=AB.TET.value)]
 
             ifs_CIP_or_TET[i] = ChanceNode(
                         name=name,
                         destination_compartments=[dest_cip, dest_tet],
                         probability_params=params.probTxCIPIfSuspToCIPAndTET)
+
+    # result of rapid susceptibility test for TET
+    # after positive result for rapid CIP test (susceptibility to CIP)
+    for s in range(n_symp_states):
+        for p in range(n_rest_profiles):
+            name = 'TET test after CIP test returned positive | ' + \
+                   + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
+            i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
+
+            # if TET test result is positive (susceptibility to TET)
+            # hence the patient can be treated with either CIP or TET
+            dest_pos_result = ifs_CIP_or_TET[i]
+            # if TET test results is negative (reduced susceptibility to TET)
+            # hence the patient will be treated with CIP
+            dest_neg_result = ifs_tx_outcome[covert_symp_susp_antibio.get_row_index(
+                symp_state=s, rest_profile=p, antibiotic=AB.CIP.value)]
+
+            ifs_rapid_TET_outcome_after_susp_CIP[i] = ChanceNode(
+                        name=name,
+                        destination_compartments=[dest_pos_result, dest_neg_result],
+                        probability_params=params.posTETTest[i])
+
+    # result of rapid susceptibility test for TET
+    # after negative result for rapid CIP test (reduced susceptibility to CIP)
+    for s in range(n_symp_states):
+        for p in range(n_rest_profiles):
+            name = 'TET test after CIP test returned negative | ' + \
+                   + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
+            i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
+
+            # if TET test result is positive (susceptibility to TET)
+            # hence the patient will be treated with TET
+            dest_pos_result = ifs_tx_outcome[covert_symp_susp_antibio.get_row_index(
+                symp_state=s, rest_profile=p, antibiotic=AB.TET.value)]
+            # if TET test results is negative (reduced susceptibility to TET)
+            # hence the patient can be treated with either CFX
+            dest_neg_result = ifs_tx_outcome[covert_symp_susp_antibio.get_row_index(
+                symp_state=s, rest_profile=p, antibiotic=AB.CFX.value)]
+
+            ifs_rapid_TET_outcome_after_reduced_susp_CIP[i] = ChanceNode(
+                name=name,
+                destination_compartments=[dest_pos_result, dest_neg_result],
+                probability_params=params.posTETTest[i])
+
+    # result of rapid susceptibility test for CIP
+    for s in range(n_symp_states):
+        for p in range(n_rest_profiles):
+            name = 'CIP test | ' + \
+                   + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
+            i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
+
+            # if CIP test result is positive (susceptibility to CIP)
+            dest_pos_result = ifs_rapid_TET_outcome_after_susp_CIP[i]
+            # if CIP test results is negative (reduced susceptibility to CIP)
+            dest_neg_result = ifs_rapid_TET_outcome_after_reduced_susp_CIP[i]
+
+            ifs_rapid_CIP_outcome[i] = ChanceNode(
+                name=name,
+                destination_compartments=[dest_pos_result, dest_neg_result],
+                probability_params=params.posCIPTest[i])
+
+    # if will receive a rapid test
+    for s in range(n_symp_states):
+        for p in range(n_rest_profiles):
+            name = 'If will receive a rapid test | ' + \
+                   + covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
+            i = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
+
+            # if will receive a rapid test
+            dest_yes = ifs_rapid_CIP_outcome[i]
+            # if will not receive a rapid test, then will be treated with CFX
+            dest_no = ifs_tx_outcome[covert_symp_susp_antibio.get_row_index(
+                symp_state=s, rest_profile=p, antibiotic=AB.CFX.value)]
+
+            ifs_will_receive_rapid_test[i] = ChanceNode(
+                name=name,
+                destination_compartments=[dest_yes, dest_no],
+                probability_params=params.probRapidTest)
+
+            # if symptomatic
+            if s == SympStat.SYMP.value:
+                counting_symp.append(ifs_tx_outcome[i])
+            # by resistance profile
+            counting_rest_to[p].append(ifs_tx_outcome[i])
 
     # ------------- compartment histories ---------------
     # set up prevalence, incidence, and cumulative incidence to collect
@@ -219,7 +305,7 @@ def build_model(model):
             i.setup_history(collect_prev=True)
         for f in Fs:
             f.setup_history(collect_prev=True)
-        for r in ifs_tx:
+        for r in ifs_tx_outcome:
             r.setup_history(collect_incd=True)
 
     counting_success_CIP_TET_CFX.setup_history(collect_incd=True)
@@ -240,7 +326,7 @@ def build_model(model):
 
     # rate of new gonorrhea cases
     n_cases = SumIncidence(name='New cases',
-                           compartments=ifs_tx)
+                           compartments=ifs_will_receive_rapid_test)
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
                                 numerator_sum_time_series=n_cases,
                                 denominator_sum_time_series=pop_size,
@@ -344,7 +430,7 @@ def build_model(model):
             Is[i].add_event(EpiIndepEvent(
                 name='Screening | ' + compart_name,
                 rate_param=params.rateScreened,
-                destination=ifs_tx[i],
+                destination=ifs_will_receive_rapid_test[i],
                 interv_to_activate=first_line_tx))
             # Is[i].add_event(EpiIndepEvent(
             #     name='Screening then M| ' + compart_name,
@@ -356,7 +442,7 @@ def build_model(model):
                 Is[i].add_event(EpiIndepEvent(
                     name='Seeking treatment | ' + compart_name,
                     rate_param=params.rateTreatment,
-                    destination=ifs_tx[i],
+                    destination=ifs_will_receive_rapid_test[i],
                     interv_to_activate=first_line_tx))
                 # Is[i].add_event(EpiIndepEvent(
                 #     name='Seeking treatment then M | ' + compart_name,
@@ -392,7 +478,10 @@ def build_model(model):
 
     # ------------- populate the model ---------------
     # populate the model
-    chance_nodes = ifs_symp_from_S + ifs_re_tx + ifs_symp_from_emerg_rest + ifs_tx \
+    chance_nodes = ifs_will_receive_rapid_test + ifs_rapid_CIP_outcome \
+                   + ifs_rapid_TET_outcome_after_susp_CIP + ifs_rapid_TET_outcome_after_reduced_susp_CIP \
+                   + ifs_CIP_or_TET + ifs_tx_outcome \
+                   + ifs_symp_from_S + ifs_re_tx + ifs_symp_from_emerg_rest \
                    + [counting_success_CIP_TET_CFX, counting_tx_M]
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,

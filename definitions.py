@@ -51,8 +51,8 @@ class TreatmentOutcome(Enum):
 
 def get_profile_after_resit_or_failure(rest_profile, antibiotic):
     """
-    :param rest_profile:
-    :param antibiotic:
+    :param rest_profile: (int) index of current resistance profile
+    :param antibiotic: (int) index of antibiotic to use
     :return: (resistance profile after treatment, reason for treatment failure)
     """
 

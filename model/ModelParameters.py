@@ -1,4 +1,4 @@
-from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, \
+from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
     TenToPower, OneMinusSum
 from apace.Inputs import EpiParameters
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio
@@ -25,6 +25,8 @@ class Parameters(EpiParameters):
         self.sensTET = Constant(model_sets.sensTET)
         self.specTET = Constant(model_sets.specTET)
 
+        # if will receive a rapid test
+        self.probRapidTest = Constant(model_sets.probRapidTest)
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = Constant(model_sets.probTxCIPIfSuspToCIPAndTET)
 
@@ -66,8 +68,9 @@ class Parameters(EpiParameters):
         self.tToRetreatment = Uniform(1 * one_over_364, 14 * one_over_364)
 
         # calculate dependent parameters
-        self.oneMinusSpecCIP = None
-        self.oneMinusSpecTET = None
+        self.posCIPTest = [None] * len(RestProfile)
+        self.posTETTest = [None] * len(RestProfile)
+
         self.prevS = None
         self.percIRes = None
         self.percISus = None
@@ -87,8 +90,19 @@ class Parameters(EpiParameters):
 
     def calculate_dependent_params(self, model_sets):
 
-        self.oneMinusSpecCIP = OneMinus(par=self.specCIP)  # 1 - specificity
-        self.oneMinusSpecTET = OneMinus(par=self.specCIP)  # 1 - specificity
+        # prob of having a positive result for rapid CIP susceptibility test
+        for i, p in enumerate(RestProfile):
+            if p in (RestProfile.SUS, RestProfile.TET, RestProfile.CFX, RestProfile.TET_CFX):
+                self.posCIPTest[i] = Equal(par=self.sensCIP)
+            else:
+                self.posCIPTest[i] = OneMinus(par=self.specCIP)
+
+        # prob of having a positive result for rapid TET susceptibility test
+        for i, p in enumerate(RestProfile):
+            if p in (RestProfile.SUS, RestProfile.CIP, RestProfile.CFX, RestProfile.CIP_CFX):
+                self.posTETTest[i] = Equal(par=self.sensTET)
+            else:
+                self.posTETTest[i] = OneMinus(par=self.specTET)
 
         self.surveySize = Product([self.annulSurveySize, Constant(model_sets.observationPeriod)])
         self.prevS = OneMinus(par=self.prevI0)
@@ -132,11 +146,12 @@ class Parameters(EpiParameters):
         self.dictOfParams = dict(
             {'Sensitivity for CIP': self.sensCIP,
              'Specificity for CIP': self.specCIP,
-             '1-Specificity for CIP': self.oneMinusSpecCIP,
              'Sensitivity for TET': self.sensTET,
              'Specificity for TET': self.specTET,
-             '1-Specificity for TET': self.oneMinusSpecTET,
+             'prob CIP test positive': self.posCIPTest,
+             'prob TET test positive': self.posTETTest,
              # ---
+             'Prob of receiving a rapid test': self.probRapidTest,
              'Prob Tx-CIP if susceptible to CIP and TET': self.probTxCIPIfSuspToCIPAndTET,
              # ----
              'Pop size': self.popSize,
