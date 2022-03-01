@@ -22,6 +22,7 @@ class GonoSettings(ModelSettings):
         self.observationPeriod = 1
         self.storeParameterValues = True
         self.ifCollectTrajsOfCompartments = collect_traj_of_comparts
+        self.exportCalibrationTrajs = False  # if export calibration trajectories
 
         # calibration settings
         self.calcLikelihood = if_calibrating
