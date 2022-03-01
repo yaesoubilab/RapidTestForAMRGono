@@ -36,7 +36,7 @@ class GonoSettings(ModelSettings):
         self.specTET = 1
 
         # probability of receiving a rapid test
-        self.probRapidTest = 0
+        self.probRapidTest = 1
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5
@@ -87,9 +87,14 @@ class GonoSettings(ModelSettings):
                                                           u=PercSymptomatic[j][3],
                                                           multiplier=0.01))
 
-    def update_settings(self, sens_CIP, spec_CIP, sens_TET, spec_TET):
+    def update_settings(self, sens, spec):
+        """
+        updates certain model parameters and settings
+        :param sens: (float) sensitivity of the rapid test for CIP and TET susceptibility
+        :param spec: (float) specificity of the rapid test for CIP and TET susceptibility
+        """
 
-        self.sensCIP = sens_CIP
-        self.specCIP = spec_CIP
-        self.sensTET = sens_TET
-        self.specTET = spec_TET
+        self.sensCIP = sens
+        self.specCIP = spec
+        self.sensTET = sens
+        self.specTET = spec

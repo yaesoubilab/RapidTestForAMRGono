@@ -133,7 +133,7 @@ def plot_scenarios(scenario_names, fig_file_name):
                                               outcome_name='Rate of gonorrhea cases',
                                               deci=3)
         life = scenarios_df.get_mean_interval(scenario_name=name,
-                                              outcome_name='Proportion of cases treated with PEN or CFX',
+                                              outcome_name='Proportion of cases treated with CIP, TET, or CFX',
                                               deci=3)
         print('{}: {} | {}'.format(name, rate, life))
 
@@ -159,8 +159,8 @@ def plot_scenarios(scenario_names, fig_file_name):
 
     list_of_scenario_sets = [scenarios]
     V.plot_sets_of_scenarios(list_of_scenario_sets=list_of_scenario_sets,
-                             name_of_base_scenario='(p=0.00, q=1.00)',
-                             effect_outcome='Proportion of cases treated with PEN or CFX',
+                             name_of_base_scenario='(p=0.50, q=1.00)',
+                             effect_outcome='Proportion of cases treated with CIP, TET, or CFX',
                              cost_outcome='Rate of gonorrhea cases',
                              labels=('Change in annual proportion of cases\ntreated with PEN or CFX',
                                      'Change in annual rate of gonorrhea\n(per 100,000 population)'),

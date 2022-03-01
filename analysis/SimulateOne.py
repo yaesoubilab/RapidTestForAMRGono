@@ -5,7 +5,7 @@ from model.Plots import plot
 
 # get model settings
 sets = GonoSettings()
-sets.update_settings(sens_CIP=0, spec_CIP=1, sens_TET=0, spec_TET=1)  # base: (0, 1)
+sets.update_settings(sens=0, spec=1, sens_TET=0, spec_TET=1)  # base: (0, 1)
 
 # make an (empty) epidemic model
 model = EpiModel(id=1, settings=sets)

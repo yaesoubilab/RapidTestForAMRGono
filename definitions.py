@@ -9,7 +9,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SIM_DURATION = 25
 END_OF_WARM_UP = 1 # 6
 END_OF_CALIB = 6
-N_BREAKS_SENSITIVITY = 11
+N_BREAKS_SENSITIVITY = 6
 N_BREAKS_SPECIFICITY = 1
 
 SYMP_STATES = ['Symp', 'Asym']
@@ -164,11 +164,11 @@ def get_list_sensitivity_specificity(n_breaks_sensitivity, n_breaks_specificity)
     if n_breaks_sensitivity == 1:
         values_sen = [0]
     else:
-        values_sen = np.linspace(0, 1, n_breaks_sensitivity)
+        values_sen = np.linspace(0.5, 1, n_breaks_sensitivity)
     if n_breaks_specificity == 1:
         values_spe = [1]
     else:
-        values_spe = np.linspace(0, 1, n_breaks_specificity)
+        values_spe = np.linspace(0.5, 1, n_breaks_specificity)
 
     for sens in reversed(values_sen):
         for spec in values_spe:
