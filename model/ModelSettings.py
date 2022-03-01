@@ -6,7 +6,7 @@ from model.Data import Prevalence, GonorrheaRate, PercSymptomatic
 class GonoSettings(ModelSettings):
     """ settings of the gonorrhea model """
 
-    def __init__(self, if_calibrating=False, collect_traj_of_comparts = True):
+    def __init__(self, if_calibrating=False, collect_traj_of_comparts=True):
         """
         :param if_calibrating: (bool) if calibrating the model
         :param collect_traj_of_comparts: (bool) if collect the trajectories of all compartments
@@ -36,7 +36,7 @@ class GonoSettings(ModelSettings):
         self.specTET = 1
 
         # probability of receiving a rapid test
-        self.probRapidTest = 1
+        self.probRapidTest = 0 if if_calibrating else 1
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5

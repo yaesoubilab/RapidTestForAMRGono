@@ -5,14 +5,14 @@ from model.Support import estimate_parameters, simulate_calibrated_model
 
 
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 160    # total number of trajectories to simulate as part of calibration
-N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16   # number of trajectories with the highest likelihood to keep
-N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16  # number of parameter values to resample for parameter estimation
+N_OF_CALIBRATION_ITERATIONS = 160*20    # total number of trajectories to simulate as part of calibration
+N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*4   # number of trajectories with the highest likelihood to keep
+N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*4  # number of parameter values to resample for parameter estimation
 
 if __name__ == "__main__":
 
     # get model settings
-    sets = GonoSettings(if_calibrating=True)
+    sets = GonoSettings(if_calibrating=True, collect_traj_of_comparts=False)
 
     # --------- calibration ----------
     # calibrate the model
