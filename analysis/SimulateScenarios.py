@@ -1,13 +1,13 @@
 import apace.Calibration as calib
 import model.Plots as P
 from apace.ScenarioSimulation import ScenarioSimulator
-from definitions import get_scenario_names, get_list_sensitivity_specificity, \
+from definitions import get_scenario_names, get_list_sens_spec_coverage, \
     N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-N_OF_SIMS = 64
-RUN_IN_PARALLEL = True
+N_OF_SIMS = 4
+RUN_IN_PARALLEL = False
 
 
 def simulate_scenarios():
@@ -18,15 +18,19 @@ def simulate_scenarios():
 
     # names of the scenarios to evaluate
     scenario_names = get_scenario_names(n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
-                                        n_breaks_specificity=N_BREAKS_SPECIFICITY)
+                                        n_breaks_specificity=N_BREAKS_SPECIFICITY,
+                                        n_breaks_rapid_test_coverage=1)
 
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
-    var_names = ['sensitivity', 'specificity']
+    var_names = ['sensitivity', 'specificity', 'rapid test coverage']
 
     # variable values
     # rows correspond to scenario names defined above, and columns correspond to variable names defined above
-    scenario_definitions = get_list_sensitivity_specificity(n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
-                                                            n_breaks_specificity=N_BREAKS_SPECIFICITY)
+    # [0.0, 1.0, 0.0]  # status quo (no rapid test)
+    scenario_definitions = [[0.0, 1.0, 0.0]] + get_list_sens_spec_coverage(
+        n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
+        n_breaks_specificity=N_BREAKS_SPECIFICITY,
+        n_breaks_rapid_test_coverage=1)
 
     # get the seeds and probability weights
     seeds, lns, weights = calib.get_seeds_lnl_probs('outputs/calibration/calibration_summary.csv')

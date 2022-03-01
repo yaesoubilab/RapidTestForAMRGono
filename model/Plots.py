@@ -127,14 +127,16 @@ def plot_scenarios(scenario_names, fig_file_name):
     scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/simulated_scenarios.csv')
 
     # get an specific outcome from an specific scenario
-    print('\nScenario name: ', 'Rate of gonorrhea cases | Proportion of cases treatable with CFX' )
+    print('\nScenario name: ', 'Rate of gonorrhea cases | Proportion of cases treatable with CFX')
     for name in scenario_names:
-        rate = scenarios_df.get_mean_interval(scenario_name=name,
-                                              outcome_name='Rate of gonorrhea cases',
-                                              deci=3)
-        life = scenarios_df.get_mean_interval(scenario_name=name,
-                                              outcome_name='Proportion of cases treated with CIP, TET, or CFX',
-                                              deci=3)
+        rate = scenarios_df.get_mean_interval(
+            scenario_name=name,
+            outcome_name='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
+            deci=3)
+        life = scenarios_df.get_mean_interval(
+            scenario_name=name,
+            outcome_name='Proportion of cases treated with CIP, TET, or CFX (average incidence after epidemic warm-up)',
+            deci=3)
         print('{}: {} | {}'.format(name, rate, life))
 
     # plot CEA
@@ -158,15 +160,16 @@ def plot_scenarios(scenario_names, fig_file_name):
         labels_shift_y=0.00)
 
     list_of_scenario_sets = [scenarios]
-    V.plot_sets_of_scenarios(list_of_scenario_sets=list_of_scenario_sets,
-                             name_of_base_scenario='(p=0.50, q=1.00)',
-                             effect_outcome='Proportion of cases treated with CIP, TET, or CFX',
-                             cost_outcome='Rate of gonorrhea cases',
-                             labels=('Change in annual proportion of cases\ntreated with PEN or CFX',
-                                     'Change in annual rate of gonorrhea\n(per 100,000 population)'),
-                             health_measure='u',
-                             x_range=None, y_range=None, cost_multiplier=100000,
-                             file_name=fig_file_name,
-                             fig_size=(4, 4))
+    V.plot_sets_of_scenarios(
+        list_of_scenario_sets=list_of_scenario_sets,
+        name_of_base_scenario='Status quo (no rapid test)',
+        effect_outcome='Proportion of cases treated with CIP, TET, or CFX (average incidence after epidemic warm-up)',
+        cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
+        labels=('Change in annual proportion of cases\n sucessfully treated with CIP, TET, or CFX',
+                'Change in annual rate of gonorrhea\n(per 100,000 population)'),
+        health_measure='u',
+        x_range=None, y_range=None, cost_multiplier=100000,
+        file_name=fig_file_name,
+        fig_size=(4, 4))
 
 

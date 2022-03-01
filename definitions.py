@@ -9,7 +9,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SIM_DURATION = 25
 END_OF_WARM_UP = 1 # 6
 END_OF_CALIB = 6
-N_BREAKS_SENSITIVITY = 6
+N_BREAKS_SENSITIVITY = 2 # 6
 N_BREAKS_SPECIFICITY = 1
 
 SYMP_STATES = ['Symp', 'Asym']
@@ -158,9 +158,16 @@ def get_survey_size(mean, l, u, multiplier=1):
     return var * pow(z/hw, 2)
 
 
-def get_list_sensitivity_specificity(n_breaks_sensitivity, n_breaks_specificity):
+def get_list_sens_spec_coverage(n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
+    """
+    :param n_breaks_sensitivity: (int) number of break points for sensitivity values
+    :param n_breaks_specificity: (int) number of break points for specificity values
+    :param n_breaks_rapid_test_coverage: (int) number of break points for coverage values
+    :return: (list) of [sensitivity, specificity, coverage of rapid test]
+    """
 
     values = []
+
     if n_breaks_sensitivity == 1:
         values_sen = [0]
     else:
@@ -169,20 +176,26 @@ def get_list_sensitivity_specificity(n_breaks_sensitivity, n_breaks_specificity)
         values_spe = [1]
     else:
         values_spe = np.linspace(0.5, 1, n_breaks_specificity)
+    if n_breaks_rapid_test_coverage == 1:
+        values_coverage = [1]
+    else:
+        values_coverage = np.linspace(0, 1, n_breaks_specificity)
 
     for sens in reversed(values_sen):
         for spec in values_spe:
-            values.append([sens, spec])
+            for cov in values_coverage:
+                values.append([sens, spec, cov])
 
     return values
 
 
-def get_scenario_names(n_breaks_sensitivity, n_breaks_specificity):
+def get_scenario_names(n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
 
-    scenario_names = []
-    values_p_q = get_list_sensitivity_specificity(n_breaks_sensitivity=n_breaks_sensitivity,
-                                                  n_breaks_specificity=n_breaks_specificity)
-    for v in values_p_q:
-        scenario_names.append('(p={:.2f}, q={:.2f})'.format(v[0], v[1]))
+    scenario_names = ['Status quo (no rapid test)']
+    values_p_q_c = get_list_sens_spec_coverage(n_breaks_sensitivity=n_breaks_sensitivity,
+                                               n_breaks_specificity=n_breaks_specificity,
+                                               n_breaks_rapid_test_coverage=n_breaks_rapid_test_coverage)
+    for v in values_p_q_c:
+        scenario_names.append('(p={:.2f}, q={:.2f}, c={:.2f})'.format(v[0], v[1], v[2]))
 
     return scenario_names
