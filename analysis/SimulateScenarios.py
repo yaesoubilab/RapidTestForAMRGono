@@ -6,8 +6,8 @@ from definitions import get_scenario_names, get_list_sens_spec_coverage, \
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-N_OF_SIMS = 4
-RUN_IN_PARALLEL = False
+N_OF_SIMS = 64*2
+RUN_IN_PARALLEL = True
 
 
 def simulate_scenarios():

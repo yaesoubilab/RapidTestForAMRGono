@@ -132,11 +132,11 @@ def plot_scenarios(scenario_names, fig_file_name):
         rate = scenarios_df.get_mean_interval(
             scenario_name=name,
             outcome_name='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
-            deci=3)
+            interval_type='c', deci=3)
         life = scenarios_df.get_mean_interval(
             scenario_name=name,
             outcome_name='Proportion of cases treated with CIP, TET, or CFX (average incidence after epidemic warm-up)',
-            deci=3)
+            interval_type='c', deci=3)
         print('{}: {} | {}'.format(name, rate, life))
 
     # plot CEA

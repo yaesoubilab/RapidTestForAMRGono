@@ -9,7 +9,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SIM_DURATION = 25
 END_OF_WARM_UP = 1 # 6
 END_OF_CALIB = 6
-N_BREAKS_SENSITIVITY = 2 # 6
+N_BREAKS_SENSITIVITY = 6 # 6
 N_BREAKS_SPECIFICITY = 1
 
 SYMP_STATES = ['Symp', 'Asym']
