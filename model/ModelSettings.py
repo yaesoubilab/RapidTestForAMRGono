@@ -88,14 +88,16 @@ class GonoSettings(ModelSettings):
                                                           u=PercSymptomatic[j][3],
                                                           multiplier=0.01))
 
-    def update_settings(self, sens, spec):
+    def update_settings(self, sens, spec, prob_rapid_test=0):
         """
         updates certain model parameters and settings
         :param sens: (float) sensitivity of the rapid test for CIP and TET susceptibility
         :param spec: (float) specificity of the rapid test for CIP and TET susceptibility
+        :param prob_rapid_test: (float) probability of receiving a rapid test
         """
 
         self.sensCIP = sens
         self.specCIP = spec
         self.sensTET = sens
         self.specTET = spec
+        self.probRapidTest = prob_rapid_test

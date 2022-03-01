@@ -7,7 +7,8 @@ from model.Plots import plot
 
 
 def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_weights=True,
-                                if_run_in_parallel=True, figure_filename='traj.png'):
+                                if_run_in_parallel=True, figure_filename='traj.png',
+                                settings=None):
     """
     :param n: (int) number of trajectories to simulate
     :param seeds: (list) of seeds
@@ -15,11 +16,12 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
     :param sample_seeds_by_weights: (bool) set to False to only use seeds with positive weights
     :param if_run_in_parallel: (bool if run in parallel
     :param figure_filename: (string) filename to save the figures as
+    :param settings: (GonoSettings) model settings
     :return:
     """
 
     # get model settings
-    sets = GonoSettings()
+    sets = GonoSettings() if settings is None else settings
 
     # build multiple epidemics
     multi_model = MultiEpidemics(model_settings=sets)
@@ -45,11 +47,13 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
          filename=figure_filename)
 
 
-def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True):
+def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True, if_run_in_parallel=True, settings=None):
     """
     simulates the calibrated model
     :param n_of_sims: (int) number of trajectories to simulate
     :param sample_seeds_by_weights: (bool)
+    :param if_run_in_parallel: (bool if run in parallel
+    :param settings: (GonoSettings) model settings
     """
 
     # ------- simulate the calibrated model ----------
@@ -61,7 +65,9 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True):
                                 seeds=seeds,
                                 weights=weights,
                                 sample_seeds_by_weights=sample_seeds_by_weights,
-                                figure_filename='Calibrated.png')
+                                if_run_in_parallel=if_run_in_parallel,
+                                figure_filename='Calibrated.png',
+                                settings=settings)
 
 
 def estimate_parameters(n_of_resamples):

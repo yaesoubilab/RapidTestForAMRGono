@@ -5,7 +5,7 @@ from model.Plots import plot
 
 # get model settings
 sets = GonoSettings()
-sets.update_settings(sens=0, spec=1, sens_TET=0, spec_TET=1)  # base: (0, 1)
+sets.update_settings(sens=0, spec=1, prob_rapid_test=0)  # base: (0, 1)
 
 # make an (empty) epidemic model
 model = EpiModel(id=1, settings=sets)
@@ -13,7 +13,7 @@ model = EpiModel(id=1, settings=sets)
 build_model(model)
 
 # simulate
-model.simulate(seed=2058449985)
+model.simulate(seed=1302421112)
 # print trajectories
 model.export_trajectories(delete_existing_files=True)
 
