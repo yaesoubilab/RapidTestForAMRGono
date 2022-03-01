@@ -9,8 +9,8 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SIM_DURATION = 25
 END_OF_WARM_UP = 1 # 6
 END_OF_CALIB = 6
-N_BREAKS_SENSITIVITY = 6 # 6
-N_BREAKS_SPECIFICITY = 1
+N_BREAKS_SENSITIVITY = 3 # 6
+N_BREAKS_SPECIFICITY = 2
 
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after

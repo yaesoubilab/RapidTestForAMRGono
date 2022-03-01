@@ -146,8 +146,8 @@ def plot_scenarios(scenario_names, fig_file_name):
         csv_file_name='outputs/scenarios/simulated_scenarios.csv')
 
     # sets of scenarios to display on the cost-effectiveness plain
-    scenarios = S.SetOfScenarios(
-        name='Changing specificity',
+    scenarios1 = S.SetOfScenarios(
+        name='Specificity = 1.0',
         scenario_df=df_scenarios,
         color='blue',
         marker='o',
@@ -158,17 +158,30 @@ def plot_scenarios(scenario_names, fig_file_name):
         if_show_fitted_curve=True,
         labels_shift_x=0.03,
         labels_shift_y=0.00)
+    scenarios2 = S.SetOfScenarios(
+        name='Specificity = 0.5',
+        scenario_df=df_scenarios,
+        color='red',
+        marker='o',
+        conditions_on_variables=[
+            S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
+            S.ConditionOnVariable(var_name='specificity', values=[0.5])],
+        if_find_frontier=False,
+        if_show_fitted_curve=True,
+        labels_shift_x=0.03,
+        labels_shift_y=0.00)
 
-    list_of_scenario_sets = [scenarios]
+    list_of_scenario_sets = [scenarios1, scenarios2]
     V.plot_sets_of_scenarios(
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
+        list_if_remove_base_scenario=[False, False],
         effect_outcome='Proportion of cases treated with CIP, TET, or CFX (average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
-        labels=('Change in annual proportion of cases\n sucessfully treated with CIP, TET, or CFX',
+        labels=('Change in annual proportion of cases\n successfully treated with CIP, TET, or CFX',
                 'Change in annual rate of gonorrhea\n(per 100,000 population)'),
         health_measure='u',
-        x_range=None, y_range=None, cost_multiplier=100000,
+        x_range=None, y_range=[-5000, 25000], cost_multiplier=100000,
         file_name=fig_file_name,
         fig_size=(4, 4))
 
