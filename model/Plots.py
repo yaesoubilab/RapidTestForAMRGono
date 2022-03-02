@@ -33,6 +33,10 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                        title='Susceptible',
                        x_multiplier=prev_multiplier,
                        y_range=(0, 1500000))
+    pop = A.TrajPlotInfo(outcome_name='Population size',
+                         title='Population',
+                         x_multiplier=prev_multiplier,
+                         y_range=(0.95*pow(10, 6), 1.05*pow(10, 6)))
 
     Is = []
     Fs = []
@@ -61,6 +65,11 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                   list_plot_info=Fs,
                                   figure_size=(7, 7),
                                   file_name='figures/(valid-Fs) ' + filename)
+
+    sim_outcomes.plot_multi_panel(n_rows=1, n_cols=2,
+                                  list_plot_info=[S, pop],
+                                  figure_size=(2*2.2, 1*2.2),
+                                  file_name='figures/(valid-S) ' + filename)
 
     # ------------- Calibration Figure ---------------
     prev = A.TrajPlotInfo(outcome_name='Prevalence',

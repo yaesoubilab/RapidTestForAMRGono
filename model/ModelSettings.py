@@ -96,8 +96,8 @@ class GonoSettings(ModelSettings):
         :param prob_rapid_test: (float) probability of receiving a rapid test
         """
 
-        self.sensCIP = sens
-        self.specCIP = spec
-        self.sensTET = sens
-        self.specTET = spec
+        self.sensCIP = 0
+        self.specCIP = 0
+        self.sensTET = 0
+        self.specTET = 1
         self.probRapidTest = prob_rapid_test

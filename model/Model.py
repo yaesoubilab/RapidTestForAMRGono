@@ -192,10 +192,12 @@ def build_model(model):
                     # destinations
                     # will always seek treatment if symptomatic after treatment failure
                     # will never seek treatment if asymptomatic after treatment failure
+                    j = covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)
                     if s == SympStat.SYMP.value:
-                        dest = Fs[covert_symp_susp.get_row_index(symp_state=s, rest_profile=p)]
+                        dest = ifs_re_tx[j]
                     else:
-                        dest = Is[next_i]
+                        dest = Is[j]
+
                     ifs_tx_outcome[i] = ChanceNode(
                         name=name,
                         destination_compartments=[dest, dest],
@@ -309,7 +311,22 @@ def build_model(model):
             i.setup_history(collect_prev=True)
         for f in Fs:
             f.setup_history(collect_prev=True)
+
+        for r in ifs_will_receive_rapid_test:
+            r.setup_history(collect_incd=True)
+        for r in ifs_rapid_CIP_outcome:
+            r.setup_history(collect_incd=True)
+        for r in ifs_rapid_TET_outcome_after_susp_CIP:
+            r.setup_history(collect_incd=True)
+        for r in ifs_rapid_TET_outcome_after_reduced_susp_CIP:
+            r.setup_history(collect_incd=True)
+        for r in ifs_CIP_or_TET:
+            r.setup_history(collect_incd=True)
         for r in ifs_tx_outcome:
+            r.setup_history(collect_incd=True)
+        for r in ifs_symp_from_emerg_rest:
+            r.setup_history(collect_incd=True)
+        for r in ifs_re_tx:
             r.setup_history(collect_incd=True)
 
     for a in range(len(AB)):
