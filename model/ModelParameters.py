@@ -1,7 +1,7 @@
 from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
     TenToPower, OneMinusSum
 from apace.Inputs import EpiParameters
-from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio
 
 
 class Parameters(EpiParameters):
@@ -129,8 +129,8 @@ class Parameters(EpiParameters):
         self.sizeI = Product([self.popSize, self.prevI0])
         self.sizeIBySympAndRest = [None] * len(SympStat) * len(RestProfile)
 
-        indexer = ConvertSympAndSuspAndAntiBio(n_symp_stats=len(SympStat),
-                                               n_rest_profiles=len(RestProfile))
+        indexer = ConvertSympAndResitAndAntiBio(n_symp_stats=len(SympStat),
+                                                n_rest_profiles=len(RestProfile))
         for s in range(len(SympStat)):
             for p in range(len(RestProfile)):
                 i = indexer.get_row_index(symp_state=s, rest_profile=p)

@@ -101,7 +101,7 @@ def get_profile_after_resit_or_failure(rest_profile, antibiotic):
     return next_p.value, reason_for_failure
 
 
-class ConvertSympAndSuspAndAntiBio:
+class ConvertSympAndResitAndAntiBio:
     # to convert (symptom state, resistance profile, antibiotic) to an index and vice versa
 
     def __init__(self, n_symp_stats, n_rest_profiles, n_antibiotics=None):

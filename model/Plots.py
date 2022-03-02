@@ -1,7 +1,7 @@
 import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
 import apace.analysis.VisualizeScenarios as V
-from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndSuspAndAntiBio, SIM_DURATION, ANTIBIOTICS
+from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS
 from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25
@@ -40,7 +40,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
 
     Is = []
     Fs = []
-    covert_symp_susp = ConvertSympAndSuspAndAntiBio(
+    covert_symp_susp = ConvertSympAndResitAndAntiBio(
         n_symp_stats=len(SympStat), n_rest_profiles=len(RestProfile))
     i = 0
     for s in range(len(SympStat)):
