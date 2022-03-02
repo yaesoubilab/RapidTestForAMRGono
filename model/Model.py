@@ -149,7 +149,7 @@ def build_model(model):
 
     # chance nodes for if symptomatic after emergence of resistance after 1st line treatment
     for p in range(n_rest_profiles):
-        name = 'If symp after moving to {} due to rest dev'.format(
+        name = 'If symp after developing resistance to {}'.format(
             covert_symp_susp.get_str_susp(susp_profile=p))
 
         dest_symp = ifs_re_tx[covert_symp_susp.get_row_index(symp_state=SympStat.SYMP.value, rest_profile=p)]
