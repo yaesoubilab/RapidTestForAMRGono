@@ -36,10 +36,10 @@ class Parameters(EpiParameters):
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile (comes from the Excel file ResistanceData.xlms)
-        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.002, 0.007)
-        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.448, 0.672)
+        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.25, 0.5) # Uniform(0.002, 0.007)
+        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0, 0) # Uniform(0.448, 0.672)
         self.percIByRestProfile[RestProfile.CFX.value] = Uniform(0, 0)
-        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.126, 0.189)
+        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0, 0) # Uniform(0.126, 0.189)
         self.percIByRestProfile[RestProfile.CIP_CFX.value] = Uniform(0, 0)
         self.percIByRestProfile[RestProfile.TET_CFX.value] = Uniform(0, 0)
         self.percIByRestProfile[RestProfile.CIP_TET_CFX.value] = Uniform(0, 0)
@@ -58,8 +58,8 @@ class Parameters(EpiParameters):
 
         # exponent of the probability for the emergence of resistance for a drug
         self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
-        self.exponProbRes[AB.TET.value] = Uniform(-5, -3)
-        self.exponProbRes[AB.CFX.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.TET.value] = Uniform(-100, -100) # Uniform(-5, -3)
+        self.exponProbRes[AB.CFX.value] = Uniform(-100, -100) # Uniform(-5, -3)
 
         self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
         self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)
