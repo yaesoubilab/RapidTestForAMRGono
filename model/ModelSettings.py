@@ -98,6 +98,6 @@ class GonoSettings(ModelSettings):
 
         self.sensCIP = sens
         self.specCIP = spec
-        self.sensTET = sens
-        self.specTET = spec
+        self.sensTET = 0*sens
+        self.specTET = 1+0*spec
         self.probRapidTest = prob_rapid_test
