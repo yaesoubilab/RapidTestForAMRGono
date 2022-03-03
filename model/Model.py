@@ -107,16 +107,17 @@ def build_model(model):
     # if resistance emerges after re-tx with CFX
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
+
             # profile after the rise of resistance to CFX
             next_p, reason_for_failure = get_profile_after_resit_or_failure(
                 rest_profile=p, antibiotic=AB.CFX)
 
+            # name of this compartment
+            str_symp_susp = covert_symp_resist.get_str_symp_susp(symp_state=s, rest_profile=p)
+            i = covert_symp_resist.get_row_index(symp_state=s, rest_profile=p)
+
             # if treatment failure is because of the development of resistance
             if reason_for_failure == TreatmentOutcome.RESISTANCE:
-
-                # name of this compartment
-                str_symp_susp = covert_symp_resist.get_str_symp_susp(symp_state=s, rest_profile=p)
-                i = covert_symp_resist.get_row_index(symp_state=s, rest_profile=p)
 
                 # destinations
                 dest_rest = Fs[covert_symp_resist.get_row_index(symp_state=s, rest_profile=next_p)]
@@ -125,6 +126,15 @@ def build_model(model):
                     name='If resistance after re-tx with CFX in '+str_symp_susp,
                     destination_compartments=[dest_rest, dest_succ],
                     probability_params=params.probResEmerge[AB.CFX.value])
+            else:
+                # destinations
+                dest_fail = counting_tx_M
+                dest_succ = counting_tx_success_by_ab[AB.CFX.value]
+                # this is a dummy chance node which will never be used.
+                ifs_resist_after_re_tx_cfx[i] = ChanceNode(
+                    name='If treatment failure after re-tx with CFX in ' + str_symp_susp,
+                    destination_compartments=[dest_fail, dest_succ],
+                    probability_params=Constant(1))
 
     # if re-tx after ineffective treatment or resistance development
     for s in range(n_symp_states):
@@ -311,26 +321,25 @@ def build_model(model):
             i.setup_history(collect_prev=True)
         for f in Fs:
             f.setup_history(collect_prev=True)
-
-        for r in ifs_will_receive_rapid_test:
-            r.setup_history(collect_incd=True)
-        for r in ifs_rapid_CIP_outcome:
-            r.setup_history(collect_incd=True)
-        for r in ifs_rapid_TET_outcome_after_susp_CIP:
-            r.setup_history(collect_incd=True)
-        for r in ifs_rapid_TET_outcome_after_reduced_susp_CIP:
-            r.setup_history(collect_incd=True)
-        for r in ifs_CIP_or_TET:
-            r.setup_history(collect_incd=True)
-        for r in ifs_tx_outcome:
-            r.setup_history(collect_incd=True)
-        for r in ifs_symp_from_emerg_rest:
-            r.setup_history(collect_incd=True)
-        for r in ifs_re_tx:
-            r.setup_history(collect_incd=True)
-        for r in ifs_resist_after_re_tx_cfx:
-            if r is not None:
-                r.setup_history(collect_incd=True)
+        # for r in ifs_will_receive_rapid_test:
+        #     r.setup_history(collect_incd=True)
+        # for r in ifs_rapid_CIP_outcome:
+        #     r.setup_history(collect_incd=True)
+        # for r in ifs_rapid_TET_outcome_after_susp_CIP:
+        #     r.setup_history(collect_incd=True)
+        # for r in ifs_rapid_TET_outcome_after_reduced_susp_CIP:
+        #     r.setup_history(collect_incd=True)
+        # for r in ifs_CIP_or_TET:
+        #     r.setup_history(collect_incd=True)
+        # for r in ifs_tx_outcome:
+        #     r.setup_history(collect_incd=True)
+        # for r in ifs_symp_from_emerg_rest:
+        #     r.setup_history(collect_incd=True)
+        # for r in ifs_re_tx:
+        #     r.setup_history(collect_incd=True)
+        # for r in ifs_resist_after_re_tx_cfx:
+        #     if r is not None:
+        #         r.setup_history(collect_incd=True)
 
     for a in range(len(AB)):
         counting_tx_success_by_ab[a].setup_history(collect_incd=True)

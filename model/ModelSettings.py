@@ -99,5 +99,5 @@ class GonoSettings(ModelSettings):
         self.sensCIP = 0
         self.specCIP = 0
         self.sensTET = 0
-        self.specTET = 1
+        self.specTET = 0
         self.probRapidTest = prob_rapid_test
