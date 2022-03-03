@@ -321,25 +321,25 @@ def build_model(model):
             i.setup_history(collect_prev=True)
         for f in Fs:
             f.setup_history(collect_prev=True)
-        # for r in ifs_will_receive_rapid_test:
-        #     r.setup_history(collect_incd=True)
-        # for r in ifs_rapid_CIP_outcome:
-        #     r.setup_history(collect_incd=True)
-        # for r in ifs_rapid_TET_outcome_after_susp_CIP:
-        #     r.setup_history(collect_incd=True)
-        # for r in ifs_rapid_TET_outcome_after_reduced_susp_CIP:
-        #     r.setup_history(collect_incd=True)
-        # for r in ifs_CIP_or_TET:
-        #     r.setup_history(collect_incd=True)
-        # for r in ifs_tx_outcome:
-        #     r.setup_history(collect_incd=True)
-        # for r in ifs_symp_from_emerg_rest:
-        #     r.setup_history(collect_incd=True)
-        # for r in ifs_re_tx:
-        #     r.setup_history(collect_incd=True)
-        # for r in ifs_resist_after_re_tx_cfx:
-        #     if r is not None:
-        #         r.setup_history(collect_incd=True)
+        for r in ifs_will_receive_rapid_test:
+            r.setup_history(collect_incd=True)
+        for r in ifs_rapid_CIP_outcome:
+            r.setup_history(collect_incd=True)
+        for r in ifs_rapid_TET_outcome_after_susp_CIP:
+            r.setup_history(collect_incd=True)
+        for r in ifs_rapid_TET_outcome_after_reduced_susp_CIP:
+            r.setup_history(collect_incd=True)
+        for r in ifs_CIP_or_TET:
+            r.setup_history(collect_incd=True)
+        for r in ifs_tx_outcome:
+            r.setup_history(collect_incd=True)
+        for r in ifs_symp_from_emerg_rest:
+            r.setup_history(collect_incd=True)
+        for r in ifs_re_tx:
+            r.setup_history(collect_incd=True)
+        for r in ifs_resist_after_re_tx_cfx:
+            if r is not None:
+                r.setup_history(collect_incd=True)
 
     for a in range(len(AB)):
         counting_tx_success_by_ab[a].setup_history(collect_incd=True)
