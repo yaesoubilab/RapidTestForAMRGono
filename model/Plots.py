@@ -96,7 +96,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
                                )
 
     perc_cases_by_rest_profile = []
-    for p in range(len(REST_PROFILES) - 2):
+    for p in range(len(REST_PROFILES) - 1):
         perc_cases_by_rest_profile.append(A.TrajPlotInfo(
             outcome_name='Proportion of cases resistant to '+REST_PROFILES[p],
             title='Proportion of cases with\nreduced susceptibility to\n{} (%)'.format(REST_PROFILES[p]),
@@ -110,9 +110,9 @@ def plot(prev_multiplier=52, incd_multiplier=1,
 
     list_plot_info = [prev, gono_rate, perc_symp]
     list_plot_info.extend(perc_cases_by_rest_profile)
-    sim_outcomes.plot_multi_panel(n_rows=3, n_cols=3,
+    sim_outcomes.plot_multi_panel(n_rows=4, n_cols=3,
                                   list_plot_info=list_plot_info,
-                                  figure_size=(3*2.2, 3*2.4), show_subplot_labels=True,
+                                  figure_size=(3*2.2, 4*2.4), show_subplot_labels=True,
                                   file_name=calibration_filename)
 
     # ------------- Successful treatment with different antibiotics ---------------
@@ -190,7 +190,9 @@ def plot_scenarios(scenario_names, fig_file_name):
         labels=('Change in annual proportion of cases\n successfully treated with CIP, TET, or CFX',
                 'Change in annual rate of gonorrhea\n(per 100,000 population)'),
         health_measure='u',
-        x_range=[0, 0.15], y_range=[-5000, 25000], cost_multiplier=100000,
+        x_range=[0, 0.2],
+        y_range=[-6000, 10000],
+        cost_multiplier=100000,
         file_name=fig_file_name,
         fig_size=(4, 4))
 
