@@ -26,7 +26,7 @@ class Parameters(EpiParameters):
         self.specTET = Constant(model_sets.specTET)
 
         # if will receive a rapid test
-        self.probRapidTest = TimeDependentStepWise(ts=[10], # year 5
+        self.probRapidTest = TimeDependentStepWise(ts=[5], # year 5
                                                    vs=[model_sets.probRapidTest])
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = Constant(model_sets.probTxCIPIfSuspToCIPAndTET)
@@ -34,13 +34,13 @@ class Parameters(EpiParameters):
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
-        self.precIBySymp[SympStat.SYMP.value] = Uniform(0, 0) # Uniform(0.0, 0.05)
+        self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile (comes from the Excel file ResistanceData.xlms)
-        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.1, 0.3) # Uniform(0.002, 0.007)
-        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0, 0) # Uniform(0.448, 0.672)
+        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.002, 0.007)
+        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.448, 0.672)
         self.percIByRestProfile[RestProfile.CFX.value] = Uniform(0, 0)
-        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0, 0) # Uniform(0.126, 0.189)
+        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.126, 0.189)
         self.percIByRestProfile[RestProfile.CIP_CFX.value] = Uniform(0, 0)
         self.percIByRestProfile[RestProfile.TET_CFX.value] = Uniform(0, 0)
         self.percIByRestProfile[RestProfile.CIP_TET_CFX.value] = Uniform(0, 0)
@@ -50,19 +50,19 @@ class Parameters(EpiParameters):
         # relative infectivity of resistance profiles to susceptible
         self.ratioInf[RestProfile.CIP.value] = Uniform(0.9, 1)
         self.ratioInf[RestProfile.TET.value] = Uniform(0.9, 1)
-        self.ratioInf[RestProfile.CFX.value] = Uniform(0, 0) # Uniform(0.9, 1)
+        self.ratioInf[RestProfile.CFX.value] = Uniform(0.9, 1)
         self.ratioInf[RestProfile.CIP_TET.value] = Uniform(0.8, 1)
-        self.ratioInf[RestProfile.CIP_CFX.value] = Uniform(0, 0) # Uniform(0.8, 1) #
+        self.ratioInf[RestProfile.CIP_CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.TET_CFX.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.CIP_TET_CFX.value] = Uniform(0.7, 1)
         self.ratioInf[RestProfile.SUS.value] = Constant(1)
 
         # exponent of the probability for the emergence of resistance for a drug
-        self.exponProbRes[AB.CIP.value] = Uniform(-100, -100)
-        self.exponProbRes[AB.TET.value] = Uniform(-100, -100)
-        self.exponProbRes[AB.CFX.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.TET.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.CFX.value] = Uniform(-6, -3) # Uniform(-5, -3)
 
-        self.probSym = Uniform(0.5, 0.5) # Uniform(0.2, 0.8)  # Constant(0.75)
+        self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
         self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)
         self.tToScreened = Uniform(0.5, 5)  # Constant(4)
         self.tToTreatment = Uniform(1 * one_over_364, 14 * one_over_364)
