@@ -1,5 +1,5 @@
 from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
-    TenToPower, OneMinusSum
+    TenToPower, OneMinusSum, TimeDependentStepWise
 from apace.Inputs import EpiParameters
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio
 
@@ -26,14 +26,15 @@ class Parameters(EpiParameters):
         self.specTET = Constant(model_sets.specTET)
 
         # if will receive a rapid test
-        self.probRapidTest = Constant(model_sets.probRapidTest)
+        self.probRapidTest = TimeDependentStepWise(ts=[5], # year 5
+                                                   vs=[model_sets.probRapidTest])
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = Constant(model_sets.probTxCIPIfSuspToCIPAndTET)
 
         self.popSize = Constant(1000000)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
-        self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
+        self.precIBySymp[SympStat.SYMP.value] = Uniform(0, 0) # Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile (comes from the Excel file ResistanceData.xlms)
         self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.1, 0.3) # Uniform(0.002, 0.007)
@@ -61,7 +62,7 @@ class Parameters(EpiParameters):
         self.exponProbRes[AB.TET.value] = Uniform(-100, -100)
         self.exponProbRes[AB.CFX.value] = Uniform(-5, -3)
 
-        self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
+        self.probSym = Uniform(0.5, 0.5) # Uniform(0.2, 0.8)  # Constant(0.75)
         self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)
         self.tToScreened = Uniform(0.5, 5)  # Constant(4)
         self.tToTreatment = Uniform(1 * one_over_364, 14 * one_over_364)

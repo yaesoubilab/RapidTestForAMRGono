@@ -91,7 +91,7 @@ def build_model(model):
     counting_tx_success_by_ab = [None] * len(AB)
     for a in range(len(AB)):
         counting_tx_success_by_ab[a] = ChanceNode(
-            name='Counting tx with ' + ANTIBIOTICS[a],
+            name='Counting success tx with ' + ANTIBIOTICS[a],
             destination_compartments=[counting_success_CIP_TET_CFX, counting_success_CIP_TET_CFX],
             probability_params=Constant(1))
 
