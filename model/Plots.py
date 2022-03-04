@@ -118,7 +118,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     # ------------- Successful treatment with different antibiotics ---------------
     Txs = []
     for a in ANTIBIOTICS:
-        Txs.append(A.TrajPlotInfo(outcome_name='To: Counting tx with ' + a,
+        Txs.append(A.TrajPlotInfo(outcome_name='To: Counting success tx with ' + a,
                                   title='Successful Tx-' + a,
                                   x_multiplier=incd_multiplier))
     Txs.append(A.TrajPlotInfo(outcome_name='To: Tx with M',

@@ -26,7 +26,7 @@ class Parameters(EpiParameters):
         self.specTET = Constant(model_sets.specTET)
 
         # if will receive a rapid test
-        self.probRapidTest = TimeDependentStepWise(ts=[5], # year 5
+        self.probRapidTest = TimeDependentStepWise(ts=[10], # year 5
                                                    vs=[model_sets.probRapidTest])
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = Constant(model_sets.probTxCIPIfSuspToCIPAndTET)

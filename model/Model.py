@@ -520,8 +520,8 @@ def build_model(model):
                    + ifs_rapid_TET_outcome_after_reduced_susp_CIP \
                    + ifs_CIP_or_TET + ifs_tx_outcome \
                    + ifs_re_tx + ifs_symp_from_emerg_rest \
-                   + counting_tx_success_by_ab\
                    + ifs_resist_after_re_tx_cfx \
+                   + counting_tx_success_by_ab \
                    + [counting_success_CIP_TET_CFX, counting_tx_M]
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
