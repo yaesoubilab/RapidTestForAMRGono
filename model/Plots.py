@@ -1,10 +1,14 @@
+import numpy as np
+
 import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
 import apace.analysis.VisualizeScenarios as V
-from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS
+from definitions import RestProfile, SympStat, REST_PROFILES, \
+    ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS, N_BREAKS_SPECIFICITY
 from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25
+COLORS = ['blue', 'red', 'green']
 
 
 def plot(prev_multiplier=52, incd_multiplier=1,
@@ -155,32 +159,22 @@ def plot_scenarios(scenario_names, fig_file_name):
         csv_file_name='outputs/scenarios/simulated_scenarios.csv')
 
     # sets of scenarios to display on the cost-effectiveness plain
-    scenarios1 = S.SetOfScenarios(
-        name='Specificity = 1.0',
-        scenario_df=df_scenarios,
-        color='blue',
-        marker='o',
-        conditions_on_variables=[
-            S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
-            S.ConditionOnVariable(var_name='specificity', values=[1])],
-        if_find_frontier=False,
-        if_show_fitted_curve=True,
-        labels_shift_x=0.03,
-        labels_shift_y=0.00)
-    scenarios2 = S.SetOfScenarios(
-        name='Specificity = 0.5',
-        scenario_df=df_scenarios,
-        color='red',
-        marker='o',
-        conditions_on_variables=[
-            S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
-            S.ConditionOnVariable(var_name='specificity', values=[0.5])],
-        if_find_frontier=False,
-        if_show_fitted_curve=True,
-        labels_shift_x=0.03,
-        labels_shift_y=0.00)
+    list_of_scenario_sets = []
+    for i, spec in enumerate(np.linspace(0, 1, N_BREAKS_SPECIFICITY)):
+        list_of_scenario_sets.append(S.SetOfScenarios(
+            name='Specificity = {}'.format(spec),
+            scenario_df=df_scenarios,
+            color=COLORS[i],
+            marker='o',
+            conditions_on_variables=[
+                S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
+                S.ConditionOnVariable(var_name='specificity', values=[spec])],
+            if_find_frontier=False,
+            if_show_fitted_curve=True,
+            labels_shift_x=0.03,
+            labels_shift_y=0.00)
+        )
 
-    list_of_scenario_sets = [scenarios1, scenarios2]
     V.plot_sets_of_scenarios(
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
