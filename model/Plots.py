@@ -8,7 +8,7 @@ from definitions import RestProfile, SympStat, REST_PROFILES, \
 from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25
-COLORS = ['blue', 'red', 'green']
+COLORS = ['blue', 'red', 'green', 'orange', 'purple']
 
 
 def plot(prev_multiplier=52, incd_multiplier=1,
