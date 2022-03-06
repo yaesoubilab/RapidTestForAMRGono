@@ -4,7 +4,7 @@ import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
 import apace.analysis.VisualizeScenarios as V
 from definitions import RestProfile, SympStat, REST_PROFILES, \
-    ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS, N_BREAKS_SPECIFICITY
+    ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS, N_BREAKS_SPECIFICITY, MIN_SEN_SPE
 from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25
@@ -140,7 +140,7 @@ def plot_scenarios(scenario_names, fig_file_name):
     # read scenarios into a dataframe
     scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/simulated_scenarios.csv')
 
-    # get an specific outcome from an specific scenario
+    # get an specific outcome from a specific scenario
     print('\nScenario name: ', 'Rate of gonorrhea cases | Proportion of cases treatable with CFX')
     for name in scenario_names:
         rate = scenarios_df.get_mean_interval(
@@ -162,14 +162,14 @@ def plot_scenarios(scenario_names, fig_file_name):
     # sets of scenarios to display on the cost-effectiveness plain
     list_of_scenario_sets = []
     list_if_remove_base_scenario = [True] * N_BREAKS_SPECIFICITY
-    for i, spec in enumerate(np.linspace(0, 1, N_BREAKS_SPECIFICITY)):
+    for i, spec in enumerate(np.linspace(MIN_SEN_SPE, 1, N_BREAKS_SPECIFICITY)):
         list_of_scenario_sets.append(S.SetOfScenarios(
             name='Specificity = {}'.format(spec),
             scenario_df=df_scenarios,
             color=COLORS[i],
             marker='o',
             conditions_on_variables=[
-                S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
+                S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.1f}'),
                 S.ConditionOnVariable(var_name='specificity', values=[spec])],
             if_find_frontier=False,
             if_show_fitted_curve=True,

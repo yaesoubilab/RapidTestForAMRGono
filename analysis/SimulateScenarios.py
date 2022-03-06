@@ -2,7 +2,7 @@ import apace.Calibration as calib
 import model.Plots as P
 from apace.ScenarioSimulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sens_spec_coverage, \
-    N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY
+    N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY, MIN_SEN_SPE
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
@@ -17,9 +17,11 @@ def simulate_scenarios():
     sets.exportTrajectories = False
 
     # names of the scenarios to evaluate
-    scenario_names = get_scenario_names(n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
-                                        n_breaks_specificity=N_BREAKS_SPECIFICITY,
-                                        n_breaks_rapid_test_coverage=1)
+    scenario_names = get_scenario_names(
+        min_sen_spe=MIN_SEN_SPE,
+        n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
+        n_breaks_specificity=N_BREAKS_SPECIFICITY,
+        n_breaks_rapid_test_coverage=1)
 
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
     var_names = ['sensitivity', 'specificity', 'rapid test coverage']
@@ -28,6 +30,7 @@ def simulate_scenarios():
     # rows correspond to scenario names defined above, and columns correspond to variable names defined above
     # [0.0, 1.0, 0.0]  # status quo (no rapid test)
     scenario_definitions = [[0.0, 1.0, 0.0]] + get_list_sens_spec_coverage(
+        min_sen_spe=MIN_SEN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
         n_breaks_rapid_test_coverage=1)

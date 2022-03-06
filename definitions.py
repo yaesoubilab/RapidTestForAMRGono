@@ -9,8 +9,9 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SIM_DURATION = 25
 END_OF_WARM_UP = 5 # 6
 END_OF_CALIB = 6
+MIN_SEN_SPE = 0.5
 N_BREAKS_SENSITIVITY = 6 # 6
-N_BREAKS_SPECIFICITY = 5
+N_BREAKS_SPECIFICITY = 6
 
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after
@@ -158,8 +159,9 @@ def get_survey_size(mean, l, u, multiplier=1):
     return var * pow(z/hw, 2)
 
 
-def get_list_sens_spec_coverage(n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
+def get_list_sens_spec_coverage(min_sen_spe, n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
     """
+    :param min_sen_spe: (float) minimum value for sensitivity and specificity
     :param n_breaks_sensitivity: (int) number of break points for sensitivity values
     :param n_breaks_specificity: (int) number of break points for specificity values
     :param n_breaks_rapid_test_coverage: (int) number of break points for coverage values
@@ -171,11 +173,11 @@ def get_list_sens_spec_coverage(n_breaks_sensitivity, n_breaks_specificity, n_br
     if n_breaks_sensitivity == 1:
         values_sen = [0]
     else:
-        values_sen = np.linspace(0, 1, n_breaks_sensitivity)
+        values_sen = np.linspace(min_sen_spe, 1, n_breaks_sensitivity)
     if n_breaks_specificity == 1:
         values_spe = [1]
     else:
-        values_spe = np.linspace(0, 1, n_breaks_specificity)
+        values_spe = np.linspace(min_sen_spe, 1, n_breaks_specificity)
     if n_breaks_rapid_test_coverage == 1:
         values_coverage = [1]
     else:
@@ -189,12 +191,14 @@ def get_list_sens_spec_coverage(n_breaks_sensitivity, n_breaks_specificity, n_br
     return values
 
 
-def get_scenario_names(n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
+def get_scenario_names(min_sen_spe, n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
 
     scenario_names = ['Status quo (no rapid test)']
-    values_p_q_c = get_list_sens_spec_coverage(n_breaks_sensitivity=n_breaks_sensitivity,
-                                               n_breaks_specificity=n_breaks_specificity,
-                                               n_breaks_rapid_test_coverage=n_breaks_rapid_test_coverage)
+    values_p_q_c = get_list_sens_spec_coverage(
+        min_sen_spe=min_sen_spe,
+        n_breaks_sensitivity=n_breaks_sensitivity,
+        n_breaks_specificity=n_breaks_specificity,
+        n_breaks_rapid_test_coverage=n_breaks_rapid_test_coverage)
     for v in values_p_q_c:
         scenario_names.append('(p={:.2f}, q={:.2f}, c={:.2f})'.format(v[0], v[1], v[2]))
 
