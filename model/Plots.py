@@ -160,7 +160,7 @@ def plot_scenarios(scenario_names, fig_file_name):
 
     # sets of scenarios to display on the cost-effectiveness plain
     list_of_scenario_sets = []
-    list_if_remove_base_scenario = [False] * N_BREAKS_SPECIFICITY
+    list_if_remove_base_scenario = [True] * N_BREAKS_SPECIFICITY
     for i, spec in enumerate(np.linspace(0, 1, N_BREAKS_SPECIFICITY)):
         list_of_scenario_sets.append(S.SetOfScenarios(
             name='Specificity = {}'.format(spec),
@@ -185,8 +185,8 @@ def plot_scenarios(scenario_names, fig_file_name):
         labels=('Change in annual proportion of cases\n successfully treated with CIP, TET, or CFX',
                 'Change in annual rate of gonorrhea\n(per 100,000 population)'),
         health_measure='u',
-        # x_range=[0, 0.2],
-        # y_range=[-6000, 10000],
+        x_range=[0, 0.15],
+        y_range=[-5000, 50000],
         cost_multiplier=100000,
         file_name=fig_file_name,
         fig_size=(4, 4))
