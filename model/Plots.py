@@ -186,10 +186,10 @@ def plot_scenarios(scenario_names, fig_file_name):
         labels=('Change in annual proportion of cases\n successfully treated with CIP, TET, or CFX',
                 'Change in annual rate of gonorrhea\n(per 100,000 population)'),
         health_measure='u',
-        x_range=[-0.005, 0.15],
+        x_range=[-0.01, 0.15],
         y_range=[-5000, 35000],
         cost_multiplier=100000,
         file_name=fig_file_name,
-        fig_size=(4, 4))
+        fig_size=(5, 5))
 
 
