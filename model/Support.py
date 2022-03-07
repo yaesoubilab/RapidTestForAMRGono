@@ -3,7 +3,7 @@ import apace.Calibration as calib
 from apace.MultiEpidemics import MultiEpidemics
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
-from model.Plots import plot
+from model.Plots import plot_trajectories
 
 
 def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_weights=True,
@@ -40,11 +40,11 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
     multi_model.print_summary_stats()
 
     # plot trajectories
-    plot(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data
-         incd_multiplier=1,  # to show weeks on the x-axis of incidence data
-         obs_prev_multiplier=1,
-         obs_incd_multiplier=1,
-         filename=figure_filename)
+    plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data
+                      incd_multiplier=1,  # to show weeks on the x-axis of incidence data
+                      obs_prev_multiplier=1,
+                      obs_incd_multiplier=1,
+                      filename=figure_filename)
 
 
 def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True, if_run_in_parallel=True, settings=None):

@@ -12,9 +12,9 @@ S.POLY_DEGREES = 1
 COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
 
 
-def plot(prev_multiplier=52, incd_multiplier=1,
-         obs_prev_multiplier=1, obs_incd_multiplier=1,
-         filename='trajectories.png'):
+def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
+                      obs_prev_multiplier=1, obs_incd_multiplier=1,
+                      filename='trajectories.png'):
     """
     :param prev_multiplier: (int) to multiply the simulation time to convert it to year, week, or day.
     :param incd_multiplier: (int) to multiply the simulation period to covert it to year, week, or day.
@@ -104,7 +104,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     for p in range(len(REST_PROFILES) - 1):
         perc_cases_by_rest_profile.append(A.TrajPlotInfo(
             outcome_name='Proportion of cases resistant to '+REST_PROFILES[p],
-            title='Proportion of cases with\nreduced susceptibility to\n{} (%)'.format(REST_PROFILES[p]),
+            title='Proportion of cases with reduced\nsusceptibility to {} (%)'.format(REST_PROFILES[p]),
             x_multiplier=obs_incd_multiplier,
             y_multiplier=100, y_range=(0, 100),
             calibration_info=A.CalibrationTargetPlotInfo(
@@ -117,7 +117,7 @@ def plot(prev_multiplier=52, incd_multiplier=1,
     list_plot_info.extend(perc_cases_by_rest_profile)
     sim_outcomes.plot_multi_panel(n_rows=4, n_cols=3,
                                   list_plot_info=list_plot_info,
-                                  figure_size=(3*2.2, 4*2.4), show_subplot_labels=True,
+                                  figure_size=(3*2.2, 4*2.3), show_subplot_labels=True,
                                   file_name=calibration_filename)
 
     # ------------- Successful treatment with different antibiotics ---------------
