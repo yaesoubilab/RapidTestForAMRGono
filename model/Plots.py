@@ -9,7 +9,7 @@ from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25
 S.POLY_DEGREES = 1
-COLORS = ['blue', 'red', 'green', 'orange', 'purple', 'grey']
+COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
 
 
 def plot(prev_multiplier=52, incd_multiplier=1,
