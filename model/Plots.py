@@ -187,7 +187,7 @@ def plot_scenarios(scenario_names, fig_file_name):
                 'Change in annual rate of gonorrhea\n(per 100,000 population)'),
         health_measure='u',
         x_range=[-0.005, 0.145],
-        y_range=[-3000, 13000],
+        y_range=[-3000, 13500],
         cost_multiplier=100000,
         file_name=fig_file_name,
         fig_size=(5, 5))

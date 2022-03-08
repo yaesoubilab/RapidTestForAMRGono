@@ -40,7 +40,7 @@ class GonoSettings(ModelSettings):
         self.probRapidTest = 0 if if_calibrating else 1
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET
-        self.probTxCIPIfSuspToCIPAndTET = 1
+        self.probTxCIPIfSuspToCIPAndTET = 0.5
 
         # calibration targets
         if self.calcLikelihood:
