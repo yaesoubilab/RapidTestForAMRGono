@@ -9,7 +9,8 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 SIM_DURATION = 25
 END_OF_WARM_UP = 5 # 6
 END_OF_CALIB = 6
-MIN_SEN_SPE = 0.5
+MIN_SEN = 0.5
+MIN_SPE = 0.8
 N_BREAKS_SENSITIVITY = 6 # 6
 N_BREAKS_SPECIFICITY = 6
 
@@ -169,9 +170,11 @@ def get_survey_size(mean, l, u, multiplier=1):
     return var * pow(z/hw, 2)
 
 
-def get_list_sens_spec_coverage(min_sen_spe, n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
+def get_list_sens_spec_coverage(min_sen, min_spe,
+                                n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
     """
-    :param min_sen_spe: (float) minimum value for sensitivity and specificity
+    :param min_sen: (float) minimum value for sensitivity
+    :param min_spe: (float) minimum value for specificity
     :param n_breaks_sensitivity: (int) number of break points for sensitivity values
     :param n_breaks_specificity: (int) number of break points for specificity values
     :param n_breaks_rapid_test_coverage: (int) number of break points for coverage values
@@ -180,19 +183,23 @@ def get_list_sens_spec_coverage(min_sen_spe, n_breaks_sensitivity, n_breaks_spec
 
     values = []
 
+    # sensitivity
     if n_breaks_sensitivity == 1:
         values_sen = [0]
     else:
-        values_sen = np.linspace(min_sen_spe, 1, n_breaks_sensitivity)
+        values_sen = np.linspace(min_sen, 1, n_breaks_sensitivity)
+    # specificity
     if n_breaks_specificity == 1:
         values_spe = [1]
     else:
-        values_spe = np.linspace(min_sen_spe, 1, n_breaks_specificity)
+        values_spe = np.linspace(min_spe, 1, n_breaks_specificity)
+    # coverage
     if n_breaks_rapid_test_coverage == 1:
         values_coverage = [1]
     else:
         values_coverage = np.linspace(0, 1, n_breaks_specificity)
 
+    # values
     for sens in reversed(values_sen):
         for spec in values_spe:
             for cov in values_coverage:
@@ -201,11 +208,13 @@ def get_list_sens_spec_coverage(min_sen_spe, n_breaks_sensitivity, n_breaks_spec
     return values
 
 
-def get_scenario_names(min_sen_spe, n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
+def get_scenario_names(min_sensitivity, min_specificity,
+                       n_breaks_sensitivity, n_breaks_specificity,
+                       n_breaks_rapid_test_coverage):
 
     scenario_names = ['Status quo (no rapid test)']
     values_p_q_c = get_list_sens_spec_coverage(
-        min_sen_spe=min_sen_spe,
+        min_sen=min_sensitivity,
         n_breaks_sensitivity=n_breaks_sensitivity,
         n_breaks_specificity=n_breaks_specificity,
         n_breaks_rapid_test_coverage=n_breaks_rapid_test_coverage)

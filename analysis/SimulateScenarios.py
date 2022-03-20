@@ -2,7 +2,7 @@ import apace.Calibration as calib
 import model.Plots as P
 from apace.ScenarioSimulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sens_spec_coverage, \
-    N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY, MIN_SEN_SPE
+    N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY, MIN_SEN, MIN_SPE
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
@@ -18,7 +18,8 @@ def simulate_scenarios():
 
     # names of the scenarios to evaluate
     scenario_names = get_scenario_names(
-        min_sen_spe=MIN_SEN_SPE,
+        min_sensitivity=MIN_SEN,
+        min_specificity=MIN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
         n_breaks_rapid_test_coverage=1)
@@ -30,7 +31,8 @@ def simulate_scenarios():
     # rows correspond to scenario names defined above, and columns correspond to variable names defined above
     # [0.0, 1.0, 0.0]  # status quo (no rapid test)
     scenario_definitions = [[0.0, 1.0, 0.0]] + get_list_sens_spec_coverage(
-        min_sen_spe=MIN_SEN_SPE,
+        min_sen=MIN_SEN,
+        min_spe=MIN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
         n_breaks_rapid_test_coverage=1)
