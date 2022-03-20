@@ -1,3 +1,4 @@
+from SimPy.InOutFunctions import read_csv_rows
 from apace.Inputs import ModelSettings
 from definitions import get_survey_size, SIM_DURATION, END_OF_WARM_UP, END_OF_CALIB
 from model.Data import Prevalence, GonorrheaRate, PercSymptomatic
@@ -102,3 +103,13 @@ class GonoSettings(ModelSettings):
         self.specTET = spec
         self.probRapidTest = prob_rapid_test
 
+    @staticmethod
+    def get_list_mean_ci_of_resistance(file_name):
+
+        data = read_csv_rows(file_name=file_name, if_ignore_first_row=False, if_convert_float=True)
+
+        table = []
+        for row in data:
+            table.append([row[1], [row[2], row[3]]])
+
+        return table
