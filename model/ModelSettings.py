@@ -101,3 +101,4 @@ class GonoSettings(ModelSettings):
         self.sensTET = sens
         self.specTET = spec
         self.probRapidTest = prob_rapid_test
+
