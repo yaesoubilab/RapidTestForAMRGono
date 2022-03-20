@@ -79,8 +79,8 @@ def build_model(model):
                                 infectivity_params=infectivity_params)
 
     # counting successful treatments with any drug
-    counting_success_CIP_TET_CFX = ChanceNode(
-        name='Successful Tx with CIP, TET, or CFX',
+    counting_success_CIP_TET_CRO = ChanceNode(
+        name='Successful Tx with CIP, TET, or CRO',
         destination_compartments=[S, S],
         probability_params=Constant(1))
     # counting M used
@@ -92,7 +92,7 @@ def build_model(model):
     for a in range(len(AB)):
         counting_tx_success_by_ab[a] = ChanceNode(
             name='Counting success tx with ' + ANTIBIOTICS[a],
-            destination_compartments=[counting_success_CIP_TET_CFX, counting_success_CIP_TET_CFX],
+            destination_compartments=[counting_success_CIP_TET_CRO, counting_success_CIP_TET_CRO],
             probability_params=Constant(1))
 
     # if symptomatic after infection
@@ -104,13 +104,13 @@ def build_model(model):
                                         destination_compartments=[dest_symp, dest_asym],
                                         probability_params=params.probSym)
 
-    # if resistance emerges after re-tx with CFX
+    # if resistance emerges after re-tx with CRO
     for s in range(n_symp_states):
         for p in range(n_rest_profiles):
 
-            # profile after the rise of resistance to CFX
+            # profile after the rise of resistance to CRO
             next_p, reason_for_failure = get_profile_after_resit_or_failure(
-                rest_profile=p, antibiotic=AB.CFX)
+                rest_profile=p, antibiotic=AB.CRO)
 
             # name of this compartment
             str_symp_susp = covert_symp_resist.get_str_symp_susp(symp_state=s, rest_profile=p)
@@ -121,18 +121,18 @@ def build_model(model):
 
                 # destinations
                 dest_rest = Fs[covert_symp_resist.get_row_index(symp_state=s, rest_profile=next_p)]
-                dest_succ = counting_tx_success_by_ab[AB.CFX.value]
+                dest_succ = counting_tx_success_by_ab[AB.CRO.value]
                 ifs_resist_after_re_tx_cfx[i] = ChanceNode(
-                    name='If resistance after re-tx with CFX in '+str_symp_susp,
+                    name='If resistance after re-tx with CRO in '+str_symp_susp,
                     destination_compartments=[dest_rest, dest_succ],
-                    probability_params=params.probResEmerge[AB.CFX.value])
+                    probability_params=params.probResEmerge[AB.CRO.value])
             else:
                 # destinations
                 dest_fail = counting_tx_M
-                dest_succ = counting_tx_success_by_ab[AB.CFX.value]
+                dest_succ = counting_tx_success_by_ab[AB.CRO.value]
                 # this is a dummy chance node which will never be used.
                 ifs_resist_after_re_tx_cfx[i] = ChanceNode(
-                    name='If treatment failure after re-tx with CFX in ' + str_symp_susp,
+                    name='If treatment failure after re-tx with CRO in ' + str_symp_susp,
                     destination_compartments=[dest_fail, dest_succ],
                     probability_params=Constant(1))
 
@@ -264,9 +264,9 @@ def build_model(model):
             dest_pos_result = ifs_tx_outcome[covert_symp_resist_antibio.get_row_index(
                 symp_state=s, rest_profile=p, antibiotic=AB.TET.value)]
             # if TET test results is negative (reduced susceptibility to TET)
-            # hence the patient can be treated with either CFX
+            # hence the patient can be treated with either CRO
             dest_neg_result = ifs_tx_outcome[covert_symp_resist_antibio.get_row_index(
-                symp_state=s, rest_profile=p, antibiotic=AB.CFX.value)]
+                symp_state=s, rest_profile=p, antibiotic=AB.CRO.value)]
 
             ifs_rapid_TET_outcome_after_reduced_susp_CIP[i] = ChanceNode(
                 name=name,
@@ -298,9 +298,9 @@ def build_model(model):
 
             # if will receive a rapid test
             dest_yes = ifs_rapid_CIP_outcome[i]
-            # if will not receive a rapid test, then will be treated with CFX
+            # if will not receive a rapid test, then will be treated with CRO
             dest_no = ifs_tx_outcome[covert_symp_resist_antibio.get_row_index(
-                symp_state=s, rest_profile=p, antibiotic=AB.CFX.value)]
+                symp_state=s, rest_profile=p, antibiotic=AB.CRO.value)]
 
             ifs_will_receive_rapid_test[i] = ChanceNode(
                 name=name,
@@ -343,7 +343,7 @@ def build_model(model):
 
     for a in range(len(AB)):
         counting_tx_success_by_ab[a].setup_history(collect_incd=True)
-    counting_success_CIP_TET_CFX.setup_history(collect_incd=True)
+    counting_success_CIP_TET_CRO.setup_history(collect_incd=True)
     counting_tx_M.setup_history(collect_incd=True)
 
     # ------------- summation statistics ---------------
@@ -392,16 +392,16 @@ def build_model(model):
         n_cases_by_resistance_profile.append(n_resistant_cases)
         perc_cases_by_resistance_profile.append(perc_cases_resistant)
 
-    # cases by resistance to CFX
-    n_cases_CFX_R = SumIncidence(
-        name='Cases CFX-R, CIP_CFX-R, TET_CFX-R, or CIP_TET_CFX-R',
-        compartments=counting_rest_to[RestProfile.CFX.value] +
-                     counting_rest_to[RestProfile.CIP_CFX.value] +
+    # cases by resistance to CRO
+    n_cases_CRO_R = SumIncidence(
+        name='Cases CRO-R, CIP_CRO-R, TET_CRO-R, or CIP_TET_CRO-R',
+        compartments=counting_rest_to[RestProfile.CRO.value] +
+                     counting_rest_to[RestProfile.CIP_CRO.value] +
                      counting_rest_to[RestProfile.TET.value] +
-                     counting_rest_to[RestProfile.CIP_TET_CFX.value])
-    perc_cases_CFX_R = RatioTimeSeries(
-            name='Proportion of cases CFX-R or CFX+PEN-R',
-            numerator_sum_time_series=n_cases_CFX_R,
+                     counting_rest_to[RestProfile.CIP_TET_CRO.value])
+    perc_cases_CRO_R = RatioTimeSeries(
+            name='Proportion of cases CRO-R or CRO+PEN-R',
+            numerator_sum_time_series=n_cases_CRO_R,
             denominator_sum_time_series=n_cases,
             if_surveyed=True,
             survey_size_param=params.surveySize)
@@ -409,12 +409,12 @@ def build_model(model):
     # treated with any antibiotics
     n_treated = SumIncidence(
         name='Cases treated',
-        compartments=[counting_success_CIP_TET_CFX, counting_tx_M])
-    n_treated_CIP_PEN_CFX = SumIncidence(name='Treated with CIP, TET, or CFX',
-                                         compartments=[counting_success_CIP_TET_CFX])
-    perc_treated_with_CIP_PEN_CFX = RatioTimeSeries(
-        name='Proportion of cases treated with CIP, TET, or CFX',
-        numerator_sum_time_series=n_treated_CIP_PEN_CFX,
+        compartments=[counting_success_CIP_TET_CRO, counting_tx_M])
+    n_treated_CIP_PEN_CRO = SumIncidence(name='Treated with CIP, TET, or CRO',
+                                         compartments=[counting_success_CIP_TET_CRO])
+    perc_treated_with_CIP_PEN_CRO = RatioTimeSeries(
+        name='Proportion of cases treated with CIP, TET, or CRO',
+        numerator_sum_time_series=n_treated_CIP_PEN_CRO,
         denominator_sum_time_series=n_treated,
         collect_stat_after_warm_up=True)
 
@@ -492,15 +492,15 @@ def build_model(model):
             i = covert_symp_resist.get_row_index(symp_state=s, rest_profile=p)
             compart_name = Fs[i].name
 
-            # receive CFX if susceptible to CFX and otherwise, will receive M
-            # treatment outcome from receiving CFX
+            # receive CRO if susceptible to CRO and otherwise, will receive M
+            # treatment outcome from receiving CRO
             next_p, reason_for_failure = get_profile_after_resit_or_failure(
-                rest_profile=p, antibiotic=AB.CFX)
+                rest_profile=p, antibiotic=AB.CRO)
 
-            # if susceptible to CFX, then will check if resistance could be developed
+            # if susceptible to CRO, then will check if resistance could be developed
             if reason_for_failure == TreatmentOutcome.RESISTANCE:
                 dest = ifs_resist_after_re_tx_cfx[p]
-            # if resistant to CFX, then will receive M
+            # if resistant to CRO, then will receive M
             elif reason_for_failure == TreatmentOutcome.INEFFECTIVE:
                 dest = counting_tx_M
 
@@ -522,14 +522,14 @@ def build_model(model):
                    + ifs_re_tx + ifs_symp_from_emerg_rest \
                    + ifs_resist_after_re_tx_cfx \
                    + counting_tx_success_by_ab \
-                   + [counting_success_CIP_TET_CFX, counting_tx_M]
+                   + [counting_success_CIP_TET_CRO, counting_tx_M]
 
-    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CFX_R,
-                               n_cases_sympt, n_treated, n_treated_CIP_PEN_CFX]
+    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CRO_R,
+                               n_cases_sympt, n_treated, n_treated_CIP_PEN_CRO]
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
-    list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CFX_R,
-                                 perc_cases_sympt, perc_treated_with_CIP_PEN_CFX]
+    list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CRO_R,
+                                 perc_cases_sympt, perc_treated_with_CIP_PEN_CRO]
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     model.populate(compartments=all_comparts,

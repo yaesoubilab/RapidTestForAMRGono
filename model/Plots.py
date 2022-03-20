@@ -101,10 +101,10 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
                                )
 
     perc_cases_by_rest_profile = []
-    for p in range(len(REST_PROFILES) - 1):
+    for p in range(len(REST_PROFILES)):
         perc_cases_by_rest_profile.append(A.TrajPlotInfo(
             outcome_name='Proportion of cases resistant to '+REST_PROFILES[p],
-            title='Proportion of cases with reduced\nsusceptibility to {} (%)'.format(REST_PROFILES[p]),
+            title='Cases with profile\n{} (%)'.format(REST_PROFILES[p]),
             x_multiplier=obs_incd_multiplier,
             y_multiplier=100, y_range=(0, 100),
             calibration_info=A.CalibrationTargetPlotInfo(

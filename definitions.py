@@ -16,8 +16,18 @@ N_BREAKS_SPECIFICITY = 6
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after
 # calculating the prevalence of other drugs
-REST_PROFILES = ['CIP', 'TET', 'CFX', 'CIP+TET', 'CIP+CFX', 'TET+CFX', 'CIP+TET+CFX', 'SUSP']
-ANTIBIOTICS = ['CIP', 'TET', 'CFX']
+# REST_PROFILES = ['CIP', 'TET', 'CRO', 'CIP+TET', 'CIP+CRO', 'TET+CRO', 'CIP+TET+CRO', 'SUSP']
+REST_PROFILES = ['CIP-NS, TET-S, CRO-S',       # CIP
+                 'CIP-S, TET-NS, CRP-S',       # TET
+                 'CIP-S, TET-S, CRO-NS',       # CRO
+                 'CIP-NS, TET-NS, CRO-S',      # CIP+TET
+                 'CIP-NS, TET-S, CRO-NS',      # CIP+CRO
+                 'CIP-S, TET-NS, CRO-NS',      # TET+CRO
+                 'CIP-NS, TET-NS, CRO-NS',     # CIP+TET+CRO
+                 'CIP-S, TET-S, CRO-S',        # SUSP
+                 ]
+
+ANTIBIOTICS = ['CIP', 'TET', 'CRO']
 
 
 class SympStat(Enum):
@@ -28,7 +38,7 @@ class SympStat(Enum):
 class AB(Enum):
     CIP = 0
     TET = 1
-    CFX = 2
+    CRO = 2
 
 
 class RestProfile(Enum):
@@ -36,11 +46,11 @@ class RestProfile(Enum):
     # of other drugs
     CIP = 0
     TET = 1
-    CFX = 2
+    CRO = 2
     CIP_TET = 3
-    CIP_CFX = 4
-    TET_CFX = 5
-    CIP_TET_CFX = 6
+    CIP_CRO = 4
+    TET_CRO = 5
+    CIP_TET_CRO = 6
     SUS = 7
 
 
@@ -68,10 +78,10 @@ def get_profile_after_resit_or_failure(rest_profile, antibiotic):
             next_p = RestProfile.CIP
         elif p == RestProfile.TET:
             next_p = RestProfile.CIP_TET
-        elif p == RestProfile.CFX:
-            next_p = RestProfile.CIP_CFX
-        elif p == RestProfile.TET_CFX:
-            next_p = RestProfile.CIP_TET_CFX
+        elif p == RestProfile.CRO:
+            next_p = RestProfile.CIP_CRO
+        elif p == RestProfile.TET_CRO:
+            next_p = RestProfile.CIP_TET_CRO
         else:
             reason_for_failure = TreatmentOutcome.INEFFECTIVE
     elif a == AB.TET:
@@ -79,21 +89,21 @@ def get_profile_after_resit_or_failure(rest_profile, antibiotic):
             next_p = RestProfile.TET
         elif p == RestProfile.CIP:
             next_p = RestProfile.CIP_TET
-        elif p == RestProfile.CFX:
-            next_p = RestProfile.TET_CFX
-        elif p == RestProfile.CIP_CFX:
-            next_p = RestProfile.CIP_TET_CFX
+        elif p == RestProfile.CRO:
+            next_p = RestProfile.TET_CRO
+        elif p == RestProfile.CIP_CRO:
+            next_p = RestProfile.CIP_TET_CRO
         else:
             reason_for_failure = TreatmentOutcome.INEFFECTIVE
-    elif a == AB.CFX:
+    elif a == AB.CRO:
         if p == RestProfile.SUS:
-            next_p = RestProfile.CFX
+            next_p = RestProfile.CRO
         elif p == RestProfile.CIP:
-            next_p = RestProfile.CIP_CFX
+            next_p = RestProfile.CIP_CRO
         elif p == RestProfile.TET:
-            next_p = RestProfile.TET_CFX
+            next_p = RestProfile.TET_CRO
         elif p == RestProfile.CIP_TET:
-            next_p = RestProfile.CIP_TET_CFX
+            next_p = RestProfile.CIP_TET_CRO
         else:
             reason_for_failure = TreatmentOutcome.INEFFECTIVE
     else:
