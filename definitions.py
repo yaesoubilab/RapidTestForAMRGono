@@ -12,7 +12,7 @@ END_OF_CALIB = 6
 MIN_SEN = 0.5
 MIN_SPE = 0.8
 N_BREAKS_SENSITIVITY = 6 # 6
-N_BREAKS_SPECIFICITY = 6
+N_BREAKS_SPECIFICITY = 5
 
 SYMP_STATES = ['Symp', 'Asym']
 # we put SUS last because its prevalence is calculated after
