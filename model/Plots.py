@@ -4,7 +4,7 @@ import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
 import apace.analysis.VisualizeScenarios as V
 from definitions import RestProfile, SympStat, REST_PROFILES, \
-    ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS, N_BREAKS_SPECIFICITY, MIN_SEN_SPE
+    ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS, N_BREAKS_SPECIFICITY, MIN_SPE
 from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25
@@ -149,7 +149,7 @@ def plot_scenarios(scenario_names, fig_file_name):
             interval_type='c', deci=3)
         life = scenarios_df.get_mean_interval(
             scenario_name=name,
-            outcome_name='Proportion of cases treated with CIP, TET, or CFX (average incidence after epidemic warm-up)',
+            outcome_name='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
             interval_type='c', deci=3)
         print('{}: {} | {}'.format(name, rate, life))
 
@@ -162,7 +162,7 @@ def plot_scenarios(scenario_names, fig_file_name):
     # sets of scenarios to display on the cost-effectiveness plain
     list_of_scenario_sets = []
     list_if_remove_base_scenario = [True] * N_BREAKS_SPECIFICITY
-    for i, spec in enumerate(np.linspace(MIN_SEN_SPE, 1, N_BREAKS_SPECIFICITY)):
+    for i, spec in enumerate(np.linspace(MIN_SPE, 1, N_BREAKS_SPECIFICITY)):
         list_of_scenario_sets.append(S.SetOfScenarios(
             name='Specificity = {}'.format(spec),
             scenario_df=df_scenarios,
@@ -181,9 +181,9 @@ def plot_scenarios(scenario_names, fig_file_name):
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
         list_if_remove_base_scenario=list_if_remove_base_scenario,
-        effect_outcome='Proportion of cases treated with CIP, TET, or CFX (average incidence after epidemic warm-up)',
+        effect_outcome='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
-        labels=('Change in annual proportion of cases\n successfully treated with CIP, TET, or CFX',
+        labels=('Change in annual proportion of cases\n successfully treated with CIP, TET, or CRO',
                 'Change in annual rate of gonorrhea\n(per 100,000 population)'),
         health_measure='u',
         x_range=[-0.005, 0.145],

@@ -44,8 +44,6 @@ def get_prec_symp(group):
 def get_resist_profile(group):
 
     # read csv file
-
-
     return None
 
 

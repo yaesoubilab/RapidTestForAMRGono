@@ -215,6 +215,7 @@ def get_scenario_names(min_sensitivity, min_specificity,
     scenario_names = ['Status quo (no rapid test)']
     values_p_q_c = get_list_sens_spec_coverage(
         min_sen=min_sensitivity,
+        min_spe=min_specificity,
         n_breaks_sensitivity=n_breaks_sensitivity,
         n_breaks_specificity=n_breaks_specificity,
         n_breaks_rapid_test_coverage=n_breaks_rapid_test_coverage)
