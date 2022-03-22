@@ -1,0 +1,10 @@
+ID,Name,Lower Bound,Upper Bound,Title,Multiplier,Format,Decimal
+0,Transmission parameter,0.5,3,Transmission!parameter,,,
+1,Relative infectivity by susceptibility profile-0,0.9,1,Relative infectivity!of CIP-NS,,,
+2,Relative infectivity by susceptibility profile-1,0.9,1,Relative infectivity!of TET-NS,,,
+3,Relative infectivity by susceptibility profile-2,0.9,1,Relative infectivity!of CRO-NS,,,
+4,Prob symptomatic,0.2,0.8,Probability of!symptomatic!infection,,,
+5,Exponent for the prob of resistance by antibiotics-0,-5,-3,Prob developing!resistance during!Tx with CIP,,,
+6,Exponent for the prob of resistance by antibiotics-1,-5,-3,Prob developing!resistance during!Tx with TET,,,
+7,Time until natural recovery,0.083333333,5,Years until!natural recovery,,,
+8,Time until screened,0.5,5,Years until!screened,,,

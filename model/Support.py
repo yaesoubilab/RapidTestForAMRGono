@@ -1,6 +1,7 @@
 import SimPy.ParameterEstimation as P
 import apace.Calibration as calib
 from apace.MultiEpidemics import MultiEpidemics
+from definitions import ROOT_DIR
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 from model.Plots import plot_trajectories
@@ -98,4 +99,5 @@ def estimate_parameters(n_of_resamples):
     print('\nPosterior distributions:')
     estimator.print_means_and_intervals(names=param_list)
     estimator.export_means_and_intervals(poster_file='outputs/calibration/posteriors.csv', names=param_list)
-    estimator.plot_pairwise(fig_filename='figures/posterior_figure.png', names=param_list)
+    estimator.plot_pairwise(fig_filename='figures/posterior_figure.png', names=param_list,
+                            csv_file_name_prior=ROOT_DIR+'/model/data/priors.csv')
