@@ -92,8 +92,9 @@ def estimate_parameters(n_of_resamples):
                   'Exponent for the prob of resistance by antibiotics-0',
                   'Exponent for the prob of resistance by antibiotics-1',
                   'Time until natural recovery',
-                  'Time until screened',
-                  'Initial % I by symptom states-0']
+                  'Time until screened'
+                  # 'Initial % I by symptom states-0'
+                  ]
     print('\nPosterior distributions:')
     estimator.print_means_and_intervals(names=param_list)
     estimator.export_means_and_intervals(poster_file='outputs/calibration/posteriors.csv', names=param_list)
