@@ -19,7 +19,7 @@ PercResistProfile = {
         [0, None, None, None],
         [1, 0.4, 0.2, 0.7]
     ],
-    'CIP-S, TET-NS, CRP-S': [
+    'CIP-S, TET-NS, CRO-S': [
         [0, None, None, None],
         [1, 56.0, 44.8, 67.2]
     ],
