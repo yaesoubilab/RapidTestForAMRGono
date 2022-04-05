@@ -19,7 +19,7 @@ SYMP_STATES = ['Symp', 'Asym']
 # calculating the prevalence of other drugs
 # REST_PROFILES = ['CIP', 'TET', 'CRO', 'CIP+TET', 'CIP+CRO', 'TET+CRO', 'CIP+TET+CRO', 'SUSP']
 REST_PROFILES = ['CIP-NS, TET-S, CRO-S',       # CIP
-                 'CIP-S, TET-NS, CRP-S',       # TET
+                 'CIP-S, TET-NS, CRO-S',       # TET
                  'CIP-S, TET-S, CRO-NS',       # CRO
                  'CIP-NS, TET-NS, CRO-S',      # CIP+TET
                  'CIP-NS, TET-S, CRO-NS',      # CIP+CRO

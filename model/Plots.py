@@ -184,7 +184,7 @@ def plot_scenarios(scenario_names, fig_file_name):
         effect_outcome='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
         labels=('Change in annual proportion of cases\n successfully treated with CIP, TET, or CRO',
-                'Change in annual rate of gonorrhea\n(per 100,000 population)'),
+                'Change in annual rate of gonorrhea\n(per 100,000 MSM population)'),
         health_measure='u',
         x_range=[-0.005, 0.145],
         y_range=[-3000, 3000],
