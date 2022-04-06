@@ -31,7 +31,7 @@ class Parameters(EpiParameters):
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = Constant(model_sets.probTxCIPIfSuspToCIPAndTET)
 
-        self.popSize = Constant(1000000)
+        self.popSize = Constant(2.78*10e6)
         self.annulSurveySize = Constant(value=1000)
         self.prevI0 = Uniform(0.03, 0.06)
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
