@@ -140,7 +140,7 @@ def plot_scenarios(scenario_names, fig_file_name):
     # read scenarios into a dataframe
     scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/simulated_scenarios.csv')
 
-    # get an specific outcome from a specific scenario
+    # get a specific outcome from a specific scenario
     print('\nScenario name: ', 'Rate of gonorrhea cases | Effective lifespan of CIP, TET, and CFX')
     for name in scenario_names:
         rate = scenarios_df.get_mean_interval(
@@ -151,7 +151,7 @@ def plot_scenarios(scenario_names, fig_file_name):
             scenario_name=name,
             outcome_name='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
             interval_type='c', deci=3, multiplier=SIM_DURATION)
-        print('{}: {} | {}'.format(name, rate, life))
+        print('{}: \t{} | {}'.format(name, rate, life))
 
     # plot CEA
     S.ERROR_BAR_ALPHA = 0.2
@@ -183,12 +183,13 @@ def plot_scenarios(scenario_names, fig_file_name):
         list_if_remove_base_scenario=list_if_remove_base_scenario,
         effect_outcome='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
-        labels=('Change in annual proportion of cases\n successfully treated with CIP, TET, or CRO',
-                'Change in annual rate of gonorrhea\n(per 100,000 MSM population)'),
+        labels=('Change in the effective lifespan of\nCIP, TET, and CRO',
+                'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)'),
         health_measure='u',
-        x_range=[-0.005, 0.145],
+        x_range=[-0.1, 3.6],
         y_range=[-3000, 3000],
         cost_multiplier=100000,
+        effect_multiplier=SIM_DURATION,
         file_name=fig_file_name,
         fig_size=(5, 5))
 
