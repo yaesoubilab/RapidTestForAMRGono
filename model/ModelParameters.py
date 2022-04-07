@@ -38,9 +38,9 @@ class Parameters(EpiParameters):
 
         # percent of I0 by resistance profile (comes from the Excel file ResistanceData.xlms)
         self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.003, 0.008)
-        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.449, 0.673)
+        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.488, 0.634)
         self.percIByRestProfile[RestProfile.CRO.value] = Uniform(0, 0)
-        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.249, 0.374)
+        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.271, 0.352)
         self.percIByRestProfile[RestProfile.CIP_CRO.value] = Uniform(0, 0)
         self.percIByRestProfile[RestProfile.TET_CRO.value] = Uniform(0, 0)
         self.percIByRestProfile[RestProfile.CIP_TET_CRO.value] = Uniform(0, 0)
