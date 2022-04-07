@@ -141,7 +141,7 @@ def plot_scenarios(scenario_names, fig_file_name):
     scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/simulated_scenarios.csv')
 
     # get an specific outcome from a specific scenario
-    print('\nScenario name: ', 'Rate of gonorrhea cases | Proportion of cases treatable with CFX')
+    print('\nScenario name: ', 'Rate of gonorrhea cases | Effective lifespan of CIP, TET, and CFX')
     for name in scenario_names:
         rate = scenarios_df.get_mean_interval(
             scenario_name=name,
@@ -150,7 +150,7 @@ def plot_scenarios(scenario_names, fig_file_name):
         life = scenarios_df.get_mean_interval(
             scenario_name=name,
             outcome_name='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
-            interval_type='c', deci=3)
+            interval_type='c', deci=3, multiplier=SIM_DURATION)
         print('{}: {} | {}'.format(name, rate, life))
 
     # plot CEA
