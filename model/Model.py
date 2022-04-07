@@ -397,10 +397,10 @@ def build_model(model):
         name='Cases CRO-R, CIP_CRO-R, TET_CRO-R, or CIP_TET_CRO-R',
         compartments=counting_rest_to[RestProfile.CRO.value] +
                      counting_rest_to[RestProfile.CIP_CRO.value] +
-                     counting_rest_to[RestProfile.TET.value] +
+                     counting_rest_to[RestProfile.TET_CRO.value] +
                      counting_rest_to[RestProfile.CIP_TET_CRO.value])
     perc_cases_CRO_R = RatioTimeSeries(
-            name='Proportion of cases CRO-R or CRO+PEN-R',
+            name='Proportion of cases CRO-NS',
             numerator_sum_time_series=n_cases_CRO_R,
             denominator_sum_time_series=n_cases,
             if_surveyed=True,
@@ -435,6 +435,9 @@ def build_model(model):
             feasible_min=0.5, feasible_max=1))
         perc_cases_sympt.add_calibration_targets(ratios=sets.percSympMean,
                                                  survey_sizes=sets.percSympN)
+        # % cases with resistance to CRO
+        perc_cases_CRO_R.add_feasible_conditions(feasible_conditions=FeasibleConditions(
+            min_threshold_to_hit=0.05))
 
     # ------------- interventions ---------------
     # interventions

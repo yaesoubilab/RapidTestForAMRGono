@@ -36,7 +36,8 @@ class Parameters(EpiParameters):
         self.prevI0 = Uniform(0.03, 0.06)
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
-        # percent of I0 by resistance profile (comes from the Excel file ResistanceData.xlms)
+        # percent of I0 by resistance profile (comes from the Excel file under \data folder)
+        # TODO: change this to dirichlete
         self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.003, 0.008)
         self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.488, 0.634)
         self.percIByRestProfile[RestProfile.CRO.value] = Uniform(0, 0)
