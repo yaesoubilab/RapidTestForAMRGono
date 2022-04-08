@@ -119,10 +119,6 @@ class Parameters(EpiParameters):
         self.prevS = OneMinus(par=self.prevI0)
         self.precIBySymp[SympStat.ASYM.value] = OneMinus(par=self.precIBySymp[SympStat.SYMP.value])
 
-        # TODO: delete this
-        # find the prevalence of I0 that are susceptible to all antibiotics
-        # self.percISus = OneMinusSum(parameters=self.percIByRestProfile)
-
         # probability for the emergence of resistance for a drug
         for p in range(len(AB)):
             self.probResEmerge[p] = TenToPower(self.exponProbRes[p])
@@ -146,12 +142,6 @@ class Parameters(EpiParameters):
         for s in range(len(SympStat)):
             for p in range(len(RestProfile)):
                 i = indexer.get_row_index(symp_state=s, rest_profile=p)
-                # TODO: delete the comment
-                #
-                # if p == RestProfile.SUS.value:
-                #     self.sizeIBySympAndRest[i] = Product(
-                #         [self.sizeI, self.precIBySymp[s], self.percISus])
-                # else:
                 self.sizeIBySympAndRest[i] = Product(
                     [self.sizeI, self.precIBySymp[s], self.percIByRestProfile[p]])
 
