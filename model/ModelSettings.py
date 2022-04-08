@@ -44,7 +44,7 @@ class GonoSettings(ModelSettings):
         self.probTxCIPIfSuspToCIPAndTET = 0.5
 
         # calibration targets
-        if self.calcLikelihood:
+        if if_calibrating:
             self.simulationDuration = END_OF_CALIB
             self.prevMean = []
             self.prevN = []
