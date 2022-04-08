@@ -1,5 +1,5 @@
 from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
-    TenToPower, OneMinusSum, TimeDependentStepWise
+    TenToPower, OneMinusSum, TimeDependentStepWise, Dirichlet
 from apace.Inputs import EpiParameters
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, END_OF_WARM_UP, ConvertSympAndResitAndAntiBio
 
@@ -37,14 +37,15 @@ class Parameters(EpiParameters):
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
         # percent of I0 by resistance profile (comes from the Excel file under \data folder)
-        # TODO: change this to dirichlete
-        self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.003, 0.008)
-        self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.488, 0.634)
-        self.percIByRestProfile[RestProfile.CRO.value] = Uniform(0, 0)
-        self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.271, 0.352)
-        self.percIByRestProfile[RestProfile.CIP_CRO.value] = Uniform(0, 0)
-        self.percIByRestProfile[RestProfile.TET_CRO.value] = Uniform(0, 0)
-        self.percIByRestProfile[RestProfile.CIP_TET_CRO.value] = Uniform(0, 0)
+        self.percIByRestProfile = Dirichlet(par_ns=[2, 280, 0, 155, 0, 0, 0, 60])
+
+        # self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.003, 0.008)
+        # self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.488, 0.634)
+        # self.percIByRestProfile[RestProfile.CRO.value] = Uniform(0, 0)
+        # self.percIByRestProfile[RestProfile.CIP_TET.value] = Uniform(0.271, 0.352)
+        # self.percIByRestProfile[RestProfile.CIP_CRO.value] = Uniform(0, 0)
+        # self.percIByRestProfile[RestProfile.TET_CRO.value] = Uniform(0, 0)
+        # self.percIByRestProfile[RestProfile.CIP_TET_CRO.value] = Uniform(0, 0)
 
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
