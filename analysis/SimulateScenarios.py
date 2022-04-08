@@ -6,8 +6,9 @@ from definitions import get_scenario_names, get_list_sens_spec_coverage, \
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-N_OF_SIMS = 16*10
+N_OF_SIMS = 160
 RUN_IN_PARALLEL = True
+RAPID_TEST_COVERAGE = 0.75
 
 
 def simulate_scenarios():
@@ -22,7 +23,7 @@ def simulate_scenarios():
         min_specificity=MIN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
-        n_breaks_rapid_test_coverage=1)
+        rapid_test_coverage=RAPID_TEST_COVERAGE)
 
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
     var_names = ['sensitivity', 'specificity', 'rapid test coverage']
@@ -35,7 +36,7 @@ def simulate_scenarios():
         min_spe=MIN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
-        n_breaks_rapid_test_coverage=1)
+        rapid_test_coverage=1)
 
     # get the seeds and probability weights
     seeds, lns, weights = calib.get_seeds_lnl_probs('outputs/calibration/calibration_summary.csv')

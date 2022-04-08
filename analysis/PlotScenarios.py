@@ -8,7 +8,7 @@ plot_scenarios(
         min_specificity=MIN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
-        n_breaks_rapid_test_coverage=1),
+        rapid_test_coverage=1),
     fig_file_name='figures/Changing specificity.png')
 
 

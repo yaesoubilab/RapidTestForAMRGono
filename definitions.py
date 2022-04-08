@@ -171,13 +171,13 @@ def get_survey_size(mean, l, u, multiplier=1):
 
 
 def get_list_sens_spec_coverage(min_sen, min_spe,
-                                n_breaks_sensitivity, n_breaks_specificity, n_breaks_rapid_test_coverage):
+                                n_breaks_sensitivity, n_breaks_specificity, rapid_test_coverage):
     """
     :param min_sen: (float) minimum value for sensitivity
     :param min_spe: (float) minimum value for specificity
     :param n_breaks_sensitivity: (int) number of break points for sensitivity values
     :param n_breaks_specificity: (int) number of break points for specificity values
-    :param n_breaks_rapid_test_coverage: (int) number of break points for coverage values
+    :param rapid_test_coverage: (float) between [0, 1] prob of receiving the rapid test
     :return: (list) of [sensitivity, specificity, coverage of rapid test]
     """
 
@@ -194,10 +194,7 @@ def get_list_sens_spec_coverage(min_sen, min_spe,
     else:
         values_spe = np.linspace(min_spe, 1, n_breaks_specificity)
     # coverage
-    if n_breaks_rapid_test_coverage == 1:
-        values_coverage = [1]
-    else:
-        values_coverage = np.linspace(0, 1, n_breaks_specificity)
+    values_coverage = [rapid_test_coverage]
 
     # values
     for sens in reversed(values_sen):
@@ -210,7 +207,7 @@ def get_list_sens_spec_coverage(min_sen, min_spe,
 
 def get_scenario_names(min_sensitivity, min_specificity,
                        n_breaks_sensitivity, n_breaks_specificity,
-                       n_breaks_rapid_test_coverage):
+                       rapid_test_coverage):
 
     scenario_names = ['Status quo (no rapid test)']
     values_p_q_c = get_list_sens_spec_coverage(
@@ -218,7 +215,7 @@ def get_scenario_names(min_sensitivity, min_specificity,
         min_spe=min_specificity,
         n_breaks_sensitivity=n_breaks_sensitivity,
         n_breaks_specificity=n_breaks_specificity,
-        n_breaks_rapid_test_coverage=n_breaks_rapid_test_coverage)
+        rapid_test_coverage=rapid_test_coverage)
     for v in values_p_q_c:
         scenario_names.append('(p={:.2f}, q={:.2f}, c={:.2f})'.format(v[0], v[1], v[2]))
 
