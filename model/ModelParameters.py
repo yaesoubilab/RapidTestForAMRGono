@@ -1,5 +1,5 @@
 from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
-    TenToPower, OneMinusSum, TimeDependentStepWise, Dirichlet
+    TenToPower, TimeDependentStepWise, Dirichlet, AnOutcomeOfAMultiVariateDist
 from apace.Inputs import EpiParameters
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, END_OF_WARM_UP, ConvertSympAndResitAndAntiBio
 
@@ -36,8 +36,16 @@ class Parameters(EpiParameters):
         self.prevI0 = Uniform(0.03, 0.06)
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
-        # percent of I0 by resistance profile (comes from the Excel file under \data folder)
-        self.percIByRestProfile = Dirichlet(par_ns=[2, 280, 0, 155, 0, 0, 0, 60])
+        # the Dirichlet distribution for the percent of I0 by resistance profile
+        # (comes from the Excel file under \data folder)
+        self.percIByRestProfileDirichlet = Dirichlet(par_ns=[2, 280, 0, 155, 0, 0, 0, 60], if_ignore_0s=True)
+
+        # percent of I0 by resistance profile
+        self.percIByRestProfile = []
+        for p in range(len(RestProfile)):
+            self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
+                par_multivariante=self.percIByRestProfileDirichlet,
+                outcome_index=p))
 
         # self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.003, 0.008)
         # self.percIByRestProfile[RestProfile.TET.value] = Uniform(0.488, 0.634)
@@ -111,8 +119,9 @@ class Parameters(EpiParameters):
         self.prevS = OneMinus(par=self.prevI0)
         self.precIBySymp[SympStat.ASYM.value] = OneMinus(par=self.precIBySymp[SympStat.SYMP.value])
 
+        # TODO: delete this
         # find the prevalence of I0 that are susceptible to all antibiotics
-        self.percISus = OneMinusSum(parameters=self.percIByRestProfile)
+        # self.percISus = OneMinusSum(parameters=self.percIByRestProfile)
 
         # probability for the emergence of resistance for a drug
         for p in range(len(AB)):
@@ -137,12 +146,14 @@ class Parameters(EpiParameters):
         for s in range(len(SympStat)):
             for p in range(len(RestProfile)):
                 i = indexer.get_row_index(symp_state=s, rest_profile=p)
-                if p == RestProfile.SUS.value:
-                    self.sizeIBySympAndRest[i] = Product(
-                        [self.sizeI, self.precIBySymp[s], self.percISus])
-                else:
-                    self.sizeIBySympAndRest[i] = Product(
-                        [self.sizeI, self.precIBySymp[s], self.percIByRestProfile[p]])
+                # TODO: delete the comment
+                #
+                # if p == RestProfile.SUS.value:
+                #     self.sizeIBySympAndRest[i] = Product(
+                #         [self.sizeI, self.precIBySymp[s], self.percISus])
+                # else:
+                self.sizeIBySympAndRest[i] = Product(
+                    [self.sizeI, self.precIBySymp[s], self.percIByRestProfile[p]])
 
     def build_dict_of_params(self):
 
@@ -161,6 +172,7 @@ class Parameters(EpiParameters):
              'Annual survey size': self.annulSurveySize,
              'Initial prevalence': self.prevI0,
              'Initial % I by symptom states': self.precIBySymp,
+             'Dirichlet dist. of % I by resistance profile': self.percIByRestProfileDirichlet,
              'Initial % I by resistance profile': self.percIByRestProfile,
              # ----
              'Transmission parameter': self.transm,
@@ -177,7 +189,7 @@ class Parameters(EpiParameters):
 
         self.dictOfParams['Survey size (over observation periods)'] = self.surveySize
         self.dictOfParams['Initial % Susceptible'] = self.prevS
-        self.dictOfParams['Initial % I susceptible to all drugs'] = self.percISus
+        # self.dictOfParams['Initial % I susceptible to all drugs'] = self.percISus
 
         self.dictOfParams['Prob of resistance by antibiotics'] = self.probResEmerge
 
