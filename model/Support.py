@@ -85,19 +85,39 @@ def estimate_parameters(n_of_resamples):
                                     csvfile_resampled_params='outputs/calibration/resampled_parameter_values.csv',
                                     seed=0)
 
-    param_list = ['Transmission parameter',
-                  'Time until natural recovery',
-                  'Time until screened',
-                  'Relative infectivity by susceptibility profile-0',
-                  'Relative infectivity by susceptibility profile-1',
-                  'Relative infectivity by susceptibility profile-2',
-                  'Prob symptomatic',
-                  'Exponent for the prob of resistance by antibiotics-0',
-                  'Exponent for the prob of resistance by antibiotics-1'
-                  # 'Initial % I by symptom states-0'
-                  ]
-    print('\nPosterior distributions:')
-    estimator.print_means_and_intervals(param_names=param_list)
-    estimator.export_means_and_intervals(poster_file='outputs/calibration/posteriors.csv', param_names=param_list)
-    estimator.plot_pairwise(fig_filename='figures/posterior_figure.png', par_names=param_list,
-                            csv_file_name_prior=ROOT_DIR+'/model/data/priors.csv')
+    param_list_for_table = [
+        'Transmission parameter',
+        'Time until natural recovery',
+        'Time until screened',
+        'Time until seeking treatment (symptomatic)',
+        'Time until seeking retreatment (symptomatic)',
+        'Prob symptomatic',
+
+        'Exponent for the prob of resistance by antibiotics-0',
+        'Exponent for the prob of resistance by antibiotics-1',
+        'Exponent for the prob of resistance by antibiotics-2'] \
+        + ['Relative infectivity by infectivity profile-{}'.format(i) for i in range(8)] \
+        + ['Initial prevalence',
+           'Initial % I by symptom states-0'] \
+        + ['Initial % I by resistance profile-{}'.format(i) for i in range(8)]
+
+    param_list_for_figure = [
+        'Transmission parameter',
+        'Time until natural recovery',
+        'Time until screened',
+        'Relative infectivity by infectivity profile-0',
+        'Relative infectivity by infectivity profile-1',
+        'Relative infectivity by infectivity profile-2',
+        'Prob symptomatic',
+        'Exponent for the prob of resistance by antibiotics-0',
+        'Exponent for the prob of resistance by antibiotics-1',
+        'Exponent for the prob of resistance by antibiotics-2'
+    ]
+    # print('\nPosterior distributions:')
+    # estimator.print_means_and_intervals(param_names=param_list_for_table)
+    estimator.export_means_and_intervals(poster_file='outputs/calibration/posteriors.csv',
+                                         param_names=param_list_for_table,
+                                         prior_info_csv_file=ROOT_DIR+'/model/data/priors.csv')
+    estimator.plot_pairwise(fig_filename='figures/posterior_figure.png',
+                            par_names=param_list_for_figure,
+                            prior_info_csv_file=ROOT_DIR + '/model/data/priors.csv')

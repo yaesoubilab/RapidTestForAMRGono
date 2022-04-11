@@ -166,7 +166,7 @@ class Parameters(EpiParameters):
              'Initial % I by resistance profile': self.percIByRestProfile,
              # ----
              'Transmission parameter': self.transm,
-             'Relative infectivity by susceptibility profile': self.ratioInf,
+             'Relative infectivity by infectivity profile': self.ratioInf,
              # ----
              'Exponent for the prob of resistance by antibiotics': self.exponProbRes,
              # ----
