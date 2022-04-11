@@ -86,14 +86,14 @@ def estimate_parameters(n_of_resamples):
                                     seed=0)
 
     param_list = ['Transmission parameter',
+                  'Time until natural recovery',
+                  'Time until screened',
                   'Relative infectivity by susceptibility profile-0',
                   'Relative infectivity by susceptibility profile-1',
                   'Relative infectivity by susceptibility profile-2',
                   'Prob symptomatic',
                   'Exponent for the prob of resistance by antibiotics-0',
-                  'Exponent for the prob of resistance by antibiotics-1',
-                  'Time until natural recovery',
-                  'Time until screened'
+                  'Exponent for the prob of resistance by antibiotics-1'
                   # 'Initial % I by symptom states-0'
                   ]
     print('\nPosterior distributions:')
