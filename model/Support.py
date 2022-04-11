@@ -97,7 +97,7 @@ def estimate_parameters(n_of_resamples):
                   # 'Initial % I by symptom states-0'
                   ]
     print('\nPosterior distributions:')
-    estimator.print_means_and_intervals(names=param_list)
-    estimator.export_means_and_intervals(poster_file='outputs/calibration/posteriors.csv', names=param_list)
-    estimator.plot_pairwise(fig_filename='figures/posterior_figure.png', names=param_list,
+    estimator.print_means_and_intervals(param_names=param_list)
+    estimator.export_means_and_intervals(poster_file='outputs/calibration/posteriors.csv', param_names=param_list)
+    estimator.plot_pairwise(fig_filename='figures/posterior_figure.png', par_names=param_list,
                             csv_file_name_prior=ROOT_DIR+'/model/data/priors.csv')
