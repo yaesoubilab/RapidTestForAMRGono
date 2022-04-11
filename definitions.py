@@ -15,17 +15,14 @@ N_BREAKS_SENSITIVITY = 6 # 6
 N_BREAKS_SPECIFICITY = 5
 
 SYMP_STATES = ['Symp', 'Asym']
-# we put SUS last because its prevalence is calculated after
-# calculating the prevalence of other drugs
-# REST_PROFILES = ['CIP', 'TET', 'CRO', 'CIP+TET', 'CIP+CRO', 'TET+CRO', 'CIP+TET+CRO', 'SUSP']
-REST_PROFILES = ['CIP-NS, TET-S, CRO-S',       # CIP
+REST_PROFILES = ['CIP-S, TET-S, CRO-S',        # SUSP
+                 'CIP-NS, TET-S, CRO-S',       # CIP
                  'CIP-S, TET-NS, CRO-S',       # TET
                  'CIP-S, TET-S, CRO-NS',       # CRO
                  'CIP-NS, TET-NS, CRO-S',      # CIP+TET
                  'CIP-NS, TET-S, CRO-NS',      # CIP+CRO
                  'CIP-S, TET-NS, CRO-NS',      # TET+CRO
                  'CIP-NS, TET-NS, CRO-NS',     # CIP+TET+CRO
-                 'CIP-S, TET-S, CRO-S',        # SUSP
                  ]
 
 ANTIBIOTICS = ['CIP', 'TET', 'CRO']
@@ -43,16 +40,14 @@ class AB(Enum):
 
 
 class RestProfile(Enum):
-    # we put SUS last because its prevalence is calculated after calculating the prevalence
-    # of other drugs
-    CIP = 0
-    TET = 1
-    CRO = 2
-    CIP_TET = 3
-    CIP_CRO = 4
-    TET_CRO = 5
-    CIP_TET_CRO = 6
-    SUS = 7
+    SUS = 0
+    CIP = 1
+    TET = 2
+    CRO = 3
+    CIP_TET = 4
+    CIP_CRO = 5
+    TET_CRO = 6
+    CIP_TET_CRO = 7
 
 
 class TreatmentOutcome(Enum):

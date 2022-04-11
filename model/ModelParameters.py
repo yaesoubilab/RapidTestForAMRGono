@@ -38,7 +38,7 @@ class Parameters(EpiParameters):
 
         # the Dirichlet distribution for the percent of I0 by resistance profile
         # (comes from the Excel file under \data folder)
-        self.percIByRestProfileDirichlet = Dirichlet(par_ns=[2, 280, 0, 155, 0, 0, 0, 60], if_ignore_0s=True)
+        self.percIByRestProfileDirichlet = Dirichlet(par_ns=[60, 2, 280, 0, 155, 0, 0, 0], if_ignore_0s=True)
 
         # percent of I0 by resistance profile
         self.percIByRestProfile = []
@@ -58,6 +58,7 @@ class Parameters(EpiParameters):
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
         # relative infectivity of resistance profiles to susceptible
+        self.ratioInf[RestProfile.SUS.value] = Constant(1)
         self.ratioInf[RestProfile.CIP.value] = Uniform(0.9, 1)
         self.ratioInf[RestProfile.TET.value] = Uniform(0.9, 1)
         self.ratioInf[RestProfile.CRO.value] = Uniform(0.9, 1)
@@ -65,7 +66,7 @@ class Parameters(EpiParameters):
         self.ratioInf[RestProfile.CIP_CRO.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.TET_CRO.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.CIP_TET_CRO.value] = Uniform(0.7, 1)
-        self.ratioInf[RestProfile.SUS.value] = Constant(1)
+
 
         # exponent of the probability for the emergence of resistance for a drug
         self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
