@@ -5,7 +5,7 @@ from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention
     ConditionOnFeatures, ConditionOnConditions, ConditionAlwaysFalse
 from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
-from definitions import RestProfile, AB, SympStat, REST_PROFILES, ANTIBIOTICS, SYMP_STATES, TreatmentOutcome, \
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, ANTIBIOTICS, TreatmentOutcome, \
     ConvertSympAndResitAndAntiBio, get_profile_after_resit_or_failure
 from model.ModelParameters import Parameters
 
@@ -90,11 +90,15 @@ def build_model(model):
                                destination_compartments=[S, S],
                                probability_params=Constant(1))
     # counting M used for 1st-line Tx
-    counting_1st_tx_M_by_symp = [None] * n_symp_states
+    counting_1st_tx_M_by_symp_profile = [None] * covert_symp_resist.length
     for s in range(n_symp_states):
-        counting_1st_tx_M_by_symp[s] = ChanceNode(name='1st-Tx with M with ' + SYMP_STATES[s],
-                                                  destination_compartments=[counting_tx_M, counting_tx_M],
-                                                  probability_params=Constant(1))
+        for p in range(n_rest_profiles):
+            i = covert_symp_resist.get_row_index(symp_state=s, rest_profile=p)
+            name = '1st-Tx with M | ' + covert_symp_resist.get_str_symp_susp(symp_state=s, rest_profile=p)
+            counting_1st_tx_M_by_symp_profile[i] = ChanceNode(
+                name=name,
+                destination_compartments=[counting_tx_M, counting_tx_M],
+                probability_params=Constant(1))
 
     # counting successful Tx with each antibiotic
     counting_tx_success_by_ab = [None] * len(AB)
@@ -321,6 +325,7 @@ def build_model(model):
                 counting_symp.append(ifs_will_receive_rapid_test[i])
             # by resistance profile
             counting_rest_to[p].append(ifs_will_receive_rapid_test[i])
+            counting_rest_to[p].append(counting_1st_tx_M_by_symp_profile[i])
 
     # ------------- compartment histories ---------------
     # set up prevalence, incidence, and cumulative incidence to collect
@@ -354,8 +359,8 @@ def build_model(model):
         counting_tx_success_by_ab[a].setup_history(collect_incd=True)
     counting_success_CIP_TET_CRO.setup_history(collect_incd=True)
     counting_tx_M.setup_history(collect_incd=True)
-    for s in range(n_symp_states):
-        counting_1st_tx_M_by_symp[s].setup_history(collect_incd=True)
+    for s in counting_1st_tx_M_by_symp_profile:
+        s.setup_history(collect_incd=True)
 
     # ------------- summation statistics ---------------
     # population size
@@ -372,7 +377,7 @@ def build_model(model):
 
     # rate of new gonorrhea cases
     n_cases = SumIncidence(name='New cases',
-                           compartments=ifs_will_receive_rapid_test + counting_1st_tx_M_by_symp)
+                           compartments=ifs_will_receive_rapid_test + counting_1st_tx_M_by_symp_profile)
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
                                 numerator_sum_time_series=n_cases,
                                 denominator_sum_time_series=pop_size,
@@ -380,8 +385,13 @@ def build_model(model):
                                 collect_stat_after_warm_up=True)
 
     # % cases symptomatic
+    first_line_tx_M_with_symp = []
+    for p in range(n_rest_profiles):
+        i = covert_symp_resist.get_row_index(symp_state=SympStat.SYMP.value, rest_profile=p)
+        first_line_tx_M_with_symp.append(counting_1st_tx_M_by_symp_profile[i])
+
     n_cases_sympt = SumIncidence(name='New cases symptomatic',
-                                 compartments=counting_symp + [counting_1st_tx_M_by_symp[SympStat.SYMP.value]])
+                                 compartments=counting_symp + first_line_tx_M_with_symp)
     perc_cases_sympt = RatioTimeSeries(name='Proportion of cases symptomatic',
                                        numerator_sum_time_series=n_cases_sympt,
                                        denominator_sum_time_series=n_cases,
@@ -523,7 +533,7 @@ def build_model(model):
             Is[i].add_event(EpiIndepEvent(
                 name='Screening then M| ' + compart_name,
                 rate_param=params.rateScreened,
-                destination=counting_1st_tx_M_by_symp[s],
+                destination=counting_1st_tx_M_by_symp_profile[i],
                 interv_to_activate=first_line_tx_with_M))
             # seeking treatment
             if s == SympStat.SYMP.value:
@@ -535,7 +545,7 @@ def build_model(model):
                 Is[i].add_event(EpiIndepEvent(
                     name='Seeking treatment then M | ' + compart_name,
                     rate_param=params.rateTreatment,
-                    destination=counting_1st_tx_M_by_symp[s],
+                    destination=counting_1st_tx_M_by_symp_profile[i],
                     interv_to_activate=first_line_tx_with_M))
 
     # add events to infection compartments after treatment failure
@@ -575,7 +585,7 @@ def build_model(model):
                    + ifs_re_tx + ifs_symp_from_emerg_rest \
                    + ifs_resist_after_re_tx_cfx \
                    + counting_tx_success_by_ab \
-                   + counting_1st_tx_M_by_symp \
+                   + counting_1st_tx_M_by_symp_profile \
                    + [counting_success_CIP_TET_CRO, counting_tx_M]
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CRO_NS,
