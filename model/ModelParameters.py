@@ -32,7 +32,7 @@ class Parameters(EpiParameters):
         self.probTxCIPIfSuspToCIPAndTET = Constant(model_sets.probTxCIPIfSuspToCIPAndTET)
 
         self.popSize = Constant(2.78*10e6)
-        self.annulSurveySize = Constant(value=1000)
+        self.annulSurveySize = Constant(value=1500)
         self.prevI0 = Uniform(0.03, 0.06)
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 

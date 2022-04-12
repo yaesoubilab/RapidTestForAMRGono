@@ -1,9 +1,11 @@
 from SimPy.Parameters import Constant
 from apace.CalibrationSupport import FeasibleConditions
-from apace.Control import InterventionAffectingEvents
+from apace.Control import InterventionAffectingEvents, ConditionBasedDecisionRule
+from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention, \
+    ConditionOnFeatures, ConditionOnConditions, ConditionAlwaysFalse
 from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
 from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
-from definitions import RestProfile, AB, SympStat, REST_PROFILES, ANTIBIOTICS, TreatmentOutcome, \
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, ANTIBIOTICS, SYMP_STATES, TreatmentOutcome, \
     ConvertSympAndResitAndAntiBio, get_profile_after_resit_or_failure
 from model.ModelParameters import Parameters
 
@@ -87,6 +89,13 @@ def build_model(model):
     counting_tx_M = ChanceNode(name='Tx with M',
                                destination_compartments=[S, S],
                                probability_params=Constant(1))
+    # counting M used for 1st-line Tx
+    counting_1st_tx_M_by_symp = [None] * n_symp_states
+    for s in range(n_symp_states):
+        counting_1st_tx_M_by_symp[s] = ChanceNode(name='1st-Tx with M with ' + SYMP_STATES[s],
+                                                  destination_compartments=[counting_tx_M, counting_tx_M],
+                                                  probability_params=Constant(1))
+
     # counting successful Tx with each antibiotic
     counting_tx_success_by_ab = [None] * len(AB)
     for a in range(len(AB)):
@@ -345,6 +354,8 @@ def build_model(model):
         counting_tx_success_by_ab[a].setup_history(collect_incd=True)
     counting_success_CIP_TET_CRO.setup_history(collect_incd=True)
     counting_tx_M.setup_history(collect_incd=True)
+    for s in range(n_symp_states):
+        counting_1st_tx_M_by_symp[s].setup_history(collect_incd=True)
 
     # ------------- summation statistics ---------------
     # population size
@@ -361,7 +372,7 @@ def build_model(model):
 
     # rate of new gonorrhea cases
     n_cases = SumIncidence(name='New cases',
-                           compartments=ifs_will_receive_rapid_test)
+                           compartments=ifs_will_receive_rapid_test + counting_1st_tx_M_by_symp)
     gono_rate = RatioTimeSeries(name='Rate of gonorrhea cases',
                                 numerator_sum_time_series=n_cases,
                                 denominator_sum_time_series=pop_size,
@@ -370,7 +381,7 @@ def build_model(model):
 
     # % cases symptomatic
     n_cases_sympt = SumIncidence(name='New cases symptomatic',
-                                 compartments=counting_symp)
+                                 compartments=counting_symp + [counting_1st_tx_M_by_symp[SympStat.SYMP.value]])
     perc_cases_sympt = RatioTimeSeries(name='Proportion of cases symptomatic',
                                        numerator_sum_time_series=n_cases_sympt,
                                        denominator_sum_time_series=n_cases,
@@ -392,16 +403,16 @@ def build_model(model):
         n_cases_by_resistance_profile.append(n_resistant_cases)
         perc_cases_by_resistance_profile.append(perc_cases_resistant)
 
-    # cases by resistance to CRO
-    n_cases_CRO_R = SumIncidence(
-        name='Cases CRO-R, CIP_CRO-R, TET_CRO-R, or CIP_TET_CRO-R',
+    # cases non-susceptible to CRO
+    n_cases_CRO_NS = SumIncidence(
+        name='Cases CRO-NS',
         compartments=counting_rest_to[RestProfile.CRO.value] +
                      counting_rest_to[RestProfile.CIP_CRO.value] +
                      counting_rest_to[RestProfile.TET_CRO.value] +
                      counting_rest_to[RestProfile.CIP_TET_CRO.value])
-    perc_cases_CRO_R = RatioTimeSeries(
+    perc_cases_CRO_NS = RatioTimeSeries(
             name='Proportion of cases CRO-NS',
-            numerator_sum_time_series=n_cases_CRO_R,
+            numerator_sum_time_series=n_cases_CRO_NS,
             denominator_sum_time_series=n_cases,
             if_surveyed=True,
             survey_size_param=params.surveySize)
@@ -436,12 +447,51 @@ def build_model(model):
         perc_cases_sympt.add_calibration_targets(ratios=sets.percSympMean,
                                                  survey_sizes=sets.percSympN)
         # % cases with resistance to CRO
-        perc_cases_CRO_R.add_feasible_conditions(feasible_conditions=FeasibleConditions(
+        perc_cases_CRO_NS.add_feasible_conditions(feasible_conditions=FeasibleConditions(
             min_threshold_to_hit=0.05))
 
     # ------------- interventions ---------------
     # interventions
-    first_line_tx = InterventionAffectingEvents(name='1st line therapy')
+    first_line_tx_with_CRO = InterventionAffectingEvents(name='1st line therapy with CRO')
+    first_line_tx_with_M = InterventionAffectingEvents(name='1st line therapy with Drug M')
+
+    # if M is available for the 1st-line Tx
+    if sets.ifMAvailableFor1stTx:
+        # ------------- features ---------------
+        # features
+        f_perc_CRO_NS = FeatureSurveillance(name='Surveyed % of cases non-suceptible to CRO',
+                                            ratio_time_series_with_surveillance=perc_cases_CRO_NS)
+        f_if_M_ever_switched_on = FeatureIntervention(name='If Drug M ever switched on',
+                                                      intervention=first_line_tx_with_M,
+                                                      feature_type='if ever switched on')
+
+        # ------------- conditions ---------------
+        # conditions
+        CRO_in_condition = ConditionOnFeatures(name='If % resistant is below threshold',
+                                               features=[f_perc_CRO_NS],
+                                               signs=['l'],
+                                               thresholds=[sets.switchThreshold])
+        CRO_out_condition = ConditionOnFeatures(name='If % resistant passes threshold',
+                                                features=[f_perc_CRO_NS],
+                                                signs=['ge'],
+                                                thresholds=[sets.switchThreshold])
+        M_is_never_used = ConditionOnFeatures(name='If M is ever used as 1st-line therapy',
+                                              features=[f_if_M_ever_switched_on],
+                                              signs=['e'],
+                                              thresholds=[0])
+
+        turn_on_tx_with_CRO = ConditionOnConditions(name='', conditions=[CRO_in_condition, M_is_never_used])
+
+        # ------------- decision rules ---------------
+        # add decision rules to interventions
+        first_line_tx_with_CRO.add_decision_rule(
+            decision_rule=ConditionBasedDecisionRule(default_switch_value=1,
+                                                     condition_to_turn_on=turn_on_tx_with_CRO,
+                                                     condition_to_turn_off=CRO_out_condition))
+        first_line_tx_with_M.add_decision_rule(
+            decision_rule=ConditionBasedDecisionRule(default_switch_value=0,
+                                                     condition_to_turn_on=CRO_out_condition,
+                                                     condition_to_turn_off=ConditionAlwaysFalse()))
 
     # ------------- attach epidemic events ---------------
     # attached epidemic events to compartments
@@ -469,24 +519,24 @@ def build_model(model):
                 name='Screening | ' + compart_name,
                 rate_param=params.rateScreened,
                 destination=ifs_will_receive_rapid_test[i],
-                interv_to_activate=first_line_tx))
-            # Is[i].add_event(EpiIndepEvent(
-            #     name='Screening then M| ' + compart_name,
-            #     rate_param=params.rateScreened,
-            #     destination=ifs_counting_tx_M[i],
-            #     interv_to_activate=first_line_tx_with_M))
+                interv_to_activate=first_line_tx_with_CRO))
+            Is[i].add_event(EpiIndepEvent(
+                name='Screening then M| ' + compart_name,
+                rate_param=params.rateScreened,
+                destination=counting_1st_tx_M_by_symp[s],
+                interv_to_activate=first_line_tx_with_M))
             # seeking treatment
             if s == SympStat.SYMP.value:
                 Is[i].add_event(EpiIndepEvent(
                     name='Seeking treatment | ' + compart_name,
                     rate_param=params.rateTreatment,
                     destination=ifs_will_receive_rapid_test[i],
-                    interv_to_activate=first_line_tx))
-                # Is[i].add_event(EpiIndepEvent(
-                #     name='Seeking treatment then M | ' + compart_name,
-                #     rate_param=params.rateTreatment,
-                #     destination=ifs_counting_tx_M[i],
-                #     interv_to_activate=first_line_tx_with_M))
+                    interv_to_activate=first_line_tx_with_CRO))
+                Is[i].add_event(EpiIndepEvent(
+                    name='Seeking treatment then M | ' + compart_name,
+                    rate_param=params.rateTreatment,
+                    destination=counting_1st_tx_M_by_symp[s],
+                    interv_to_activate=first_line_tx_with_M))
 
     # add events to infection compartments after treatment failure
     for s in range(n_symp_states):
@@ -525,19 +575,28 @@ def build_model(model):
                    + ifs_re_tx + ifs_symp_from_emerg_rest \
                    + ifs_resist_after_re_tx_cfx \
                    + counting_tx_success_by_ab \
+                   + counting_1st_tx_M_by_symp \
                    + [counting_success_CIP_TET_CRO, counting_tx_M]
 
-    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CRO_R,
+    list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CRO_NS,
                                n_cases_sympt, n_treated, n_treated_CIP_PEN_CRO]
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
-    list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CRO_R,
+    list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CRO_NS,
                                  perc_cases_sympt, perc_treated_with_CIP_PEN_CRO]
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
+
+    features = None
+    conditions = None
+    if sets.ifMAvailableFor1stTx:
+        features = [f_perc_CRO_NS, f_if_M_ever_switched_on]
+        conditions = [CRO_in_condition, CRO_out_condition, M_is_never_used, turn_on_tx_with_CRO],
 
     model.populate(compartments=all_comparts,
                    chance_nodes=chance_nodes,
                    list_of_sum_time_series=list_of_sum_time_series,
                    list_of_ratio_time_series=list_of_ratio_time_series,
-                   interventions=[first_line_tx],
+                   interventions=[first_line_tx_with_CRO, first_line_tx_with_M],
+                   features=[f_perc_CRO_NS, f_if_M_ever_switched_on] if sets.ifMAvailableFor1stTx else None,
+                   conditions=[CRO_in_condition, CRO_out_condition, M_is_never_used, turn_on_tx_with_CRO],
                    parameters=params)

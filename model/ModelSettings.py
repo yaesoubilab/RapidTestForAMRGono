@@ -40,6 +40,10 @@ class GonoSettings(ModelSettings):
         # probability of receiving a rapid test
         self.probRapidTest = 0 if if_calibrating else 1
 
+        # if M is available for the 1st-Tx
+        self.ifMAvailableFor1stTx = True
+        self.switchThreshold = 0.05
+
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5
 
@@ -89,7 +93,7 @@ class GonoSettings(ModelSettings):
                                                           u=PercSymptomatic[j][3],
                                                           multiplier=0.01))
 
-    def update_settings(self, sens, spec, prob_rapid_test=0):
+    def update_settings(self, sens, spec, prob_rapid_test=0, if_m_available_for_1st_tx=True):
         """
         updates certain model parameters and settings
         :param sens: (float) sensitivity of the rapid test for CIP and TET susceptibility
@@ -102,6 +106,7 @@ class GonoSettings(ModelSettings):
         self.sensTET = sens
         self.specTET = spec
         self.probRapidTest = prob_rapid_test
+        self.ifMAvailableFor1stTx = if_m_available_for_1st_tx
 
     @staticmethod
     def get_list_mean_ci_of_resistance(file_name):
