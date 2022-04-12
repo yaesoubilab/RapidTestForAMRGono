@@ -195,7 +195,7 @@ def get_list_sens_spec_coverage(min_sen, min_spe,
     for sens in reversed(values_sen):
         for spec in values_spe:
             for cov in values_coverage:
-                values.append([sens, spec, cov])
+                values.append([sens, spec, cov, True])
 
     return values
 
@@ -212,6 +212,6 @@ def get_scenario_names(min_sensitivity, min_specificity,
         n_breaks_specificity=n_breaks_specificity,
         rapid_test_coverage=rapid_test_coverage)
     for v in values_p_q_c:
-        scenario_names.append('(p={:.2f}, q={:.2f}, c={:.2f})'.format(v[0], v[1], v[2]))
+        scenario_names.append('(p={:.2f}, q={:.2f}, c={:.2f}, m=True)'.format(v[0], v[1], v[2]))
 
     return scenario_names

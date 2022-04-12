@@ -26,12 +26,12 @@ def simulate_scenarios():
         rapid_test_coverage=RAPID_TEST_COVERAGE)
 
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
-    var_names = ['sensitivity', 'specificity', 'rapid test coverage']
+    var_names = ['sensitivity', 'specificity', 'rapid test coverage', 'if M is available for 1st-Tx']
 
     # variable values
     # rows correspond to scenario names defined above, and columns correspond to variable names defined above
-    # [0.0, 1.0, 0.0]  # status quo (no rapid test)
-    scenario_definitions = [[0.0, 1.0, 0.0]] + get_list_sens_spec_coverage(
+    # [0.0, 1.0, 0.0, True]  # status quo (no rapid test)
+    scenario_definitions = [[0.0, 1.0, 0.0, True]] + get_list_sens_spec_coverage(
         min_sen=MIN_SEN,
         min_spe=MIN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,

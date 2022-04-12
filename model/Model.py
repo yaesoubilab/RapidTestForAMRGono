@@ -1,6 +1,6 @@
 from SimPy.Parameters import Constant
 from apace.CalibrationSupport import FeasibleConditions
-from apace.Control import InterventionAffectingEvents, ConditionBasedDecisionRule
+from apace.Control import InterventionAffectingEvents, ConditionBasedDecisionRule, PredeterminedDecisionRule
 from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention, \
     ConditionOnFeatures, ConditionOnConditions, ConditionAlwaysFalse
 from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
@@ -465,43 +465,46 @@ def build_model(model):
     first_line_tx_with_CRO = InterventionAffectingEvents(name='1st line therapy with CRO')
     first_line_tx_with_M = InterventionAffectingEvents(name='1st line therapy with Drug M')
 
+
+    # ------------- features ---------------
+    # features
+    f_perc_CRO_NS = FeatureSurveillance(name='Surveyed % of cases non-suceptible to CRO',
+                                        ratio_time_series_with_surveillance=perc_cases_CRO_NS)
+    f_if_M_ever_switched_on = FeatureIntervention(name='If Drug M ever switched on',
+                                                  intervention=first_line_tx_with_M,
+                                                  feature_type='if ever switched on')
+
+    # ------------- conditions ---------------
+    # conditions
+    CRO_in_condition = ConditionOnFeatures(name='If % resistant is below threshold',
+                                           features=[f_perc_CRO_NS],
+                                           signs=['l'],
+                                           thresholds=[sets.switchThreshold])
+    CRO_out_condition = ConditionOnFeatures(name='If % resistant passes threshold',
+                                            features=[f_perc_CRO_NS],
+                                            signs=['ge'],
+                                            thresholds=[sets.switchThreshold])
+    M_is_never_used = ConditionOnFeatures(name='If M is ever used as 1st-line therapy',
+                                          features=[f_if_M_ever_switched_on],
+                                          signs=['e'],
+                                          thresholds=[0])
+
+    turn_on_tx_with_CRO = ConditionOnConditions(name='', conditions=[CRO_in_condition, M_is_never_used])
+
+    # ------------- decision rules ---------------
+    # add decision rules to interventions
+    first_line_tx_with_CRO.add_decision_rule(
+        decision_rule=ConditionBasedDecisionRule(default_switch_value=1,
+                                                 condition_to_turn_on=turn_on_tx_with_CRO,
+                                                 condition_to_turn_off=CRO_out_condition))
     # if M is available for the 1st-line Tx
     if sets.ifMAvailableFor1stTx:
-        # ------------- features ---------------
-        # features
-        f_perc_CRO_NS = FeatureSurveillance(name='Surveyed % of cases non-suceptible to CRO',
-                                            ratio_time_series_with_surveillance=perc_cases_CRO_NS)
-        f_if_M_ever_switched_on = FeatureIntervention(name='If Drug M ever switched on',
-                                                      intervention=first_line_tx_with_M,
-                                                      feature_type='if ever switched on')
-
-        # ------------- conditions ---------------
-        # conditions
-        CRO_in_condition = ConditionOnFeatures(name='If % resistant is below threshold',
-                                               features=[f_perc_CRO_NS],
-                                               signs=['l'],
-                                               thresholds=[sets.switchThreshold])
-        CRO_out_condition = ConditionOnFeatures(name='If % resistant passes threshold',
-                                                features=[f_perc_CRO_NS],
-                                                signs=['ge'],
-                                                thresholds=[sets.switchThreshold])
-        M_is_never_used = ConditionOnFeatures(name='If M is ever used as 1st-line therapy',
-                                              features=[f_if_M_ever_switched_on],
-                                              signs=['e'],
-                                              thresholds=[0])
-
-        turn_on_tx_with_CRO = ConditionOnConditions(name='', conditions=[CRO_in_condition, M_is_never_used])
-
-        # ------------- decision rules ---------------
-        # add decision rules to interventions
-        first_line_tx_with_CRO.add_decision_rule(
-            decision_rule=ConditionBasedDecisionRule(default_switch_value=1,
-                                                     condition_to_turn_on=turn_on_tx_with_CRO,
-                                                     condition_to_turn_off=CRO_out_condition))
         first_line_tx_with_M.add_decision_rule(
             decision_rule=ConditionBasedDecisionRule(default_switch_value=0,
                                                      condition_to_turn_on=CRO_out_condition,
                                                      condition_to_turn_off=ConditionAlwaysFalse()))
+    else:
+        first_line_tx_with_M.add_decision_rule(decision_rule=PredeterminedDecisionRule(predetermined_switch_value=0))
 
     # ------------- attach epidemic events ---------------
     # attached epidemic events to compartments
@@ -600,13 +603,13 @@ def build_model(model):
     conditions = None
     if sets.ifMAvailableFor1stTx:
         features = [f_perc_CRO_NS, f_if_M_ever_switched_on]
-        conditions = [CRO_in_condition, CRO_out_condition, M_is_never_used, turn_on_tx_with_CRO],
+        conditions = [CRO_in_condition, CRO_out_condition, M_is_never_used, turn_on_tx_with_CRO]
 
     model.populate(compartments=all_comparts,
                    chance_nodes=chance_nodes,
                    list_of_sum_time_series=list_of_sum_time_series,
                    list_of_ratio_time_series=list_of_ratio_time_series,
                    interventions=[first_line_tx_with_CRO, first_line_tx_with_M],
-                   features=[f_perc_CRO_NS, f_if_M_ever_switched_on] if sets.ifMAvailableFor1stTx else None,
-                   conditions=[CRO_in_condition, CRO_out_condition, M_is_never_used, turn_on_tx_with_CRO],
+                   features=features,
+                   conditions=conditions,
                    parameters=params)

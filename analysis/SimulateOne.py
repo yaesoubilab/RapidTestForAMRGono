@@ -5,7 +5,7 @@ from model.Plots import plot_trajectories
 
 # get model settings
 sets = GonoSettings()
-sets.update_settings(sens=0, spec=1, prob_rapid_test=0)  # base: (0, 1, 0)
+sets.update_settings(sens=0, spec=1, prob_rapid_test=0, if_m_available_for_1st_tx=False)  # base: (0, 1, 0)
 
 # make an (empty) epidemic model
 model = EpiModel(id=1, settings=sets)
