@@ -89,6 +89,10 @@ def build_model(model):
     counting_tx_M = ChanceNode(name='Tx with M',
                                destination_compartments=[S, S],
                                probability_params=Constant(1))
+    counting_1st_tx_M = ChanceNode(name='1st-Tx with M',
+                                   destination_compartments=[counting_tx_M, counting_tx_M],
+                                   probability_params=Constant(1))
+
     # counting M used for 1st-line Tx
     counting_1st_tx_M_by_symp_profile = [None] * covert_symp_resist.length
     for s in range(n_symp_states):
@@ -97,7 +101,7 @@ def build_model(model):
             name = '1st-Tx with M | ' + covert_symp_resist.get_str_symp_susp(symp_state=s, rest_profile=p)
             counting_1st_tx_M_by_symp_profile[i] = ChanceNode(
                 name=name,
-                destination_compartments=[counting_tx_M, counting_tx_M],
+                destination_compartments=[counting_1st_tx_M, counting_1st_tx_M],
                 probability_params=Constant(1))
 
     # counting successful Tx with each antibiotic
@@ -354,13 +358,15 @@ def build_model(model):
         for r in ifs_resist_after_re_tx_cfx:
             if r is not None:
                 r.setup_history(collect_incd=True)
+        for s in counting_1st_tx_M_by_symp_profile:
+            s.setup_history(collect_incd=True)
 
     for a in range(len(AB)):
         counting_tx_success_by_ab[a].setup_history(collect_incd=True)
     counting_success_CIP_TET_CRO.setup_history(collect_incd=True)
     counting_tx_M.setup_history(collect_incd=True)
-    for s in counting_1st_tx_M_by_symp_profile:
-        s.setup_history(collect_incd=True)
+    counting_1st_tx_M.setup_history(collect_incd=True)
+
 
     # ------------- summation statistics ---------------
     # population size
@@ -589,7 +595,7 @@ def build_model(model):
                    + ifs_resist_after_re_tx_cfx \
                    + counting_tx_success_by_ab \
                    + counting_1st_tx_M_by_symp_profile \
-                   + [counting_success_CIP_TET_CRO, counting_tx_M]
+                   + [counting_success_CIP_TET_CRO, counting_tx_M, counting_1st_tx_M]
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CRO_NS,
                                n_cases_sympt, n_treated, n_treated_CIP_PEN_CRO]

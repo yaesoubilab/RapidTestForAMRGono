@@ -126,6 +126,9 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
         Txs.append(A.TrajPlotInfo(outcome_name='To: Counting success tx with ' + a,
                                   title='Successful Tx-' + a,
                                   x_multiplier=incd_multiplier))
+    Txs.append(A.TrajPlotInfo(outcome_name='To: 1st-Tx with M',
+                              title='Successful 1st-Tx-M',
+                              x_multiplier=incd_multiplier))
     Txs.append(A.TrajPlotInfo(outcome_name='To: Tx with M',
                               title='Successful Tx-M',
                               x_multiplier=incd_multiplier))
