@@ -6,9 +6,10 @@ from definitions import get_scenario_names, get_list_sens_spec_coverage, \
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-N_OF_SIMS = 160
-RUN_IN_PARALLEL = True
 RAPID_TEST_COVERAGE = 0.75
+IF_M_AVAILABLE_FOR_FIRST_TX = False
+N_OF_SIMS = 32
+RUN_IN_PARALLEL = True
 
 
 def simulate_scenarios():
@@ -23,7 +24,8 @@ def simulate_scenarios():
         min_specificity=MIN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
-        rapid_test_coverage=RAPID_TEST_COVERAGE)
+        rapid_test_coverage=RAPID_TEST_COVERAGE,
+        if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
 
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
     var_names = ['sensitivity', 'specificity', 'rapid test coverage', 'if M is available for 1st-Tx']
@@ -31,12 +33,13 @@ def simulate_scenarios():
     # variable values
     # rows correspond to scenario names defined above, and columns correspond to variable names defined above
     # [0.0, 1.0, 0.0, True]  # status quo (no rapid test)
-    scenario_definitions = [[0.0, 1.0, 0.0, True]] + get_list_sens_spec_coverage(
+    scenario_definitions = [[0.0, 1.0, 0.0, IF_M_AVAILABLE_FOR_FIRST_TX]] + get_list_sens_spec_coverage(
         min_sen=MIN_SEN,
         min_spe=MIN_SPE,
         n_breaks_sensitivity=N_BREAKS_SENSITIVITY,
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
-        rapid_test_coverage=1)
+        rapid_test_coverage=RAPID_TEST_COVERAGE,
+        if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
 
     # get the seeds and probability weights
     seeds, lns, weights = calib.get_seeds_lnl_probs('outputs/calibration/calibration_summary.csv')
