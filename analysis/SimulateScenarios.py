@@ -8,7 +8,7 @@ from model.ModelSettings import GonoSettings
 
 RAPID_TEST_COVERAGE = 0.75
 IF_M_AVAILABLE_FOR_FIRST_TX = False
-N_OF_SIMS = 32
+N_OF_SIMS = 160
 RUN_IN_PARALLEL = True
 
 
