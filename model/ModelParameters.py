@@ -38,7 +38,7 @@ class Parameters(EpiParameters):
 
         # the Dirichlet distribution for the percent of I0 by resistance profile
         # (comes from the Excel file under \data folder)
-        self.percIByRestProfileDirichlet = Dirichlet(par_ns=[60, 2, 280, 0, 155, 0, 0, 0], if_ignore_0s=True)
+        self.percIByRestProfileDirichlet = Dirichlet(par_ns=[55, 2, 270, 0, 170, 0, 0, 0], if_ignore_0s=True)
 
         # percent of I0 by resistance profile
         self.percIByRestProfile = []

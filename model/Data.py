@@ -17,15 +17,15 @@ PercSymptomatic = [
 PercResistProfile = {
     'CIP-S, TET-S, CRO-S': [
         [0, None, None, None],
-        [1, 12.1, 9.7, 14.5]
+        [1, 11.0, 8.3, 13.8]
     ],
     'CIP-NS, TET-S, CRO-S': [
         [0, None, None, None],
-        [1, 0.5, 0.3, 0.8]
+        [1, 0.6, 0.0, 1.3]
     ],
     'CIP-S, TET-NS, CRO-S': [
         [0, None, None, None],
-        [1, 56.1, 44.9, 67.3]
+        [1, 54.1, 49.7, 58.5]
     ],
     'CIP-S, TET-S, CRO-NS': [
         [0, None, None, None],
@@ -33,7 +33,7 @@ PercResistProfile = {
     ],
     'CIP-NS, TET-NS, CRO-S': [
         [0, None, None, None],
-        [1, 31.2, 24.9, 37.4]
+        [1, 34.1, 29.9, 38.3]
     ],
     'CIP-NS, TET-S, CRO-NS': [
         [0, None, None, None],
