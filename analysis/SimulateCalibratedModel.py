@@ -1,20 +1,14 @@
 from model.ModelSettings import GonoSettings
 from model.Support import simulate_calibrated_model
 
-IF_M_AVAILABLE_FOR_FIRST_TX = True
-N_OF_TRAJS_TO_USE_FOR_SIMULATION = 32   # number of trajectories with the highest likelihood to keep
+IF_M_AVAILABLE_FOR_FIRST_TX = False
+N_OF_TRAJS_TO_USE_FOR_SIMULATION = 8   # number of trajectories with the highest likelihood to keep
 
 if __name__ == "__main__":
 
     # get model settings
-    sets = GonoSettings()
-    sets.update_settings(sens=1, spec=1, prob_rapid_test=0.75, # base: (0, 1, 0)
-                         if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
-
-    if IF_M_AVAILABLE_FOR_FIRST_TX:
-        figure_name = 'Calibrated-With M.png'
-    else:
-        figure_name = 'Calibrated-With.png'
+    sets = GonoSettings(if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
+    sets.update_settings(sens=0, spec=1, prob_rapid_test=0)  # base: (0, 1, 0)
 
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS_TO_USE_FOR_SIMULATION,
                               sample_seeds_by_weights=False,

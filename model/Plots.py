@@ -140,10 +140,10 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
                                   file_name='figures/(valid-Tx) ' + filename)
 
 
-def plot_scenarios(scenario_names, fig_file_name):
+def plot_scenarios(scenario_names, csv_file_name, fig_file_name):
 
     # read scenarios into a dataframe
-    scenarios_df = S.ScenarioDataFrame(csv_file_name='outputs/scenarios/simulated_scenarios.csv')
+    scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_name)
 
     # get a specific outcome from a specific scenario
     print('\nScenario name: ', 'Rate of gonorrhea cases | Effective lifespan of CIP, TET, and CFX')
@@ -160,9 +160,9 @@ def plot_scenarios(scenario_names, fig_file_name):
 
     # plot CEA
     S.ERROR_BAR_ALPHA = 0.2
-    # read scenarios into a dataframe
-    df_scenarios = S.ScenarioDataFrame(
-        csv_file_name='outputs/scenarios/simulated_scenarios.csv')
+    # # read scenarios into a dataframe
+    # df_scenarios = S.ScenarioDataFrame(
+    #     csv_file_name='outputs/scenarios/simulated_scenarios.csv')
 
     # sets of scenarios to display on the cost-effectiveness plain
     list_of_scenario_sets = []
@@ -170,7 +170,7 @@ def plot_scenarios(scenario_names, fig_file_name):
     for i, spec in enumerate(np.linspace(MIN_SPE, 1, N_BREAKS_SPECIFICITY)):
         list_of_scenario_sets.append(S.SetOfScenarios(
             name='Specificity = {:.2f}'.format(spec),
-            scenario_df=df_scenarios,
+            scenario_df=scenarios_df,
             color=COLORS[i],
             marker='o',
             conditions_on_variables=[
