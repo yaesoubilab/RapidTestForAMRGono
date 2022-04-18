@@ -367,7 +367,6 @@ def build_model(model):
     counting_tx_M.setup_history(collect_incd=True)
     counting_1st_tx_M.setup_history(collect_incd=True)
 
-
     # ------------- summation statistics ---------------
     # population size
     all_comparts = [S] + Is + Fs
