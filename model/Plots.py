@@ -14,17 +14,19 @@ COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
 
 def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
                       obs_prev_multiplier=1, obs_incd_multiplier=1,
+                      dir_of_trajs='outputs/trajectories',
                       filename='trajectories.png'):
     """
     :param prev_multiplier: (int) to multiply the simulation time to convert it to year, week, or day.
     :param incd_multiplier: (int) to multiply the simulation period to covert it to year, week, or day.
     :param obs_prev_multiplier: (int) to multiply the prevalence survey time to convert it to year, week, or day.
     :param obs_incd_multiplier: (int) to multiply the incidence survey period to covert it to year, week, or day.
+    :param dir_of_trajs: (string) directory where simulated trajectories are located
     :param filename: (string) filename to save the trajectories as
     :return:
     """
 
-    sim_outcomes = A.SimOutcomeTrajectories(csv_directory='outputs/trajectories')
+    sim_outcomes = A.SimOutcomeTrajectories(csv_directory=dir_of_trajs)
 
     # defaults
     A.TIME_0 = 0  # 2014

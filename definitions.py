@@ -8,7 +8,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SIM_DURATION = 25
 END_OF_WARM_UP = 5 # 6
-END_OF_CALIB = 15 # 6
+END_OF_CALIB = 20 # 6
 MIN_SEN = 0.5
 MIN_SPE = 0.8
 N_BREAKS_SENSITIVITY = 6 # 6

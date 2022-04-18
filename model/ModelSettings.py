@@ -7,10 +7,11 @@ from model.Data import Prevalence, GonorrheaRate, PercSymptomatic
 class GonoSettings(ModelSettings):
     """ settings of the gonorrhea model """
 
-    def __init__(self, if_calibrating=False, collect_traj_of_comparts=True):
+    def __init__(self, if_calibrating=False, collect_traj_of_comparts=True, if_m_available_for_1st_tx=False):
         """
         :param if_calibrating: (bool) if calibrating the model
         :param collect_traj_of_comparts: (bool) if collect the trajectories of all compartments
+        :param if_m_available_for_1st_tx: (bool) if M is available for 1st_tx
         """
 
         ModelSettings.__init__(self)
@@ -41,8 +42,18 @@ class GonoSettings(ModelSettings):
         self.probRapidTest = 0 if if_calibrating else 1
 
         # if M is available for the 1st-Tx
-        self.ifMAvailableFor1stTx = True
+        self.ifMAvailableFor1stTx = if_m_available_for_1st_tx
         self.switchThreshold = 0.05
+
+        # folders
+        if self.ifMAvailableFor1stTx:
+            self.folderToSaveTrajs = 'outputs-with-M/trajectories'
+            self.folderToSaveSummary = 'outputs-with-M/summary'
+            self.folderToSaveScenarioAnalysis = 'outputs-with-M/scenarios'
+        else:
+            self.folderToSaveTrajs = 'outputs-no-M/trajectories'
+            self.folderToSaveSummary = 'outputs-no-M/summary'
+            self.folderToSaveScenarioAnalysis = 'outputs-no-M/scenarios'
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5
@@ -93,7 +104,7 @@ class GonoSettings(ModelSettings):
                                                           u=PercSymptomatic[j][3],
                                                           multiplier=0.01))
 
-    def update_settings(self, sens, spec, prob_rapid_test=0, if_m_available_for_1st_tx=True):
+    def update_settings(self, sens, spec, prob_rapid_test=0):
         """
         updates certain model parameters and settings
         :param sens: (float) sensitivity of the rapid test for CIP and TET susceptibility
@@ -106,7 +117,6 @@ class GonoSettings(ModelSettings):
         self.sensTET = sens
         self.specTET = spec
         self.probRapidTest = prob_rapid_test
-        self.ifMAvailableFor1stTx = if_m_available_for_1st_tx
 
     @staticmethod
     def get_list_mean_ci_of_resistance(file_name):

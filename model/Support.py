@@ -40,21 +40,32 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
     # get summary statistics of runtime,
     multi_model.print_summary_stats()
 
+    if sets.ifMAvailableFor1stTx:
+        dir_of_trajs = 'outputs-with-M/trajectories'
+        figure_filename = 'Calibrated-with-M'
+    else:
+        dir_of_trajs = 'outputs-no-M/trajectories'
+        figure_filename = 'Calibration-no-M'
+
     # plot trajectories
     plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data
                       incd_multiplier=1,  # to show weeks on the x-axis of incidence data
                       obs_prev_multiplier=1,
                       obs_incd_multiplier=1,
+                      dir_of_trajs=dir_of_trajs,
                       filename=figure_filename)
 
 
-def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True, if_run_in_parallel=True, settings=None):
+def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True,
+                              if_run_in_parallel=True, settings=None,
+                              figure_filename='Calibrated.png'):
     """
     simulates the calibrated model
     :param n_of_sims: (int) number of trajectories to simulate
     :param sample_seeds_by_weights: (bool)
     :param if_run_in_parallel: (bool if run in parallel
     :param settings: (GonoSettings) model settings
+    :param figure_filename: (string) figure name
     """
 
     # ------- simulate the calibrated model ----------
@@ -67,7 +78,7 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True, if_run_in
                                 weights=weights,
                                 sample_seeds_by_weights=sample_seeds_by_weights,
                                 if_run_in_parallel=if_run_in_parallel,
-                                figure_filename='Calibrated.png',
+                                figure_filename=figure_filename,
                                 settings=settings)
 
 
@@ -78,12 +89,13 @@ def estimate_parameters(n_of_resamples):
     # ---------- parameter estimation -----------
     # calculate posterior distributions and plot figures
     estimator = P.ParameterAnalyzer()
-    estimator.resample_param_values(csvfile_param_values_and_weights='outputs/calibration/calibration_summary.csv',
-                                    n=n_of_resamples,
-                                    weight_col=3,
-                                    sample_by_weight=False,
-                                    csvfile_resampled_params='outputs/calibration/resampled_parameter_values.csv',
-                                    seed=0)
+    estimator.resample_param_values(
+        csvfile_param_values_and_weights='outputs/calibration/calibration_summary.csv',
+        n=n_of_resamples,
+        weight_col=3,
+        sample_by_weight=False,
+        csvfile_resampled_params='outputs/calibration/resampled_parameter_values.csv',
+        seed=0)
 
     param_list_for_table = [
         'Transmission parameter',
