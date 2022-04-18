@@ -15,7 +15,7 @@ RUN_IN_PARALLEL = True
 def simulate_scenarios():
 
     # get model settings
-    sets = GonoSettings()
+    sets = GonoSettings(if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
     sets.exportTrajectories = False
 
     # names of the scenarios to evaluate
