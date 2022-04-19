@@ -1,12 +1,12 @@
 import apace.Calibration as calib
 import model.Plots as P
+from analysis.PlotScenarios import X_RANGE, Y_RANGE
 from apace.ScenarioSimulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sens_spec_coverage, \
-    N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY, MIN_SEN, MIN_SPE
+    N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY, MIN_SEN, MIN_SPE, RAPID_TEST_COVERAGE
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
-RAPID_TEST_COVERAGE = 0.75
 IF_M_AVAILABLE_FOR_FIRST_TX = True
 N_OF_SIMS = 160
 RUN_IN_PARALLEL = True
@@ -64,7 +64,9 @@ def simulate_scenarios():
     # plot the CEA figure and other analyses
     P.plot_scenarios(scenario_names=scenario_names,
                      csv_file_name=sets.folderToSaveScenarioAnalysis + '/simulated_scenarios.csv',
-                     fig_file_name=fig_file_name)
+                     fig_file_name=fig_file_name,
+                     x_range=X_RANGE,
+                     y_range=Y_RANGE)
 
 
 if __name__ == "__main__":

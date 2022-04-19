@@ -140,7 +140,7 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
                                   file_name='figures/(valid-Tx) ' + filename)
 
 
-def plot_scenarios(scenario_names, csv_file_name, fig_file_name):
+def plot_scenarios(scenario_names, csv_file_name, fig_file_name, x_range, y_range):
 
     # read scenarios into a dataframe
     scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_name)
@@ -191,8 +191,8 @@ def plot_scenarios(scenario_names, csv_file_name, fig_file_name):
         labels=('Change in the effective lifespan of\nCIP, TET, and CRO',
                 'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)'),
         health_measure='u',
-        x_range=[-0.1, 6.1],
-        y_range=[-6000, 2000],
+        x_range=x_range,
+        y_range=y_range,
         cost_multiplier=100000,
         effect_multiplier=SIM_DURATION,
         file_name=fig_file_name,

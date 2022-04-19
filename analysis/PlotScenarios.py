@@ -1,9 +1,11 @@
-from SimulateScenarios import RAPID_TEST_COVERAGE
-from definitions import get_scenario_names, N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY, MIN_SEN, MIN_SPE
+from definitions import get_scenario_names, N_BREAKS_SENSITIVITY, N_BREAKS_SPECIFICITY, \
+    MIN_SEN, MIN_SPE, RAPID_TEST_COVERAGE
 from model.Plots import plot_scenarios
 
 
-IF_M_AVAILABLE_FOR_FIRST_TX = True
+IF_M_AVAILABLE_FOR_FIRST_TX = False
+X_RANGE = [-0.1, 8.1]
+Y_RANGE = [-6000, 5000]
 
 if IF_M_AVAILABLE_FOR_FIRST_TX:
     fig_file_name = 'figures/Changing specificity-with-M.png'
@@ -21,6 +23,8 @@ plot_scenarios(
         n_breaks_specificity=N_BREAKS_SPECIFICITY,
         rapid_test_coverage=RAPID_TEST_COVERAGE),
     csv_file_name=csv_file_name,
-    fig_file_name=fig_file_name)
+    fig_file_name=fig_file_name,
+    x_range=X_RANGE,
+    y_range=Y_RANGE)
 
 
