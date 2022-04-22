@@ -255,7 +255,7 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
         list_if_remove_base_scenario=[True] * len(SPE_VALUES),
         effect_outcome='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
-        labels=('Change in the effective lifespan of\nCIP, TET, and CRO',
+        labels=('Change in the effective lifespan of\nCIP, TET, and CRO (years)',
                 'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)'),
         health_measure='u',
         x_range=x_range,
