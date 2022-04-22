@@ -3,8 +3,7 @@ import numpy as np
 import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
 import apace.analysis.VisualizeScenarios as V
-from definitions import RestProfile, SympStat, REST_PROFILES, \
-    ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS, N_BREAKS_SPECIFICITY, MIN_SPE
+from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, SIM_DURATION, ANTIBIOTICS
 from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25

@@ -1,19 +1,20 @@
 import os
 from enum import Enum
 
-import numpy as np
 from scipy.stats import norm
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SIM_DURATION = 25
-END_OF_WARM_UP = 5 # 6
+END_OF_WARM_UP = 1
 END_OF_CALIB = 20 # 6
 RAPID_TEST_COVERAGE = 0.75
-MIN_SEN = 0.5
-MIN_SPE = 0.8
-N_BREAKS_SENSITIVITY = 6
-N_BREAKS_SPECIFICITY = 5
+
+# for sensitivity analysis
+SEN_VALUES = (0.5, 0.75, 1.0)    # sensitivity
+SPE_VALUES = (0.95, 0.975, 1.0)  # specificity
+COVERAGE_VALUES = (0.5, 0.75, 1)      # coverage
+
 
 SYMP_STATES = ['Symp', 'Asym']
 REST_PROFILES = ['CIP-S, TET-S, CRO-S',        # SUSP
@@ -166,54 +167,29 @@ def get_survey_size(mean, l, u, multiplier=1):
     return var * pow(z/hw, 2)
 
 
-def get_list_sens_spec_coverage(min_sen, min_spe,
-                                n_breaks_sensitivity, n_breaks_specificity, rapid_test_coverage):
+def get_list_sens_spec_coverage():
     """
-    :param min_sen: (float) minimum value for sensitivity
-    :param min_spe: (float) minimum value for specificity
-    :param n_breaks_sensitivity: (int) number of break points for sensitivity values
-    :param n_breaks_specificity: (int) number of break points for specificity values
-    :param rapid_test_coverage: (float) between [0, 1] prob of receiving the rapid test
     :return: (list) of [sensitivity, specificity, coverage of rapid test]
     """
 
     values = []
-
-    # sensitivity
-    if n_breaks_sensitivity == 1:
-        values_sen = [0]
-    else:
-        values_sen = np.linspace(min_sen, 1, n_breaks_sensitivity)
-    # specificity
-    if n_breaks_specificity == 1:
-        values_spe = [1]
-    else:
-        values_spe = np.linspace(min_spe, 1, n_breaks_specificity)
-    # coverage
-    values_coverage = [rapid_test_coverage]
-
-    # values
-    for sens in reversed(values_sen):
-        for spec in values_spe:
-            for cov in values_coverage:
+    for cov in COVERAGE_VALUES:
+        for sens in reversed(SEN_VALUES):
+            for spec in SPE_VALUES:
                 values.append([sens, spec, cov])
 
     return values
 
 
-def get_scenario_names(min_sensitivity, min_specificity,
-                       n_breaks_sensitivity, n_breaks_specificity,
-                       rapid_test_coverage):
+def get_scenario_names():
+    """
+    :return: (list) of scenario names based on [sensitivity, specificity, coverage of rapid test]
+    """
 
     scenario_names = ['Status quo (no rapid test)']
-    values_p_q_c = get_list_sens_spec_coverage(
-        min_sen=min_sensitivity,
-        min_spe=min_specificity,
-        n_breaks_sensitivity=n_breaks_sensitivity,
-        n_breaks_specificity=n_breaks_specificity,
-        rapid_test_coverage=rapid_test_coverage)
+    values_p_q_c = get_list_sens_spec_coverage()
     for v in values_p_q_c:
-        scenario_names.append('(p={:.2f}, q={:.2f}, c={:.2f})'.format(
+        scenario_names.append('(p={:.3f}, q={:.3f}, c={:.3f})'.format(
             v[0], v[1], v[2]))
 
     return scenario_names
