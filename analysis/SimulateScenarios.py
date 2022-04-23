@@ -2,7 +2,7 @@ import apace.Calibration as calib
 import model.Plots as P
 from analysis.PlotScenarios import X_RANGE, Y_RANGE
 from apace.ScenarioSimulation import ScenarioSimulator
-from definitions import get_scenario_names, get_list_sens_spec_coverage
+from definitions import get_scenario_names, get_list_sens_spec_coverage, COVERAGE_VALUES
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
@@ -45,17 +45,22 @@ def simulate_scenarios():
     # export results of the scenario analysis
     scenario_sim.export_results()
 
-    if IF_M_AVAILABLE_FOR_FIRST_TX:
-        fig_file_name = 'figures/Changing specificity-with-M.png'
-    else:
-        fig_file_name = 'figures/Changing specificity-no-M.png'
-
     # plot the CEA figure and other analyses
-    P.plot_scenarios(scenario_names=scenario_names,
-                     csv_file_name=sets.folderToSaveScenarioAnalysis + '/simulated_scenarios.csv',
-                     fig_file_name=fig_file_name,
-                     x_range=X_RANGE,
-                     y_range=Y_RANGE)
+    for c in COVERAGE_VALUES:
+
+        if IF_M_AVAILABLE_FOR_FIRST_TX:
+            fig_file_name = 'figures/SA-with M-coverage {}.png'.format(c)
+            csv_file_name = 'outputs-with-M/scenarios/simulated_scenarios.csv'
+        else:
+            fig_file_name = 'figures/SA-no M-coverage {}.png'.format(c)
+            csv_file_name = 'outputs-no-M/scenarios/simulated_scenarios.csv'
+
+        P.plot_scenarios(
+            csv_file_name=csv_file_name,
+            fig_file_name=fig_file_name,
+            test_coverage=c,
+            x_range=X_RANGE,
+            y_range=Y_RANGE)
 
 
 if __name__ == "__main__":
