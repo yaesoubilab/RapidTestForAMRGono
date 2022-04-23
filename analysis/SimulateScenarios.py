@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore")
 
 
 IF_M_AVAILABLE_FOR_FIRST_TX = True
-N_OF_SIMS = 16
+N_OF_SIMS = 160
 RUN_IN_PARALLEL = True
 
 
@@ -54,9 +54,9 @@ def simulate_scenarios(if_m_available_for_1st_tx):
     for c in COVERAGE_VALUES:
 
         if if_m_available_for_1st_tx:
-            fig_file_name = 'figures/SA-with M-coverage {}.png'.format(c)
+            fig_file_name = 'figures/SA-with M-coverage {:.2f}.png'.format(c)
         else:
-            fig_file_name = 'figures/SA-no M-coverage {}.png'.format(c)
+            fig_file_name = 'figures/SA-no M-coverage {:.2f}.png'.format(c)
 
         P.plot_scenarios(
             csv_file_name=sets.folderToSaveScenarioAnalysis + '/simulated_scenarios.csv',
