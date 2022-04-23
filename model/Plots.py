@@ -1,8 +1,9 @@
 import apace.analysis.Scenarios as S
 import apace.analysis.Trajectories as A
 import apace.analysis.VisualizeScenarios as V
-from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio,\
-    SPE_VALUES, SIM_DURATION, ANTIBIOTICS
+from SimPy.InOutFunctions import write_csv
+from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
+    SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES
 from model import Data as D
 
 A.SUBPLOT_W_SPACE = 0.25
@@ -161,6 +162,22 @@ def get_rate_percentage_life(scenarios_df, scenario_name):
     return rate, proportion, life
 
 
+def get_perc_change_rate_life(scenarios_df, scenario_name_base, scenario_name_new):
+
+    perc_change_rate = scenarios_df.get_relative_diff_mean_interval(
+        scenario_name_base=scenario_name_base,
+        scenario_names=scenario_name_new,
+        outcome_name='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
+        deci=1, form='%')
+    perc_change_life = scenarios_df.get_relative_diff_mean_interval(
+        scenario_name_base=scenario_name_base,
+        scenario_names=scenario_name_new,
+        outcome_name='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
+        deci=1, form='%')
+
+    return perc_change_rate, perc_change_life
+
+
 def print_rate_percentage_life(scenarios_df, scenario_name):
     """
        :param scenarios_df: (scenario dataframe)
@@ -209,23 +226,49 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
 def export_summary_of_scenarios(if_m_available_for_1st_tx):
 
     if if_m_available_for_1st_tx:
-        csv_file_name = 'outputs-with-M/scenarios/simulated_scenarios.csv'
+        csv_file_scenarios = 'outputs-with-M/scenarios/simulated_scenarios.csv'
+        csv_file_summary = 'outputs-with-M/scenarios/performance_summary.csv'
     else:
-        csv_file_name = 'outputs-no-M/scenarios/simulated_scenarios.csv'
+        csv_file_scenarios = 'outputs-no-M/scenarios/simulated_scenarios.csv'
+        csv_file_summary = 'outputs-no-M/scenarios/performance_summary.csv'
 
     # read scenarios into a dataframe
-    scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_name)
+    scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_scenarios)
 
+    # rows
+    rows = [
+        ['Scenario name',
+         'Rate of gonorrhea cases',
+         '% cases treated with CIP, TET, or CRO',
+         'Effective lifespan of CIP, TET, and CFX',
+         'delta - Rate of gonorrhea cases',
+         'delta - Effective lifespan of CIP, TET, and CFX',
+         ]
+    ]
 
-    # baseline analysis
-    print_rate_percentage_life(scenarios_df=scenarios_df,
-                               scenario_name='Status quo (no rapid test)')
-    print_rate_percentage_life(scenarios_df=scenarios_df,
-                               scenario_name='(p=0.750, q=0.975, c={:.3f})'.format(test_coverage))
+    # status quo
+    scenario_name_base = 'Status quo (no rapid test)'
+    rate, prop, life = get_rate_percentage_life(scenarios_df=scenarios_df, scenario_name=scenario_name_base)
+    rows.append([scenario_name_base, rate, prop, life, '', ''])
 
-    print_change_rate_percentage_life(scenarios_df=scenarios_df,
-                                      scenario_name_base='Status quo (no rapid test)',
-                                      scenario_name_new='(p=0.750, q=0.975, c={:.3f})'.format(test_coverage))
+    #
+    for test_coverage in COVERAGE_VALUES:
+        # scenario name
+        scenario_name = '(p=0.750, q=0.975, c={:.3f})'.format(test_coverage)
+
+        # get rate, percentage treated with 1st-line drugs, and lifespan of 1st-line drugs
+        rate, prop, life = get_rate_percentage_life(
+            scenarios_df=scenarios_df, scenario_name=scenario_name)
+
+        # get % change in rate, % change in lifespan
+        perc_change_rate, perc_change_life = get_perc_change_rate_life(
+            scenarios_df=scenarios_df, scenario_name_base=scenario_name_base, scenario_name_new=scenario_name)
+
+        # append row
+        rows.append([scenario_name, rate, prop, life, perc_change_rate, perc_change_life])
+
+    # export to csv
+    write_csv(rows=rows, file_name=csv_file_summary)
 
 
 def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_coverage):
