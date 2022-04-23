@@ -206,6 +206,40 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
     print('\tEffective lifespan of CIP, TET, and CFX:\t\t', life)
 
 
+def export_summary_of_scenarios(if_m_available_for_1st_tx):
+
+    if if_m_available_for_1st_tx:
+        csv_file_name = 'outputs-with-M/scenarios/simulated_scenarios.csv'
+    else:
+        csv_file_name = 'outputs-no-M/scenarios/simulated_scenarios.csv'
+
+    # read scenarios into a dataframe
+    scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_name)
+
+
+    # baseline analysis
+    print_rate_percentage_life(scenarios_df=scenarios_df,
+                               scenario_name='Status quo (no rapid test)')
+    print_rate_percentage_life(scenarios_df=scenarios_df,
+                               scenario_name='(p=0.750, q=0.975, c={:.3f})'.format(test_coverage))
+
+    print_change_rate_percentage_life(scenarios_df=scenarios_df,
+                                      scenario_name_base='Status quo (no rapid test)',
+                                      scenario_name_new='(p=0.750, q=0.975, c={:.3f})'.format(test_coverage))
+
+
+def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_coverage):
+
+    if if_m_available_for_1st_tx:
+        fig_file_name = 'figures/SA-with M-coverage {:.2f}.png'.format(test_coverage)
+        csv_file_name = 'outputs-with-M/scenarios/simulated_scenarios.csv'
+    else:
+        fig_file_name = 'figures/SA-no M-coverage {:.2f}.png'.format(test_coverage)
+        csv_file_name = 'outputs-no-M/scenarios/simulated_scenarios.csv'
+
+    return csv_file_name, fig_file_name
+
+
 def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range, print_all_scenarios=False):
 
     # read scenarios into a dataframe
@@ -217,16 +251,6 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
         for name in scenarios_df.scenarios:
             rate, prop, life = get_rate_percentage_life(scenarios_df=scenarios_df, scenario_name=name)
             print('{}: \t{} | {}'.format(name, rate, life))
-
-    # baseline analysis
-    print_rate_percentage_life(scenarios_df=scenarios_df,
-                               scenario_name='Status quo (no rapid test)')
-    print_rate_percentage_life(scenarios_df=scenarios_df,
-                               scenario_name='(p=0.750, q=0.975, c={:.3f})'.format(test_coverage))
-
-    print_change_rate_percentage_life(scenarios_df=scenarios_df,
-                                      scenario_name_base='Status quo (no rapid test)',
-                                      scenario_name_new='(p=0.750, q=0.975, c={:.3f})'.format(test_coverage))
 
     # plot CEA
     S.ERROR_BAR_ALPHA = 0.2
