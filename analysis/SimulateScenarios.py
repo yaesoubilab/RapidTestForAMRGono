@@ -1,3 +1,5 @@
+import warnings
+
 import apace.Calibration as calib
 import model.Plots as P
 from analysis.PlotScenarios import X_RANGE, Y_RANGE
@@ -6,15 +8,18 @@ from definitions import get_scenario_names, get_list_sens_spec_coverage, COVERAG
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 
+warnings.filterwarnings("ignore")
+
+
 IF_M_AVAILABLE_FOR_FIRST_TX = True
 N_OF_SIMS = 16
 RUN_IN_PARALLEL = True
 
 
-def simulate_scenarios():
+def simulate_scenarios(if_m_available_for_1st_tx):
 
     # get model settings
-    sets = GonoSettings(if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
+    sets = GonoSettings(if_m_available_for_1st_tx=if_m_available_for_1st_tx)
     sets.exportTrajectories = False
 
     # names of the scenarios to evaluate
@@ -48,15 +53,13 @@ def simulate_scenarios():
     # plot the CEA figure and other analyses
     for c in COVERAGE_VALUES:
 
-        if IF_M_AVAILABLE_FOR_FIRST_TX:
+        if if_m_available_for_1st_tx:
             fig_file_name = 'figures/SA-with M-coverage {}.png'.format(c)
-            csv_file_name = 'outputs-with-M/scenarios/simulated_scenarios.csv'
         else:
             fig_file_name = 'figures/SA-no M-coverage {}.png'.format(c)
-            csv_file_name = 'outputs-no-M/scenarios/simulated_scenarios.csv'
 
         P.plot_scenarios(
-            csv_file_name=csv_file_name,
+            csv_file_name=sets.folderToSaveScenarioAnalysis + '/simulated_scenarios.csv',
             fig_file_name=fig_file_name,
             test_coverage=c,
             x_range=X_RANGE,
@@ -64,4 +67,9 @@ def simulate_scenarios():
 
 
 if __name__ == "__main__":
-    simulate_scenarios()
+
+    print('\n*** M is available for 1st Tx ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True)
+
+    print('\n*** M is not available for 1st Tx***')
+    simulate_scenarios(if_m_available_for_1st_tx=False)

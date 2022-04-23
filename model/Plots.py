@@ -219,12 +219,14 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
             print('{}: \t{} | {}'.format(name, rate, life))
 
     # baseline analysis
-    print_rate_percentage_life(scenarios_df=scenarios_df, scenario_name='Status quo (no rapid test)')
-    print_rate_percentage_life(scenarios_df=scenarios_df, scenario_name='(p=0.750, q=0.975, c=0.750)')
+    print_rate_percentage_life(scenarios_df=scenarios_df,
+                               scenario_name='Status quo (no rapid test)')
+    print_rate_percentage_life(scenarios_df=scenarios_df,
+                               scenario_name='(p=0.750, q=0.975, c={:.3f})'.format(test_coverage))
 
     print_change_rate_percentage_life(scenarios_df=scenarios_df,
                                       scenario_name_base='Status quo (no rapid test)',
-                                      scenario_name_new='(p=0.750, q=0.975, c=0.750)')
+                                      scenario_name_new='(p=0.750, q=0.975, c={:.3f})'.format(test_coverage))
 
     # plot CEA
     S.ERROR_BAR_ALPHA = 0.2
