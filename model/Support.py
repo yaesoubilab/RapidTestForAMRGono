@@ -42,10 +42,8 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
 
     if sets.ifMAvailableFor1stTx:
         dir_of_trajs = 'outputs-with-M/trajectories'
-        figure_filename = 'Calibrated-with-M'
     else:
         dir_of_trajs = 'outputs-no-M/trajectories'
-        figure_filename = 'Calibration-no-M'
 
     # plot trajectories
     plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data

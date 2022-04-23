@@ -1,12 +1,19 @@
 from model.ModelSettings import GonoSettings
 from model.Support import simulate_calibrated_model
 
-N_OF_TRAJS_TO_USE_FOR_SIMULATION = 160   # number of trajectories with the highest likelihood to keep
+N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16   # number of trajectories with the highest likelihood to keep
 # sensitivity, specificity, coverage
 SEN, SPE, COV = 0.75, 0.975, 0.75     # base: (0, 1, 0)
 
 
-def simulate_calibrated(sen, spe, coverage, if_m_available):
+def simulate_calibrated(sen=0.0, spe=1.0, coverage=0.0, if_m_available=True):
+
+    if if_m_available:
+        figure_filename = 'Calibrated with M p{} q{} c{}.png'.format(
+            sen, spe, coverage)
+    else:
+        figure_filename = 'Calibration no M p{} q{} c{}.png'.format(
+            sen, spe, coverage)
 
     # get model settings
     sets = GonoSettings(if_m_available_for_1st_tx=if_m_available)
@@ -15,7 +22,8 @@ def simulate_calibrated(sen, spe, coverage, if_m_available):
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS_TO_USE_FOR_SIMULATION,
                               sample_seeds_by_weights=False,
                               if_run_in_parallel=True,
-                              settings=sets)
+                              settings=sets,
+                              figure_filename=figure_filename)
 
 
 if __name__ == "__main__":
