@@ -2,7 +2,7 @@ import warnings
 
 import apace.Calibration as calib
 import model.Plots as P
-from analysis.PlotScenarios import X_RANGE, Y_RANGE
+from analysis.PlotScenarios import X_RANGE_WITH_M, Y_RANGE_WITH_M
 from apace.ScenarioSimulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sens_spec_coverage, COVERAGE_VALUES
 from model.Model import build_model
@@ -62,8 +62,8 @@ def simulate_scenarios(if_m_available_for_1st_tx):
             csv_file_name=sets.folderToSaveScenarioAnalysis + '/simulated_scenarios.csv',
             fig_file_name=fig_file_name,
             test_coverage=c,
-            x_range=X_RANGE,
-            y_range=Y_RANGE)
+            x_range=X_RANGE_WITH_M,
+            y_range=Y_RANGE_WITH_M)
 
 
 if __name__ == "__main__":

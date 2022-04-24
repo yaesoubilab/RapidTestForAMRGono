@@ -303,7 +303,7 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
 
     for i, spec in enumerate(SPE_VALUES):
         list_of_scenario_sets.append(S.SetOfScenarios(
-            name='Specificity = {:.2f}'.format(spec),
+            name='Specificity = {:.3f}'.format(spec),
             scenario_df=scenarios_df,
             color=COLORS[i],
             marker='o',
@@ -314,8 +314,8 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
             ],
             if_find_frontier=False,
             if_show_fitted_curve=False,
-            labels_shift_x=0.02,
-            labels_shift_y=0.00)
+            labels_shift_x=0.01,
+            labels_shift_y=0.01)
         )
 
     V.plot_sets_of_scenarios(
