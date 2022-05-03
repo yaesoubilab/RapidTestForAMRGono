@@ -271,16 +271,42 @@ def export_summary_of_scenarios(if_m_available_for_1st_tx):
     write_csv(rows=rows, file_name=csv_file_summary)
 
 
-def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_coverage):
+def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_coverage=None):
 
     if if_m_available_for_1st_tx:
-        fig_file_name = 'figures/SA-with M-coverage {:.2f}.png'.format(test_coverage)
+        if test_coverage is not None:
+            fig_file_name = 'figures/SA-with M-coverage {:.2f}.png'.format(test_coverage)
+        else:
+            fig_file_name = 'figures/SA-with M-coverage.png'
+
         csv_file_name = 'outputs-with-M/scenarios/simulated_scenarios.csv'
     else:
-        fig_file_name = 'figures/SA-no M-coverage {:.2f}.png'.format(test_coverage)
+        if test_coverage is not None:
+            fig_file_name = 'figures/SA-no M-coverage {:.2f}.png'.format(test_coverage)
+        else:
+            fig_file_name = 'figures/SA-no M-coverage.png'
+
         csv_file_name = 'outputs-no-M/scenarios/simulated_scenarios.csv'
 
     return csv_file_name, fig_file_name
+
+
+def get_scenarios_with_spec_cov(scenarios_df, i, spec, test_coverage):
+
+    return S.SetOfScenarios(
+        name='Specificity = {:.3f}'.format(spec),
+        scenario_df=scenarios_df,
+        color=COLORS[i],
+        marker='o',
+        conditions_on_variables=[
+            S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.1f}'),
+            S.ConditionOnVariable(var_name='specificity', values=[spec]),
+            S.ConditionOnVariable(var_name='rapid test coverage', values=[test_coverage])
+        ],
+        if_find_frontier=False,
+        if_show_fitted_curve=False,
+        labels_shift_x=0.01,
+        labels_shift_y=0.01)
 
 
 def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range, print_all_scenarios=False):
@@ -302,20 +328,8 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
     list_of_scenario_sets = []
 
     for i, spec in enumerate(SPE_VALUES):
-        list_of_scenario_sets.append(S.SetOfScenarios(
-            name='Specificity = {:.3f}'.format(spec),
-            scenario_df=scenarios_df,
-            color=COLORS[i],
-            marker='o',
-            conditions_on_variables=[
-                S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.1f}'),
-                S.ConditionOnVariable(var_name='specificity', values=[spec]),
-                S.ConditionOnVariable(var_name='rapid test coverage', values=[test_coverage])
-            ],
-            if_find_frontier=False,
-            if_show_fitted_curve=False,
-            labels_shift_x=0.01,
-            labels_shift_y=0.01)
+        list_of_scenario_sets.append(
+            get_scenarios_with_spec_cov(scenarios_df=scenarios_df, i=i, spec=spec, test_coverage=test_coverage)
         )
 
     V.plot_sets_of_scenarios(
@@ -335,3 +349,36 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
         fig_size=(5, 5))
 
 
+def plot_scenario_sa(csv_file_name, fig_file_name, x_range=None, y_range=None, l_b_r_t=None, fig_size=None):
+
+    # read scenarios into a dataframe
+    scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_name)
+
+    list_list_series = []
+    list_of_titles = []
+    for c in COVERAGE_VALUES:
+        list_of_titles.append('Test Coverage {:.0%}'.format(c))
+        list_of_scenario_sets = []
+        for i, spec in enumerate(SPE_VALUES):
+            list_of_scenario_sets.append(
+                get_scenarios_with_spec_cov(scenarios_df=scenarios_df, i=i, spec=spec, test_coverage=c)
+            )
+        list_list_series.append(list_of_scenario_sets)
+
+    V.multi_plot_series(
+        list_list_series=list_list_series,
+        list_of_titles=list_of_titles,
+        name_of_base_scenario='Status quo (no rapid test)',
+        list_if_remove_base_scenario=[True] * len(SPE_VALUES),
+        effect_outcome='Proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
+        cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
+        x_range=x_range,
+        y_range=y_range,
+        labels=('Change in the effective lifespan of ciprofloxacin, tetracycline, and ceftriaxone (years)',
+                'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)'),
+        cost_multiplier=100000,
+        effect_multiplier=SIM_DURATION,
+        fig_size=fig_size,
+        l_b_r_t=l_b_r_t,
+        file_name=fig_file_name
+    )
