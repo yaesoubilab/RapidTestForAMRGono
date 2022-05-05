@@ -299,7 +299,7 @@ def get_scenarios_with_spec_cov(scenarios_df, i, spec, test_coverage):
         color=COLORS[i],
         marker='o',
         conditions_on_variables=[
-            S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.1f}'),
+            S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
             S.ConditionOnVariable(var_name='specificity', values=[spec]),
             S.ConditionOnVariable(var_name='rapid test coverage', values=[test_coverage])
         ],
