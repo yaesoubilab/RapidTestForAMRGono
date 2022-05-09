@@ -375,7 +375,7 @@ def plot_scenario_sa(csv_file_name, fig_file_name, x_range=None, y_range=None, l
         x_range=x_range,
         y_range=y_range,
         labels=('Change in the effective lifespan of ciprofloxacin, tetracycline, and ceftriaxone (years)',
-                'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)'),
+                'Change in the annual rate of notified gonorrhea cases\n(per 100,000 MSM population)'),
         cost_multiplier=100000,
         effect_multiplier=SIM_DURATION,
         fig_size=fig_size,
