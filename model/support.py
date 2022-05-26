@@ -1,11 +1,10 @@
-from model.Model import build_model
-from model.ModelSettings import GonoSettings
-from model.Plots import plot_trajectories
-
 import apacepy.calibration as calib
 import deampy.parameter_estimation as P
 from apacepy.multi_epidemics import MultiEpidemics
 from definitions import ROOT_DIR
+from model.model_settings import GonoSettings
+from model.model_structure import build_model
+from model.plots import plot_trajectories
 
 
 def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_weights=True,
@@ -42,9 +41,9 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
     multi_model.print_summary_stats()
 
     if sets.ifMAvailableFor1stTx:
-        dir_of_trajs = 'outputs-with-M/trajectories'
+        dir_of_trajs = 'outputs/with-M/trajectories'
     else:
-        dir_of_trajs = 'outputs-no-M/trajectories'
+        dir_of_trajs = 'outputs/no-M/trajectories'
 
     # plot trajectories
     plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data

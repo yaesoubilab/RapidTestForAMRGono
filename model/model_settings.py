@@ -47,13 +47,13 @@ class GonoSettings(ModelSettings):
 
         # folders
         if self.ifMAvailableFor1stTx:
-            self.folderToSaveTrajs = 'outputs-with-M/trajectories'
-            self.folderToSaveSummary = 'outputs-with-M/summary'
-            self.folderToSaveScenarioAnalysis = 'outputs-with-M/scenarios'
+            self.folderToSaveTrajs = 'outputs/with-M/trajectories'
+            self.folderToSaveSummary = 'outputs/with-M/summary'
+            self.folderToSaveScenarioAnalysis = 'outputs/with-M/scenarios'
         else:
-            self.folderToSaveTrajs = 'outputs-no-M/trajectories'
-            self.folderToSaveSummary = 'outputs-no-M/summary'
-            self.folderToSaveScenarioAnalysis = 'outputs-no-M/scenarios'
+            self.folderToSaveTrajs = 'outputs/no-M/trajectories'
+            self.folderToSaveSummary = 'outputs/no-M/summary'
+            self.folderToSaveScenarioAnalysis = 'outputs/no-M/scenarios'
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5
