@@ -2,6 +2,7 @@ import apacepy.analysis.scenarios as scen
 import apacepy.analysis.trajectories as traj
 import apacepy.analysis.visualize_scenarios as vis
 from deampy.in_out_functions import write_csv
+
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
     SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES
 from model import data as D
@@ -280,14 +281,14 @@ def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_
         else:
             fig_file_name = 'figures/SA/with M-coverage.png'
 
-        csv_file_name = 'outputs-with-M/scenarios/simulated_scenarios.csv'
+        csv_file_name = 'outputs/with-M/scenarios/simulated_scenarios.csv'
     else:
         if test_coverage is not None:
             fig_file_name = 'figures/SA/no M-coverage {:.2f}.png'.format(test_coverage)
         else:
             fig_file_name = 'figures/SA/no M-coverage.png'
 
-        csv_file_name = 'outputs-no-M/scenarios/simulated_scenarios.csv'
+        csv_file_name = 'outputs/no-M/scenarios/simulated_scenarios.csv'
 
     return csv_file_name, fig_file_name
 
