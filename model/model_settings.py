@@ -1,8 +1,7 @@
-from model.Data import Prevalence, GonorrheaRate, PercSymptomatic
-
 from apacepy.inputs import ModelSettings
 from deampy.in_out_functions import read_csv_rows
 from definitions import get_survey_size, SIM_DURATION, END_OF_WARM_UP, END_OF_CALIB
+from model.data import Prevalence, GonorrheaRate, PercSymptomatic
 
 
 class GonoSettings(ModelSettings):

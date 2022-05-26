@@ -1,24 +1,28 @@
-from model.model import build_model
-
 from apacepy.epidemic import EpiModel
 from model.model_settings import GonoSettings
+from model.model_structure import build_model
 from model.plots import plot_trajectories
 
-IF_M_AVAILABLE_FOR_FIRST_TX = True
+# if drug M can be used for 1st line therapy
+IF_M_AVAILABLE_FOR_FIRST_TX = False
+# sensitivity, specificity, and coverage of the rapid test
+# the status quo is (0, 1, 0)
+SENS, SPEC, COVERAGE = 0, 1, 0
 
+# -------------------
 # get model settings
 sets = GonoSettings(if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
-sets.update_settings(sens=1, spec=1, prob_rapid_test=1)  # base: (0, 1, 0)
+sets.update_settings(sens=SENS, spec=SPEC, prob_rapid_test=COVERAGE)
 
 # make an (empty) epidemic model
 model = EpiModel(id=1, settings=sets)
-# populate the SIR model
+# populate the model with the gonorrhea model
 build_model(model)
 
 # simulate
 model.simulate(seed=273773726)
-# print trajectories
-model.export_trajectories(delete_existing_files=True)
+# export trajectories
+model.export_trajectories()
 
 # file name
 if IF_M_AVAILABLE_FOR_FIRST_TX:

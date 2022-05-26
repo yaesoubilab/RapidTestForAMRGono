@@ -1,14 +1,15 @@
-import apacepy.analysis.scenarios as S
-import apacepy.analysis.trajectories as A
-import apacepy.analysis.visualize_scenarios as V
+import apacepy.analysis.scenarios as scen
+import apacepy.analysis.trajectories as traj
+import apacepy.analysis.visualize_scenarios as vis
 from deampy.in_out_functions import write_csv
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
     SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES
 from model import data as D
 
-A.SUBPLOT_W_SPACE = 0.25
-S.POLY_DEGREES = 1
-COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
+traj.SUBPLOT_W_SPACE = 0.25
+scen.POLY_DEGREES = 1
+SCENARIO_COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
+DIR_TRAJS = 'figures/trajs/'
 
 
 def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
@@ -25,24 +26,24 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
     :return:
     """
 
-    sim_outcomes = A.SimOutcomeTrajectories(csv_directory=dir_of_trajs)
+    sim_outcomes = traj.SimOutcomeTrajectories(csv_directory=dir_of_trajs)
 
     # defaults
-    A.TIME_0 = 0  # 2014
-    A.X_RANGE = (0, SIM_DURATION+1)
-    A.X_TICKS = [A.TIME_0, 5]  # x-axis ticks (min at 0 with interval of 5)
-    A.X_LABEL = 'Year'  # x-axis label
-    A.TRAJ_TRANSPARENCY = 0.75 if filename == 'onetraj' else 0.25
+    traj.TIME_0 = 0  # 2014
+    traj.X_RANGE = (0, SIM_DURATION+1)
+    traj.X_TICKS = [traj.TIME_0, 5]  # x-axis ticks (min at 0 with interval of 5)
+    traj.X_LABEL = 'Year'  # x-axis label
+    traj.TRAJ_TRANSPARENCY = 0.75 if filename == 'onetraj' else 0.25
 
     # plot information
-    S = A.TrajPlotInfo(outcome_name='In: S',
-                       title='Susceptible',
-                       x_multiplier=prev_multiplier,
-                       y_range=(0, 1500000))
-    pop = A.TrajPlotInfo(outcome_name='Population size',
-                         title='Population',
-                         x_multiplier=prev_multiplier,
-                         y_range=(0.95*pow(10, 6), 1.05*pow(10, 6)))
+    S = traj.TrajPlotInfo(outcome_name='In: S',
+                          title='Susceptible',
+                          x_multiplier=prev_multiplier,
+                          y_range=(0, 1500000))
+    pop = traj.TrajPlotInfo(outcome_name='Population size',
+                            title='Population',
+                            x_multiplier=prev_multiplier,
+                            y_range=(0.95*pow(10, 6), 1.05*pow(10, 6)))
 
     Is = []
     Fs = []
@@ -53,24 +54,24 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
         for p in range(len(RestProfile)):
             str_symp_susp = covert_symp_susp.get_str_symp_susp(symp_state=s, rest_profile=p)
             # Is
-            Is.append(A.TrajPlotInfo(outcome_name='In: I ' + str_symp_susp,
-                                     title='I ' + str_symp_susp,
-                                     x_multiplier=prev_multiplier))
+            Is.append(traj.TrajPlotInfo(outcome_name='In: I ' + str_symp_susp,
+                                        title='I ' + str_symp_susp,
+                                        x_multiplier=prev_multiplier))
             # Fs: infectious compartments after treatment failure
-            Fs.append(A.TrajPlotInfo(outcome_name='In: F ' + str_symp_susp,
-                                     title='F ' + str_symp_susp,
-                                     x_multiplier=prev_multiplier))
+            Fs.append(traj.TrajPlotInfo(outcome_name='In: F ' + str_symp_susp,
+                                        title='F ' + str_symp_susp,
+                                        x_multiplier=prev_multiplier))
             # increment i
             i += 1
 
     sim_outcomes.plot_multi_panel(n_rows=4, n_cols=4,
                                   list_plot_info=Is,
                                   figure_size=(7, 7),
-                                  file_name='figures/(valid-Is) ' + filename)
+                                  file_name=DIR_TRAJS+'(valid-Is) ' + filename)
     sim_outcomes.plot_multi_panel(n_rows=4, n_cols=4,
                                   list_plot_info=Fs,
                                   figure_size=(7, 7),
-                                  file_name='figures/(valid-Fs) ' + filename)
+                                  file_name=DIR_TRAJS+'(valid-Fs) ' + filename)
 
     # sim_outcomes.plot_multi_panel(n_rows=1, n_cols=2,
     #                               list_plot_info=[S, pop],
@@ -78,41 +79,41 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
     #                               file_name='figures/(valid-S) ' + filename)
 
     # ------------- Calibration Figure ---------------
-    prev = A.TrajPlotInfo(outcome_name='Prevalence',
-                          title='Prevalence (%)',
-                          x_multiplier=obs_prev_multiplier, y_multiplier=100,
-                          y_range=(0, 10),
-                          calibration_info=A.CalibrationTargetPlotInfo(
-                              rows_of_data=D.Prevalence)
-                          )
-    gono_rate = A.TrajPlotInfo(outcome_name='Rate of gonorrhea cases',
-                               title='Rate of gonorrhea cases\n(Per 100,000 MSM population)',
-                               x_multiplier=obs_incd_multiplier, y_multiplier=100000,
-                               y_range=(0, 12500),
-                               calibration_info=A.CalibrationTargetPlotInfo(
-                                   rows_of_data=D.GonorrheaRate)
-                               )
+    prev = traj.TrajPlotInfo(outcome_name='Prevalence',
+                             title='Prevalence (%)',
+                             x_multiplier=obs_prev_multiplier, y_multiplier=100,
+                             y_range=(0, 10),
+                             calibration_info=traj.CalibrationTargetPlotInfo(
+                                 rows_of_data=D.Prevalence)
+                             )
+    gono_rate = traj.TrajPlotInfo(outcome_name='Rate of gonorrhea cases',
+                                  title='Rate of gonorrhea cases\n(Per 100,000 MSM population)',
+                                  x_multiplier=obs_incd_multiplier, y_multiplier=100000,
+                                  y_range=(0, 12500),
+                                  calibration_info=traj.CalibrationTargetPlotInfo(
+                                      rows_of_data=D.GonorrheaRate)
+                                  )
 
-    perc_symp = A.TrajPlotInfo(outcome_name='Proportion of cases symptomatic',
-                               title='Percent gonorrhea cases\nthat are symptomatic (%)',
-                               x_multiplier=obs_incd_multiplier,
-                               y_multiplier=100, y_range=(0, 100),
-                               calibration_info=A.CalibrationTargetPlotInfo(
-                                   rows_of_data=D.PercSymptomatic)
-                               )
+    perc_symp = traj.TrajPlotInfo(outcome_name='Proportion of cases symptomatic',
+                                  title='Percent gonorrhea cases\nthat are symptomatic (%)',
+                                  x_multiplier=obs_incd_multiplier,
+                                  y_multiplier=100, y_range=(0, 100),
+                                  calibration_info=traj.CalibrationTargetPlotInfo(
+                                      rows_of_data=D.PercSymptomatic)
+                                  )
 
     perc_cases_by_rest_profile = []
     for p in range(len(REST_PROFILES)):
-        perc_cases_by_rest_profile.append(A.TrajPlotInfo(
+        perc_cases_by_rest_profile.append(traj.TrajPlotInfo(
             outcome_name='Proportion of cases resistant to '+REST_PROFILES[p],
             title='Cases with profile\n{} (%)'.format(REST_PROFILES[p]),
             x_multiplier=obs_incd_multiplier,
             y_multiplier=100, y_range=(0, 100),
-            calibration_info=A.CalibrationTargetPlotInfo(
+            calibration_info=traj.CalibrationTargetPlotInfo(
                 rows_of_data=D.PercResistProfile[REST_PROFILES[p]]))
         )
 
-    calibration_filename = 'figures/(summary) ' + filename
+    calibration_filename = DIR_TRAJS+'(summary) ' + filename
 
     list_plot_info = [prev, gono_rate, perc_symp]
     list_plot_info.extend(perc_cases_by_rest_profile)
@@ -124,19 +125,19 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
     # ------------- Successful treatment with different antibiotics ---------------
     Txs = []
     for a in ANTIBIOTICS:
-        Txs.append(A.TrajPlotInfo(outcome_name='To: Counting success tx with ' + a,
-                                  title='Successful Tx-' + a,
-                                  x_multiplier=incd_multiplier))
-    Txs.append(A.TrajPlotInfo(outcome_name='To: 1st-Tx with M',
-                              title='Successful 1st-Tx-M',
-                              x_multiplier=incd_multiplier))
-    Txs.append(A.TrajPlotInfo(outcome_name='To: Tx with M',
-                              title='Successful Tx-M',
-                              x_multiplier=incd_multiplier))
+        Txs.append(traj.TrajPlotInfo(outcome_name='To: Counting success tx with ' + a,
+                                     title='Successful Tx-' + a,
+                                     x_multiplier=incd_multiplier))
+    Txs.append(traj.TrajPlotInfo(outcome_name='To: 1st-Tx with M',
+                                 title='Successful 1st-Tx-M',
+                                 x_multiplier=incd_multiplier))
+    Txs.append(traj.TrajPlotInfo(outcome_name='To: Tx with M',
+                                 title='Successful Tx-M',
+                                 x_multiplier=incd_multiplier))
     sim_outcomes.plot_multi_panel(n_rows=2, n_cols=3,
                                   list_plot_info=Txs,
                                   figure_size=(3*2.2, 2*2.2), show_subplot_labels=True,
-                                  file_name='figures/(valid-Tx) ' + filename)
+                                  file_name=DIR_TRAJS+'(valid-Tx) ' + filename)
 
 
 def get_rate_percentage_life(scenarios_df, scenario_name):
@@ -233,7 +234,7 @@ def export_summary_of_scenarios(if_m_available_for_1st_tx):
         csv_file_summary = 'outputs-no-M/scenarios/performance_summary.csv'
 
     # read scenarios into a dataframe
-    scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_scenarios)
+    scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_scenarios)
 
     # rows
     rows = [
@@ -293,15 +294,15 @@ def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_
 
 def get_scenarios_with_spec_cov(scenarios_df, i, spec, test_coverage):
 
-    return S.SetOfScenarios(
+    return scen.SetOfScenarios(
         name='Specificity = {:.3f}'.format(spec),
         scenario_df=scenarios_df,
-        color=COLORS[i],
+        color=SCENARIO_COLORS[i],
         marker='o',
         conditions_on_variables=[
-            S.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
-            S.ConditionOnVariable(var_name='specificity', values=[spec]),
-            S.ConditionOnVariable(var_name='rapid test coverage', values=[test_coverage])
+            scen.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
+            scen.ConditionOnVariable(var_name='specificity', values=[spec]),
+            scen.ConditionOnVariable(var_name='rapid test coverage', values=[test_coverage])
         ],
         if_find_frontier=False,
         if_show_fitted_curve=False,
@@ -312,7 +313,7 @@ def get_scenarios_with_spec_cov(scenarios_df, i, spec, test_coverage):
 def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range, print_all_scenarios=False):
 
     # read scenarios into a dataframe
-    scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_name)
+    scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_name)
 
     # get a specific outcome from a specific scenario
     if print_all_scenarios:
@@ -322,7 +323,7 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
             print('{}: \t{} | {}'.format(name, rate, life))
 
     # plot CEA
-    S.ERROR_BAR_ALPHA = 0.2
+    scen.ERROR_BAR_ALPHA = 0.2
 
     # sets of scenarios to display on the cost-effectiveness plain
     list_of_scenario_sets = []
@@ -332,7 +333,7 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
             get_scenarios_with_spec_cov(scenarios_df=scenarios_df, i=i, spec=spec, test_coverage=test_coverage)
         )
 
-    V.plot_sets_of_scenarios(
+    vis.plot_sets_of_scenarios(
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
         list_if_remove_base_scenario=[True] * len(SPE_VALUES),
@@ -352,7 +353,7 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
 def plot_scenario_sa(csv_file_name, fig_file_name, x_range=None, y_range=None, l_b_r_t=None, fig_size=None):
 
     # read scenarios into a dataframe
-    scenarios_df = S.ScenarioDataFrame(csv_file_name=csv_file_name)
+    scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_name)
 
     list_list_series = []
     list_of_titles = []
@@ -365,7 +366,7 @@ def plot_scenario_sa(csv_file_name, fig_file_name, x_range=None, y_range=None, l
             )
         list_list_series.append(list_of_scenario_sets)
 
-    V.multi_plot_series(
+    vis.multi_plot_series(
         list_list_series=list_list_series,
         list_of_titles=list_of_titles,
         name_of_base_scenario='Status quo (no rapid test)',

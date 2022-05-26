@@ -1,7 +1,7 @@
 from model.model_settings import GonoSettings
 from model.support import simulate_calibrated_model
 
-N_OF_TRAJS_TO_USE_FOR_SIMULATION = 160   # number of trajectories with the highest likelihood to keep
+N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16   # number of trajectories with the highest likelihood to keep
 
 
 def simulate_calibrated(sen=0.0, spe=1.0, coverage=0.0, if_m_available=True): # base: (0, 1, 0)
