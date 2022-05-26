@@ -1,12 +1,13 @@
 import warnings
 
-import apace.Calibration as calib
-import model.Plots as P
-from analysis.PlotScenarios import X_RANGE_WITH_M, Y_RANGE_WITH_M
-from apace.ScenarioSimulation import ScenarioSimulator
+from model.model import build_model
+
+import apacepy.calibration as calib
+import model.plots as P
+from analysis.plot_scenarios import X_RANGE_WITH_M, Y_RANGE_WITH_M
+from apacepy.scenario_simulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sens_spec_coverage, COVERAGE_VALUES
-from model.Model import build_model
-from model.ModelSettings import GonoSettings
+from model.model_settings import GonoSettings
 
 warnings.filterwarnings("ignore")
 

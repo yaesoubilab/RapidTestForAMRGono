@@ -1,4 +1,4 @@
-from model.Plots import plot_trajectories
+from model.plots import plot_trajectories
 
 
 # plot trajectories

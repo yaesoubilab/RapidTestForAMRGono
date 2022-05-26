@@ -1,4 +1,4 @@
-from model.Support import simulate_multi_trajectories
+from model.support import simulate_multi_trajectories
 
 if __name__ == "__main__":
 

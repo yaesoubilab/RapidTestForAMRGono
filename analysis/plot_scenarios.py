@@ -1,5 +1,5 @@
 from definitions import COVERAGE_VALUES
-from model.Plots import plot_scenarios, plot_scenario_sa, \
+from model.plots import plot_scenarios, plot_scenario_sa, \
     get_scenarios_csv_filename_and_fig_filename, export_summary_of_scenarios
 
 IF_M_AVAILABLE_FOR_FIRST_TX = True

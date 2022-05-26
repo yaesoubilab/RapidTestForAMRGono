@@ -1,11 +1,10 @@
-from SimPy.InOutFunctions import write_csv
-
-import apace.analysis.Scenarios as S
-import apace.analysis.Trajectories as A
-import apace.analysis.VisualizeScenarios as V
+import apacepy.analysis.scenarios as S
+import apacepy.analysis.trajectories as A
+import apacepy.analysis.visualize_scenarios as V
+from deampy.in_out_functions import write_csv
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
     SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES
-from model import Data as D
+from model import data as D
 
 A.SUBPLOT_W_SPACE = 0.25
 S.POLY_DEGREES = 1

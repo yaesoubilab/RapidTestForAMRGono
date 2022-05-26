@@ -1,4 +1,0 @@
-from Calibrate import N_OF_RESAMPLES_FOR_PARAM_ESTIMATION
-from model.Support import estimate_parameters
-
-estimate_parameters(n_of_resamples=N_OF_RESAMPLES_FOR_PARAM_ESTIMATION)

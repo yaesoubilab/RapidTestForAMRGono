@@ -1,13 +1,13 @@
-from SimPy.Parameters import Constant
-from apace.CalibrationSupport import FeasibleConditions
-from apace.Control import InterventionAffectingEvents, ConditionBasedDecisionRule, PredeterminedDecisionRule
-from apace.FeaturesAndConditions import FeatureSurveillance, FeatureIntervention, \
+from apacepy.calibration_support import FeasibleConditions
+from apacepy.control import InterventionAffectingEvents, ConditionBasedDecisionRule, PredeterminedDecisionRule
+from apacepy.features_conditions import FeatureSurveillance, FeatureIntervention, \
     ConditionOnFeatures, ConditionOnConditions, ConditionAlwaysFalse
-from apace.ModelObjects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
-from apace.TimeSeries import SumPrevalence, SumIncidence, RatioTimeSeries
+from apacepy.model_objects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
+from apacepy.time_series import SumPrevalence, SumIncidence, RatioTimeSeries
+from deampy.parameters import Constant
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, ANTIBIOTICS, TreatmentOutcome, \
     ConvertSympAndResitAndAntiBio, get_profile_after_resit_or_failure
-from model.ModelParameters import Parameters
+from model.model_parameters import Parameters
 
 
 def build_model(model):

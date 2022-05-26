@@ -1,6 +1,6 @@
-from SimPy.Parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
+from apacepy.inputs import EpiParameters
+from deampy.parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
     TenToPower, TimeDependentStepWise, Dirichlet, AnOutcomeOfAMultiVariateDist
-from apace.Inputs import EpiParameters
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, END_OF_WARM_UP, ConvertSympAndResitAndAntiBio
 
 

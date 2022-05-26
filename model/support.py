@@ -1,10 +1,11 @@
-import SimPy.ParameterEstimation as P
-import apace.Calibration as calib
-from apace.MultiEpidemics import MultiEpidemics
-from definitions import ROOT_DIR
 from model.Model import build_model
 from model.ModelSettings import GonoSettings
 from model.Plots import plot_trajectories
+
+import apacepy.calibration as calib
+import deampy.parameter_estimation as P
+from apacepy.multi_epidemics import MultiEpidemics
+from definitions import ROOT_DIR
 
 
 def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_weights=True,

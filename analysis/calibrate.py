@@ -1,7 +1,8 @@
-import apace.Calibration as calib
-from model import Model as M
-from model.ModelSettings import GonoSettings
-from model.Support import estimate_parameters, simulate_calibrated_model
+import model.model as M
+
+import apacepy.calibration as calib
+from model.model_settings import GonoSettings
+from model.support import estimate_parameters, simulate_calibrated_model
 
 IF_M_AVAILABLE_FOR_FIRST_TX = True
 
