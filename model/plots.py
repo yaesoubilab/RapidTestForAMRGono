@@ -227,11 +227,11 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
 def export_summary_of_scenarios(if_m_available_for_1st_tx):
 
     if if_m_available_for_1st_tx:
-        csv_file_scenarios = 'outputs-with-M/scenarios/simulated_scenarios.csv'
-        csv_file_summary = 'outputs-with-M/scenarios/performance_summary.csv'
+        csv_file_scenarios = 'outputs/with-M/scenarios/simulated_scenarios.csv'
+        csv_file_summary = 'outputs/with-M/scenarios/performance_summary.csv'
     else:
-        csv_file_scenarios = 'outputs-no-M/scenarios/simulated_scenarios.csv'
-        csv_file_summary = 'outputs-no-M/scenarios/performance_summary.csv'
+        csv_file_scenarios = 'outputs/no-M/scenarios/simulated_scenarios.csv'
+        csv_file_summary = 'outputs/no-M/scenarios/performance_summary.csv'
 
     # read scenarios into a dataframe
     scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_scenarios)
@@ -276,16 +276,16 @@ def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_
 
     if if_m_available_for_1st_tx:
         if test_coverage is not None:
-            fig_file_name = 'figures/SA-with M-coverage {:.2f}.png'.format(test_coverage)
+            fig_file_name = 'figures/SA/with M-coverage {:.2f}.png'.format(test_coverage)
         else:
-            fig_file_name = 'figures/SA-with M-coverage.png'
+            fig_file_name = 'figures/SA/with M-coverage.png'
 
         csv_file_name = 'outputs-with-M/scenarios/simulated_scenarios.csv'
     else:
         if test_coverage is not None:
-            fig_file_name = 'figures/SA-no M-coverage {:.2f}.png'.format(test_coverage)
+            fig_file_name = 'figures/SA/no M-coverage {:.2f}.png'.format(test_coverage)
         else:
-            fig_file_name = 'figures/SA-no M-coverage.png'
+            fig_file_name = 'figures/SA/no M-coverage.png'
 
         csv_file_name = 'outputs-no-M/scenarios/simulated_scenarios.csv'
 

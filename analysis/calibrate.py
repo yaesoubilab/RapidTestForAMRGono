@@ -1,21 +1,22 @@
-import model.model as M
-
 import apacepy.calibration as calib
 from model.model_settings import GonoSettings
+from model.model_structure import build_model
 from model.support import estimate_parameters, simulate_calibrated_model
 
+# if drug M can be used for 1st line therapy
 IF_M_AVAILABLE_FOR_FIRST_TX = True
 
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 16*100    # total number of trajectories to simulate as part of calibration
-N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*10   # number of trajectories with the highest likelihood to keep
-N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*10  # number of parameter values to resample for parameter estimation
+N_OF_CALIBRATION_ITERATIONS = 16*10    # total number of trajectories to simulate as part of calibration
+N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*1   # number of trajectories with the highest likelihood to keep
+N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*1  # number of parameter values to resample for parameter estimation
 
 if __name__ == "__main__":
 
     # get model settings
     sets = GonoSettings(if_calibrating=True, collect_traj_of_comparts=False,
                         if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
+    # calibrate under the status quo scenario (no rapid test)
     sets.update_settings(sens=0, spec=1, prob_rapid_test=0)
 
     # --------- calibration ----------
@@ -23,7 +24,7 @@ if __name__ == "__main__":
     calibration = calib.CalibrationWithRandomSampling(model_settings=sets, max_tries=200)
 
     calibration.run(
-        function_to_populate_model=M.build_model,
+        function_to_populate_model=build_model,
         num_of_iterations=N_OF_CALIBRATION_ITERATIONS,
         if_run_in_parallel=RUN_IN_PARALLEL)
 

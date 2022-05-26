@@ -55,6 +55,7 @@ def plot_scenarios_sa(if_m_available_for_1st_tx):
 
 if __name__ == "__main__":
 
+    # for scenarios where drug M is and is not available for 1st-line therapy
     for m in (True, False):
 
         # export summary

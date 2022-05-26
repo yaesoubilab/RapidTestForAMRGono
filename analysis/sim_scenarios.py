@@ -1,19 +1,18 @@
 import warnings
 
-from model.model import build_model
-
 import apacepy.calibration as calib
-import model.plots as P
+import model.plots as plots
 from analysis.plot_scenarios import X_RANGE_WITH_M, Y_RANGE_WITH_M
 from apacepy.scenario_simulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sens_spec_coverage, COVERAGE_VALUES
 from model.model_settings import GonoSettings
+from model.model_structure import build_model
 
 warnings.filterwarnings("ignore")
 
 
 IF_M_AVAILABLE_FOR_FIRST_TX = True
-N_OF_SIMS = 160
+N_OF_SIMS = 16
 RUN_IN_PARALLEL = True
 
 
@@ -55,11 +54,11 @@ def simulate_scenarios(if_m_available_for_1st_tx):
     for c in COVERAGE_VALUES:
 
         if if_m_available_for_1st_tx:
-            fig_file_name = 'figures/SA-with M-coverage {:.2f}.png'.format(c)
+            fig_file_name = 'figures/SA/with M-coverage {:.2f}.png'.format(c)
         else:
-            fig_file_name = 'figures/SA-no M-coverage {:.2f}.png'.format(c)
+            fig_file_name = 'figures/SA/no M-coverage {:.2f}.png'.format(c)
 
-        P.plot_scenarios(
+        plots.plot_scenarios(
             csv_file_name=sets.folderToSaveScenarioAnalysis + '/simulated_scenarios.csv',
             fig_file_name=fig_file_name,
             test_coverage=c,
