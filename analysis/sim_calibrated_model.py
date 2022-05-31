@@ -1,7 +1,7 @@
 from model.model_settings import GonoSettings
 from model.support import simulate_calibrated_model
 
-N_OF_TRAJS = 16   # number of trajectories to simulate
+N_OF_TRAJS = 160   # number of trajectories to simulate
 
 
 def simulate_calibrated(sen=0.0, spe=1.0, coverage=0.0, if_m_available=True):
