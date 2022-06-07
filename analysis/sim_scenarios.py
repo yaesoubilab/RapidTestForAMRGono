@@ -1,10 +1,9 @@
 import warnings
 
 import apacepy.calibration as calib
-from apacepy.scenario_simulation import ScenarioSimulator
-
 import model.plots as plots
-from analysis.plot_scenarios import X_RANGE_WITH_M, Y_RANGE_WITH_M
+from analysis.analyze_and_plot_scenarios import X_RANGE_WITH_M, Y_RANGE_WITH_M
+from apacepy.scenario_simulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sens_spec_coverage, COVERAGE_VALUES
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
