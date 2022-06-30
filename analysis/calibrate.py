@@ -10,13 +10,12 @@ To calibrate the model under two scenarios:
     2) when M is not available for first-line therapy (set IF_M_AVAILABLE_FOR_FIRST_TX = False)
 """
 
-# if drug M can be used for 1st line therapy
 IF_M_AVAILABLE_FOR_FIRST_TX = True  # set to False when M is not available for first-line therapy
-
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 16*100    # total number of trajectories to simulate as part of calibration
-N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*10   # number of trajectories with the highest likelihood to keep
-N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*10  # number of parameter values to resample for parameter estimation
+N_OF_CALIBRATION_ITERATIONS = 16*2    # total number of trajectories to simulate as part of calibration
+N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*1   # number of trajectories with the highest likelihood to keep
+N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*1  # number of parameter values to resample for parameter estimation
+
 
 if __name__ == "__main__":
 

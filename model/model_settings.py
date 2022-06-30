@@ -1,5 +1,6 @@
 from apacepy.inputs import ModelSettings
 from deampy.in_out_functions import read_csv_rows
+
 from definitions import get_survey_size, SIM_DURATION, END_OF_WARM_UP, END_OF_CALIB
 from model.data import Prevalence, GonorrheaRate, PercSymptomatic
 
@@ -50,10 +51,12 @@ class GonoSettings(ModelSettings):
             self.folderToSaveTrajs = 'outputs/with-M/trajectories'
             self.folderToSaveSummary = 'outputs/with-M/summary'
             self.folderToSaveScenarioAnalysis = 'outputs/with-M/scenarios'
+            self.folderToSaveCalibrationResults = 'outputs/with-M/calibration'
         else:
             self.folderToSaveTrajs = 'outputs/no-M/trajectories'
             self.folderToSaveSummary = 'outputs/no-M/summary'
             self.folderToSaveScenarioAnalysis = 'outputs/no-M/scenarios'
+            self.folderToSaveCalibrationResults = 'outputs/no-M/calibration'
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5
