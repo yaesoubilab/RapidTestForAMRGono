@@ -44,7 +44,7 @@ class Parameters(EpiParameters):
         self.percIByRestProfile = []
         for p in range(len(RestProfile)):
             self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
-                par_multivariante=self.percIByRestProfileDirichlet,
+                par_multivariate=self.percIByRestProfileDirichlet,
                 outcome_index=p))
 
         # self.percIByRestProfile[RestProfile.CIP.value] = Uniform(0.003, 0.008)

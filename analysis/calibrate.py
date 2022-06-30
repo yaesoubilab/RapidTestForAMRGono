@@ -6,22 +6,26 @@ from model.support import estimate_parameters, simulate_calibrated_model
 
 """
 To calibrate the model under two scenarios: 
-    1) when M is available for first-line therapy (set IF_M_AVAILABLE_FOR_FIRST_TX = True)
-    2) when M is not available for first-line therapy (set IF_M_AVAILABLE_FOR_FIRST_TX = False)
+    1) when M is available for first-line therapy 
+    2) when M is not available for first-line therapy
+
+The results will be saved under analysis/outputs/with-M or analysis/outputs/no-M
 """
 
-IF_M_AVAILABLE_FOR_FIRST_TX = True  # set to False when M is not available for first-line therapy
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 16*2    # total number of trajectories to simulate as part of calibration
+N_OF_CALIBRATION_ITERATIONS = 16*10    # total number of trajectories to simulate as part of calibration
 N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*1   # number of trajectories with the highest likelihood to keep
 N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*1  # number of parameter values to resample for parameter estimation
 
 
-if __name__ == "__main__":
+def calibrate(if_m_available):
+    """ calibrate and simulate the calibrated model
+    :param if_m_available: (bool) if M is available for first-line therapy
+    """
 
     # get model settings
     sets = GonoSettings(if_calibrating=True, collect_traj_of_comparts=False,
-                        if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
+                        if_m_available_for_1st_tx=if_m_available)
     # calibrate under the status quo scenario (no rapid test)
     sets.update_settings(sens=0, spec=1, prob_rapid_test=0)
 
@@ -41,12 +45,28 @@ if __name__ == "__main__":
     calibration.save_results()
 
     # estimate parameters and draw histograms
-    estimate_parameters(n_of_resamples=N_OF_RESAMPLES_FOR_PARAM_ESTIMATION)
+    estimate_parameters(n_of_resamples=N_OF_RESAMPLES_FOR_PARAM_ESTIMATION,
+                        calibration_summary_file=sets.folderToSaveCalibrationResults+'/calibration_summary.csv',
+                        if_m_available_for_1st_tx=if_m_available,
+                        calibration_folder=sets.folderToSaveCalibrationResults)
 
     # simulate the calibrated model
     sets = GonoSettings(if_calibrating=False, collect_traj_of_comparts=True,
-                        if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
+                        if_m_available_for_1st_tx=if_m_available)
     sets.update_settings(sens=0, spec=1, prob_rapid_test=0)
+
+    if if_m_available:
+        figure_name = 'Calibrated with M.png'
+    else:
+        figure_name = 'Calibrated no M.png'
+
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS_TO_USE_FOR_SIMULATION,
                               sample_seeds_by_weights=False,
-                              settings=sets)
+                              settings=sets,
+                              figure_filename=figure_name)
+
+
+if __name__ == "__main__":
+
+    calibrate(if_m_available=True)
+    calibrate(if_m_available=False)

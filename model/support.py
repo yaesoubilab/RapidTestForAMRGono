@@ -68,7 +68,7 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True,
 
     # ------- simulate the calibrated model ----------
     # get the seeds and probability weights
-    seeds, ln, weights = calib.get_seeds_lnl_probs('outputs/calibration/calibration_summary.csv')
+    seeds, ln, weights = calib.get_seeds_lnl_probs(settings.folderToSaveCalibrationResults+'/calibration_summary.csv')
 
     # simulate the calibrated model
     simulate_multi_trajectories(n=n_of_sims,
@@ -80,19 +80,23 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True,
                                 settings=settings)
 
 
-def estimate_parameters(n_of_resamples):
+def estimate_parameters(n_of_resamples, calibration_summary_file, if_m_available_for_1st_tx, calibration_folder):
     """
-    :param n_of_resamples:(int) number of parameter values to resamples
+    :param n_of_resamples: (int) number of parameter values to resamples
+    :param calibration_summary_file: (string) file name where the calibration summary is located
+    :param if_m_available_for_1st_tx: (bool) set true if M is available as the first-line therapy
+    :param calibration_folder: (string) folder where calibration results are stored
     """
+
     # ---------- parameter estimation -----------
     # calculate posterior distributions and plot figures
     estimator = P.ParameterAnalyzer()
     estimator.resample_param_values(
-        csvfile_param_values_and_weights='outputs/calibration/calibration_summary.csv',
+        csvfile_param_values_and_weights=calibration_summary_file,
         n=n_of_resamples,
         weight_col=3,
         sample_by_weight=False,
-        csvfile_resampled_params='outputs/calibration/resampled_parameter_values.csv',
+        csvfile_resampled_params=calibration_folder+'/resampled_parameter_values.csv',
         seed=0)
 
     param_list_for_table = [
@@ -125,9 +129,15 @@ def estimate_parameters(n_of_resamples):
     ]
     # print('\nPosterior distributions:')
     # estimator.print_means_and_intervals(param_names=param_list_for_table)
-    estimator.export_means_and_intervals(poster_file='outputs/calibration/posteriors.csv',
+    estimator.export_means_and_intervals(poster_file=calibration_folder+'/posteriors.csv',
                                          param_names=param_list_for_table,
                                          prior_info_csv_file=ROOT_DIR+'/model/data/priors.csv')
-    estimator.plot_pairwise(fig_filename='figures/posterior_figure.png',
+
+    if if_m_available_for_1st_tx:
+        fig_filename = 'figures/posterior_figure_with_M.png'
+    else:
+        fig_filename = 'figures/posterior_figure_no_M.png'
+
+    estimator.plot_pairwise(fig_filename=fig_filename,
                             par_names=param_list_for_figure,
                             prior_info_csv_file=ROOT_DIR + '/model/data/priors.csv')
