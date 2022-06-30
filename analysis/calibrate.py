@@ -4,8 +4,14 @@ from model.model_settings import GonoSettings
 from model.model_structure import build_model
 from model.support import estimate_parameters, simulate_calibrated_model
 
+"""
+To calibrate the model under two scenarios: 
+    1) when M is available for first-line therapy (set IF_M_AVAILABLE_FOR_FIRST_TX = True)
+    2) when M is not available for first-line therapy (set IF_M_AVAILABLE_FOR_FIRST_TX = False)
+"""
+
 # if drug M can be used for 1st line therapy
-IF_M_AVAILABLE_FOR_FIRST_TX = True
+IF_M_AVAILABLE_FOR_FIRST_TX = True  # set to False when M is not available for first-line therapy
 
 RUN_IN_PARALLEL = True
 N_OF_CALIBRATION_ITERATIONS = 16*100    # total number of trajectories to simulate as part of calibration

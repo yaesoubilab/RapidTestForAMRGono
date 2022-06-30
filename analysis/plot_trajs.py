@@ -1,6 +1,10 @@
 from model.plots import plot_trajectories
 
 
+"""
+To plot the simulated trajectories available under 
+"""
+
 # plot trajectories
 plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data
                   incd_multiplier=1,  # to show weeks on the x-axis of incidence data
