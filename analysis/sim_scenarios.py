@@ -10,10 +10,13 @@ from model.model_structure import build_model
 
 warnings.filterwarnings("ignore")
 
+"""
+To simulate and plot the impact of rapid tests with different characteristics
+The results will be saved under outputs/(with or no)-M/scenarios, and under figures/SA
+"""
 
-IF_M_AVAILABLE_FOR_FIRST_TX = True
-N_OF_SIMS = 160
-RUN_IN_PARALLEL = True
+N_OF_SIMS = 2
+RUN_IN_PARALLEL = False
 
 
 def simulate_scenarios(if_m_available_for_1st_tx):
@@ -34,7 +37,7 @@ def simulate_scenarios(if_m_available_for_1st_tx):
     scenario_definitions = [[0.0, 1.0, 0.0]] + get_list_sens_spec_coverage()
 
     # get the seeds and probability weights
-    seeds, lns, weights = calib.get_seeds_lnl_probs('outputs/calibration/calibration_summary.csv')
+    seeds, lns, weights = calib.get_seeds_lnl_probs(sets.folderToSaveCalibrationResults+'/calibration_summary.csv')
 
     scenario_sim = ScenarioSimulator(model_settings=sets,
                                      scenario_names=scenario_names,

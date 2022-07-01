@@ -2,8 +2,6 @@ from definitions import COVERAGE_VALUES
 from model.plots import plot_scenarios, plot_scenario_sa, \
     get_scenarios_csv_filename_and_fig_filename, export_summary_of_scenarios
 
-IF_M_AVAILABLE_FOR_FIRST_TX = True
-TEST_COVERAGE = 0.75
 X_RANGE_WITH_M = [-0.1, 6.1]
 Y_RANGE_WITH_M = [-500, 1500]
 X_RANGE_NO_M = [-0.1, 6.1]
