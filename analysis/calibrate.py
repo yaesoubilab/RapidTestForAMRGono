@@ -69,5 +69,5 @@ def calibrate(if_m_available, calibration_seed):
 if __name__ == "__main__":
 
     for m_available in (True, False):
-        for calib_seed in (None, 1):
-            calibrate(if_m_available=m_available, calibration_seed=calib_seed)
+        # for calib_seed in (None):
+        calibrate(if_m_available=m_available, calibration_seed=None)
