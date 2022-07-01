@@ -1,6 +1,6 @@
 from definitions import COVERAGE_VALUES
 from model.plots import plot_scenarios, plot_scenario_sa, \
-    get_scenarios_csv_filename_and_fig_filename, export_summary_of_scenarios
+    get_scenarios_csv_filename_and_fig_filename, export_performance_of_scenarios
 
 X_RANGE_WITH_M = [-0.1, 6.1]
 Y_RANGE_WITH_M = [-500, 1500]
@@ -54,18 +54,18 @@ def plot_scenarios_sa(if_m_available_for_1st_tx):
 if __name__ == "__main__":
 
     # for scenarios where drug M is and is not available for 1st-line therapy
-    for m in (True, False):
+    for if_m_available in (True, False):
 
-        # export summary
-        export_summary_of_scenarios(if_m_available_for_1st_tx=m)
+        # export performance of different scenarios of test characteristics
+        export_performance_of_scenarios(if_m_available_for_1st_tx=if_m_available)
 
         # 3 panel figure
-        plot_scenarios_sa(if_m_available_for_1st_tx=m)
+        plot_scenarios_sa(if_m_available_for_1st_tx=if_m_available)
 
         for c in COVERAGE_VALUES:
             # plot
             plot_scenarios_for_a_test_coverage(
-                if_m_available_for_1st_tx=m,
+                if_m_available_for_1st_tx=if_m_available,
                 test_coverage=c)
 
 

@@ -225,7 +225,16 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
     print('\tEffective lifespan of CIP, TET, and CFX:\t\t', life)
 
 
-def export_summary_of_scenarios(if_m_available_for_1st_tx):
+def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values):
+    """
+    export performance of different scenarios of test characteristics
+    :param if_m_available_for_1st_tx: (bool) if m is available for first-line therapy
+    :param coverage_values: (float) specific coverage value for the test
+    :return: saves a csv file with the following columns for each scenario:
+        (rate of gonorrhea cases, % cases treated with CIP, TET, or CRO, lifespan of CIP, TET, or CRO,
+        % increase in cases with respect to the status quo,
+        % increase in lifespan of CIP, TET, or CRO with respect to the status quo)
+    """
 
     if if_m_available_for_1st_tx:
         csv_file_scenarios = 'outputs/with-M/scenarios/simulated_scenarios.csv'
@@ -254,7 +263,7 @@ def export_summary_of_scenarios(if_m_available_for_1st_tx):
     rows.append([scenario_name_base, rate, prop, life, '', ''])
 
     #
-    for test_coverage in COVERAGE_VALUES:
+    for test_coverage in coverage_values:
         # scenario name
         scenario_name = '(p=0.750, q=0.975, c={:.3f})'.format(test_coverage)
 
@@ -274,6 +283,12 @@ def export_summary_of_scenarios(if_m_available_for_1st_tx):
 
 
 def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_coverage=None):
+    """
+    :param if_m_available_for_1st_tx: (bool) if M is available for first-line therapy
+    :param test_coverage: (float) coverage of rapid text
+    :return: (tuple) name of csv file containing the summary of simulated scenarios,
+                     name of figure to save the results as
+    """
 
     if if_m_available_for_1st_tx:
         if test_coverage is not None:
@@ -294,6 +309,13 @@ def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_
 
 
 def get_scenarios_with_spec_cov(scenarios_df, i, spec, test_coverage):
+    """
+    :param scenarios_df: dataframe of simulated scenarios
+    :param i: (int) index of the specificity (to get the color code)
+    :param spec: (float) specificity
+    :param test_coverage: (float) test coverage
+    :return: set of scenarios varying sensitivity for the specified specificity and test coverage
+    """
 
     return scen.SetOfScenarios(
         name='Specificity = {:.3f}'.format(spec),
@@ -312,6 +334,14 @@ def get_scenarios_with_spec_cov(scenarios_df, i, spec, test_coverage):
 
 
 def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range, print_all_scenarios=False):
+    """ plots the cost-effectiveness figure for a specific text coverage
+    :param csv_file_name: (string) csv filename where the summary of simulated scenarios are located
+    :param fig_file_name: (string) filename of the figure to save the results as
+    :param test_coverage: (float) specific value of test coverage
+    :param x_range: range of x-axis
+    :param y_range: range of y-axis
+    :param print_all_scenarios: (bool) set True to print the performance of different scenarios
+    """
 
     # read scenarios into a dataframe
     scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_name)
