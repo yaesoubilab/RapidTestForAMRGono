@@ -2,6 +2,14 @@ from definitions import COVERAGE_VALUES
 from model.plots import plot_scenarios, plot_scenario_sa, \
     get_scenarios_csv_filename_and_fig_filename, export_performance_of_scenarios
 
+"""
+To plot the cost-effectiveness plan visualizing the performance of rapid tests for 
+different test characteristics. The results will be save under 
+    analysis/figures/SA and 
+    analysis/outputs/(with or no-M)/scenarios/performance_summary.csv
+"""
+
+
 X_RANGE_WITH_M = [-0.1, 6.1]
 Y_RANGE_WITH_M = [-500, 1500]
 X_RANGE_NO_M = [-0.1, 6.1]
@@ -39,7 +47,7 @@ def plot_scenarios_for_a_test_coverage(if_m_available_for_1st_tx, test_coverage)
 
 def plot_scenarios_sa(if_m_available_for_1st_tx):
     """
-    plots a 3-panel figure of cost-effectiveness planes visualizing the performance of a rapid test for
+    plots a 3-panel figure of cost-effectiveness planes visualizing the performance of the rapid test for
         the specified scenario for the availability of M
     :param if_m_available_for_1st_tx: (bool) if M is available for the first-line therapy
     """
@@ -70,11 +78,13 @@ if __name__ == "__main__":
         # export performance of different scenarios of test characteristics
         export_performance_of_scenarios(if_m_available_for_1st_tx=if_m_available, coverage_values=COVERAGE_VALUES)
 
-        # 3 panel figure
+        #  plots a 3-panel figure of cost-effectiveness planes visualizing the performance of the rapid test for
+        #  the specified scenario for the availability of M
         plot_scenarios_sa(if_m_available_for_1st_tx=if_m_available)
 
         for c in COVERAGE_VALUES:
-            # plot
+            # plot a cost-effectiveness plan visualizing the performance of the rapid test for
+            # the specified scenario for the availability of M and test coverage
             plot_scenarios_for_a_test_coverage(
                 if_m_available_for_1st_tx=if_m_available,
                 test_coverage=c)
