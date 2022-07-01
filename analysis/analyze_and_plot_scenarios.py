@@ -70,21 +70,30 @@ def plot_scenarios_sa(if_m_available_for_1st_tx):
                      fig_size=(8, 3.5))
 
 
+def export_performance_summary_and_plots(if_m_available):
+    """
+    exports performance summary and cost-effectiveness plots for this scenario for the availability of M
+    :param if_m_available: (bool) if M is available for the first-line therapy
+    """
+
+    # export performance of different scenarios of test characteristics
+    export_performance_of_scenarios(if_m_available_for_1st_tx=if_m_available, coverage_values=COVERAGE_VALUES)
+
+    #  plots a 3-panel figure of cost-effectiveness planes visualizing the performance of the rapid test for
+    #  the specified scenario for the availability of M
+    plot_scenarios_sa(if_m_available_for_1st_tx=if_m_available)
+
+    for c in COVERAGE_VALUES:
+        # plot a cost-effectiveness plan visualizing the performance of the rapid test for
+        # the specified scenario for the availability of M and test coverage
+        plot_scenarios_for_a_test_coverage(
+            if_m_available_for_1st_tx=if_m_available,
+            test_coverage=c)
+
+
 if __name__ == "__main__":
 
     # for scenarios where drug M is and is not available for 1st-line therapy
     for if_m_available in (True, False):
+        export_performance_summary_and_plots(if_m_available=if_m_available)
 
-        # export performance of different scenarios of test characteristics
-        export_performance_of_scenarios(if_m_available_for_1st_tx=if_m_available, coverage_values=COVERAGE_VALUES)
-
-        #  plots a 3-panel figure of cost-effectiveness planes visualizing the performance of the rapid test for
-        #  the specified scenario for the availability of M
-        plot_scenarios_sa(if_m_available_for_1st_tx=if_m_available)
-
-        for c in COVERAGE_VALUES:
-            # plot a cost-effectiveness plan visualizing the performance of the rapid test for
-            # the specified scenario for the availability of M and test coverage
-            plot_scenarios_for_a_test_coverage(
-                if_m_available_for_1st_tx=if_m_available,
-                test_coverage=c)

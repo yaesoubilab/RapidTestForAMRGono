@@ -3,6 +3,7 @@ import warnings
 import apacepy.calibration as calib
 from apacepy.scenario_simulation import ScenarioSimulator
 
+from analyze_and_plot_scenarios import export_performance_summary_and_plots
 from definitions import get_scenario_names, get_list_sens_spec_coverage
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
@@ -52,20 +53,8 @@ def simulate_scenarios(if_m_available_for_1st_tx):
     # export results of the scenario analysis
     scenario_sim.export_results()
 
-    # # plot the CEA figure and other analyses
-    # for c in COVERAGE_VALUES:
-    #
-    #     if if_m_available_for_1st_tx:
-    #         fig_file_name = 'figures/SA/with M-coverage {:.2f}.png'.format(c)
-    #     else:
-    #         fig_file_name = 'figures/SA/no M-coverage {:.2f}.png'.format(c)
-    #
-    #     plots.plot_scenarios(
-    #         csv_file_name=sets.folderToSaveScenarioAnalysis + '/simulated_scenarios.csv',
-    #         fig_file_name=fig_file_name,
-    #         test_coverage=c,
-    #         x_range=X_RANGE_WITH_M,
-    #         y_range=Y_RANGE_WITH_M)
+    # export the summary of performance and cost-effectiveness plots
+    export_performance_summary_and_plots(if_m_available=if_m_available_for_1st_tx)
 
 
 if __name__ == "__main__":
