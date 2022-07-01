@@ -193,3 +193,27 @@ def get_scenario_names():
             v[0], v[1], v[2]))
 
     return scenario_names
+
+
+def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None):
+    """
+    :param if_m_available:
+    :param sim_duration:
+    :param calibration_seed:
+    :return: the name the scenario being simulated
+    """
+
+    name = 'with-'
+
+    if if_m_available:
+        name += 'M'
+    else:
+        name += 'no M'
+
+    if sim_duration is not None:
+        name += '-{}yrs'.format(sim_duration)
+
+    if calibration_seed is not None:
+        name += '-{}'.format(calibration_seed)
+
+    return name

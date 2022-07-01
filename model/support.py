@@ -1,17 +1,21 @@
 import apacepy.calibration as calib
 import deampy.parameter_estimation as P
 from apacepy.multi_epidemics import MultiEpidemics
-from definitions import ROOT_DIR
+
+from definitions import ROOT_DIR, get_scenario_name
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
 from model.plots import plot_trajectories
 
 
-def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_weights=True,
+def simulate_multi_trajectories(n, sim_duration=None, calibration_seed=None,
+                                seeds=None, weights=None, sample_seeds_by_weights=True,
                                 if_run_in_parallel=True, figure_filename='traj.png',
                                 settings=None):
     """
     :param n: (int) number of trajectories to simulate
+    :param sim_duration: (float) simulation duration (for sensitivity analysis)
+    :param calibration_seed: (int) seed used for calibrating the model (for sensitivity analysis)
     :param seeds: (list) of seeds
     :param weights: (list) probability weights over seeds
     :param sample_seeds_by_weights: (bool) set to False to only use seeds with positive weights
@@ -40,26 +44,32 @@ def simulate_multi_trajectories(n, seeds=None, weights=None, sample_seeds_by_wei
     # get summary statistics of runtime,
     multi_model.print_summary_stats()
 
-    if sets.ifMAvailableFor1stTx:
-        dir_of_trajs = 'outputs/with-M/trajectories'
-    else:
-        dir_of_trajs = 'outputs/no-M/trajectories'
+    # scenario name
+    scenario_name = get_scenario_name(if_m_available=sets.ifMAvailableFor1stTx,
+                                      sim_duration=sim_duration,
+                                      calibration_seed=calibration_seed)
+    dir_of_traj_files = 'outputs/{}/trajectories'.format(scenario_name)
+    dir_of_traj_figs = 'figures/{}/trajs'.format(scenario_name)
 
     # plot trajectories
     plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data
                       incd_multiplier=1,  # to show weeks on the x-axis of incidence data
                       obs_prev_multiplier=1,
                       obs_incd_multiplier=1,
-                      dir_of_trajs=dir_of_trajs,
+                      dir_of_traj_files=dir_of_traj_files,
+                      dir_of_traj_figs=dir_of_traj_figs,
                       filename=figure_filename)
 
 
-def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True,
+def simulate_calibrated_model(n_of_sims, sim_duration=None, calibration_seed=None,
+                              sample_seeds_by_weights=True,
                               if_run_in_parallel=True, settings=None,
                               figure_filename='Calibrated.png'):
     """
     simulates the calibrated model
     :param n_of_sims: (int) number of trajectories to simulate
+    :param sim_duration: (float) simulation duration (for sensitivity analysis)
+    :param calibration_seed: (int) seed used for calibrating the model (for sensitivity analysis)
     :param sample_seeds_by_weights: (bool)
     :param if_run_in_parallel: (bool if run in parallel
     :param settings: (GonoSettings) model settings
@@ -72,6 +82,8 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True,
 
     # simulate the calibrated model
     simulate_multi_trajectories(n=n_of_sims,
+                                sim_duration=sim_duration,
+                                calibration_seed=calibration_seed,
                                 seeds=seeds,
                                 weights=weights,
                                 sample_seeds_by_weights=sample_seeds_by_weights,
@@ -80,12 +92,15 @@ def simulate_calibrated_model(n_of_sims, sample_seeds_by_weights=True,
                                 settings=settings)
 
 
-def estimate_parameters(n_of_resamples, calibration_summary_file, if_m_available_for_1st_tx, calibration_folder):
+def estimate_parameters(n_of_resamples,
+                        calibration_summary_file,
+                        calibration_folder,
+                        figure_folder):
     """
     :param n_of_resamples: (int) number of parameter values to resamples
     :param calibration_summary_file: (string) file name where the calibration summary is located
-    :param if_m_available_for_1st_tx: (bool) set true if M is available as the first-line therapy
     :param calibration_folder: (string) folder where calibration results are stored
+    :param figure_folder: (string) folder where estimation figures should be saved to
     """
 
     # ---------- parameter estimation -----------
@@ -133,11 +148,6 @@ def estimate_parameters(n_of_resamples, calibration_summary_file, if_m_available
                                          param_names=param_list_for_table,
                                          prior_info_csv_file=ROOT_DIR+'/model/data/priors.csv')
 
-    if if_m_available_for_1st_tx:
-        fig_filename = 'figures/posterior_figure_with_M.png'
-    else:
-        fig_filename = 'figures/posterior_figure_no_M.png'
-
-    estimator.plot_pairwise(fig_filename=fig_filename,
+    estimator.plot_pairwise(fig_filename=figure_folder+'/posterior.png',
                             par_names=param_list_for_figure,
                             prior_info_csv_file=ROOT_DIR + '/model/data/priors.csv')

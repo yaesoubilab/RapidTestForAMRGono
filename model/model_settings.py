@@ -1,25 +1,32 @@
 from apacepy.inputs import ModelSettings
 from deampy.in_out_functions import read_csv_rows
 
-from definitions import get_survey_size, SIM_DURATION, END_OF_WARM_UP, END_OF_CALIB
+from definitions import get_survey_size, SIM_DURATION, END_OF_WARM_UP, END_OF_CALIB, get_scenario_name
 from model.data import Prevalence, GonorrheaRate, PercSymptomatic
 
 
 class GonoSettings(ModelSettings):
     """ settings of the gonorrhea model """
 
-    def __init__(self, if_calibrating=False, collect_traj_of_comparts=True, if_m_available_for_1st_tx=False):
+    def __init__(self, if_calibrating=False, collect_traj_of_comparts=True,
+                 if_m_available_for_1st_tx=False, sim_duration=None, calibration_seed=None):
         """
         :param if_calibrating: (bool) if calibrating the model
         :param collect_traj_of_comparts: (bool) if collect the trajectories of all compartments
         :param if_m_available_for_1st_tx: (bool) if M is available for 1st_tx
+        :param sim_duration: (float) simulation duration (for sensitivity analysis)
+        :param calibration_seed: (int) calibration seed (for sensitivity analysis)
         """
 
         ModelSettings.__init__(self)
 
         # model settings
         self.deltaT = 7 / 364  # 1 day
-        self.simulationDuration = SIM_DURATION  # years
+        if sim_duration is None:
+            self.simulationDuration = SIM_DURATION  # years
+        else:
+            self.simulationDuration = sim_duration
+
         self.endOfWarmUpPeriod = END_OF_WARM_UP
         self.simulationOutputPeriod = 1  # simulation output period
         self.observationPeriod = 1
@@ -29,6 +36,7 @@ class GonoSettings(ModelSettings):
 
         # calibration settings
         self.calcLikelihood = if_calibrating
+        self.calibSeed = calibration_seed
 
         # projection period
         self.storeProjectedOutcomes = True
@@ -47,16 +55,14 @@ class GonoSettings(ModelSettings):
         self.switchThreshold = 0.05
 
         # folders
-        if self.ifMAvailableFor1stTx:
-            self.folderToSaveTrajs = 'outputs/with-M/trajectories'
-            self.folderToSaveSummary = 'outputs/with-M/summary'
-            self.folderToSaveScenarioAnalysis = 'outputs/with-M/scenarios'
-            self.folderToSaveCalibrationResults = 'outputs/with-M/calibration'
-        else:
-            self.folderToSaveTrajs = 'outputs/no-M/trajectories'
-            self.folderToSaveSummary = 'outputs/no-M/summary'
-            self.folderToSaveScenarioAnalysis = 'outputs/no-M/scenarios'
-            self.folderToSaveCalibrationResults = 'outputs/no-M/calibration'
+        scenario_name = get_scenario_name(if_m_available=self.ifMAvailableFor1stTx,
+                                          sim_duration=sim_duration,
+                                          calibration_seed=self.calibSeed)
+
+        self.folderToSaveTrajs = 'outputs/{}/trajectories'.format(scenario_name)
+        self.folderToSaveSummary = 'outputs/{}/summary'.format(scenario_name)
+        self.folderToSaveScenarioAnalysis = 'outputs/{}/scenarios'.format(scenario_name)
+        self.folderToSaveCalibrationResults = 'outputs/{}/calibration'.format(scenario_name)
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5

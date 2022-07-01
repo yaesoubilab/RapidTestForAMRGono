@@ -1,4 +1,5 @@
 from apacepy.epidemic import EpiModel
+
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
 from model.plots import plot_trajectories
@@ -33,6 +34,6 @@ else:
 # plot trajectories
 plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data
                   incd_multiplier=1*sets.simulationOutputPeriod,  # to show weeks on the x-axis of incidence data
-                  dir_of_trajs=sets.folderToSaveTrajs,
+                  dir_of_traj_files=sets.folderToSaveTrajs,
                   filename=filename
                   )

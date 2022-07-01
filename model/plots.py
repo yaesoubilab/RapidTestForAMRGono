@@ -10,24 +10,24 @@ from model import data as D
 traj.SUBPLOT_W_SPACE = 0.25
 scen.POLY_DEGREES = 1
 SCENARIO_COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
-DIR_TRAJS = 'figures/trajs/'
 
 
 def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
                       obs_prev_multiplier=1, obs_incd_multiplier=1,
-                      dir_of_trajs='outputs/trajectories',
+                      dir_of_traj_files='outputs/trajectories',
+                      dir_of_traj_figs='figures/trajs',
                       filename='trajectories.png'):
     """
     :param prev_multiplier: (int) to multiply the simulation time to convert it to year, week, or day.
     :param incd_multiplier: (int) to multiply the simulation period to covert it to year, week, or day.
     :param obs_prev_multiplier: (int) to multiply the prevalence survey time to convert it to year, week, or day.
     :param obs_incd_multiplier: (int) to multiply the incidence survey period to covert it to year, week, or day.
-    :param dir_of_trajs: (string) directory where simulated trajectories are located
+    :param dir_of_traj_files: (string) directory where simulated trajectories are located
+    :param dir_of_traj_figs: (string) directory where figures should be saved to
     :param filename: (string) filename to save the trajectories as
-    :return:
     """
 
-    sim_outcomes = traj.SimOutcomeTrajectories(csv_directory=dir_of_trajs)
+    sim_outcomes = traj.SimOutcomeTrajectories(csv_directory=dir_of_traj_files)
 
     # defaults
     traj.TIME_0 = 0  # 2014
@@ -68,11 +68,11 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
     sim_outcomes.plot_multi_panel(n_rows=4, n_cols=4,
                                   list_plot_info=Is,
                                   figure_size=(7, 7),
-                                  file_name=DIR_TRAJS+'(valid-Is) ' + filename)
+                                  file_name=dir_of_traj_figs+'/(valid-Is) ' + filename)
     sim_outcomes.plot_multi_panel(n_rows=4, n_cols=4,
                                   list_plot_info=Fs,
                                   figure_size=(7, 7),
-                                  file_name=DIR_TRAJS+'(valid-Fs) ' + filename)
+                                  file_name=dir_of_traj_figs+'/(valid-Fs) ' + filename)
 
     # sim_outcomes.plot_multi_panel(n_rows=1, n_cols=2,
     #                               list_plot_info=[S, pop],
@@ -114,7 +114,7 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
                 rows_of_data=D.PercResistProfile[REST_PROFILES[p]]))
         )
 
-    calibration_filename = DIR_TRAJS+'(summary) ' + filename
+    calibration_filename = dir_of_traj_figs+'/(summary) ' + filename
 
     list_plot_info = [prev, gono_rate, perc_symp]
     list_plot_info.extend(perc_cases_by_rest_profile)
@@ -138,7 +138,7 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
     sim_outcomes.plot_multi_panel(n_rows=2, n_cols=3,
                                   list_plot_info=Txs,
                                   figure_size=(3*2.2, 2*2.2), show_subplot_labels=True,
-                                  file_name=DIR_TRAJS+'(valid-Tx) ' + filename)
+                                  file_name=dir_of_traj_figs+'/(valid-Tx) ' + filename)
 
 
 def get_rate_percentage_life(scenarios_df, scenario_name):
