@@ -7,7 +7,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SIM_DURATION = 25
 END_OF_WARM_UP = 1
-END_OF_CALIB = 20 # 6
+END_OF_CALIB = 15
 RAPID_TEST_COVERAGE = 0.75
 
 # for sensitivity analysis
