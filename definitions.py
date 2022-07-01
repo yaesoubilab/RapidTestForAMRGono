@@ -11,9 +11,9 @@ END_OF_CALIB = 15
 RAPID_TEST_COVERAGE = 0.75
 
 # for sensitivity analysis
-SEN_VALUES = (0.5, 0.75, 1.0)    # sensitivity
-SPE_VALUES = (0.95, 0.975, 1.0)  # specificity
-COVERAGE_VALUES = (0.5, 0.75, 1)      # coverage
+SEN_VALUES = (0.5, 0.75)    # sensitivity
+SPE_VALUES = (0.95, 0.975)  # specificity
+COVERAGE_VALUES = (0.5, 0.75)      # coverage
 
 
 SYMP_STATES = ['Symp', 'Asym']
@@ -203,10 +203,10 @@ def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None):
     :return: the name the scenario being simulated
     """
 
-    name = 'with-'
+    name = ''
 
     if if_m_available:
-        name += 'M'
+        name += 'with M'
     else:
         name += 'no M'
 

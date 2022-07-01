@@ -4,7 +4,7 @@ import apacepy.analysis.visualize_scenarios as vis
 from deampy.in_out_functions import write_csv
 
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
-    SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES
+    SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, get_scenario_name
 from model import data as D
 
 traj.SUBPLOT_W_SPACE = 0.25
@@ -225,10 +225,13 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
     print('\tEffective lifespan of CIP, TET, and CFX:\t\t', life)
 
 
-def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values):
+def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
+                                    simulation_duration=None, calibration_seed=None):
     """
     export performance of different scenarios of test characteristics
     :param if_m_available_for_1st_tx: (bool) if m is available for first-line therapy
+    :param simulation_duration: (float) simulation duration (for sensitivity analysis)
+    :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     :param coverage_values: (float) specific coverage value for the test
     :return: saves a csv file with the following columns for each scenario:
         (rate of gonorrhea cases, % cases treated with CIP, TET, or CRO, lifespan of CIP, TET, or CRO,
@@ -236,12 +239,14 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values):
         % increase in lifespan of CIP, TET, or CRO with respect to the status quo)
     """
 
-    if if_m_available_for_1st_tx:
-        csv_file_scenarios = 'outputs/with-M/scenarios/simulated_scenarios.csv'
-        csv_file_summary = 'outputs/with-M/scenarios/performance_summary.csv'
-    else:
-        csv_file_scenarios = 'outputs/no-M/scenarios/simulated_scenarios.csv'
-        csv_file_summary = 'outputs/no-M/scenarios/performance_summary.csv'
+    scenario_name = get_scenario_name(
+        if_m_available=if_m_available_for_1st_tx,
+        sim_duration=simulation_duration,
+        calibration_seed=calibration_seed
+    )
+
+    csv_file_scenarios = 'outputs/{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
+    csv_file_summary = 'outputs/{}/scenarios/performance_summary.csv'.format(scenario_name)
 
     # read scenarios into a dataframe
     scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_scenarios)
@@ -282,28 +287,28 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values):
     write_csv(rows=rows, file_name=csv_file_summary)
 
 
-def get_scenarios_csv_filename_and_fig_filename(if_m_available_for_1st_tx, test_coverage=None):
+def get_scenarios_csv_filename_and_fig_filename(
+        if_m_available_for_1st_tx, test_coverage=None, sim_duration=None, calibration_seed=None):
     """
     :param if_m_available_for_1st_tx: (bool) if M is available for first-line therapy
     :param test_coverage: (float) coverage of rapid text
     :return: (tuple) name of csv file containing the summary of simulated scenarios,
                      name of figure to save the results as
+    :param sim_duration: (float) simulation duration (for sensitivity analysis)
+    :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     """
 
-    if if_m_available_for_1st_tx:
-        if test_coverage is not None:
-            fig_file_name = 'figures/SA/with M-coverage {:.2f}.png'.format(test_coverage)
-        else:
-            fig_file_name = 'figures/SA/with M-coverage.png'
+    scenario_name = get_scenario_name(
+        if_m_available=if_m_available_for_1st_tx,
+        sim_duration=sim_duration,
+        calibration_seed=calibration_seed)
 
-        csv_file_name = 'outputs/with-M/scenarios/simulated_scenarios.csv'
+    if test_coverage is not None:
+        fig_file_name = 'figures/SA/{}-coverage {:.2f}.png'.format(scenario_name, test_coverage)
     else:
-        if test_coverage is not None:
-            fig_file_name = 'figures/SA/no M-coverage {:.2f}.png'.format(test_coverage)
-        else:
-            fig_file_name = 'figures/SA/no M-coverage.png'
+        fig_file_name = 'figures/SA/{}-coverage.png'.format(scenario_name)
 
-        csv_file_name = 'outputs/no-M/scenarios/simulated_scenarios.csv'
+    csv_file_name = 'outputs/{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
 
     return csv_file_name, fig_file_name
 
