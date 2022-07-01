@@ -1,6 +1,8 @@
 import apacepy.calibration as calib
 
-from definitions import get_scenario_name
+from deampy.in_out_functions import TextFile
+
+from definitions import get_scenario_name, ROOT_DIR
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
 from model.support import estimate_parameters, simulate_calibrated_model
@@ -25,6 +27,9 @@ def calibrate(if_m_available, calibration_seed):
     :param calibration_seed: (int or None) calibration seed (for sensitivity analysis)
     """
 
+    # scenario name
+    scenario_name = get_scenario_name(if_m_available=if_m_available, calibration_seed=calibration_seed)
+
     # get model settings
     sets = GonoSettings(if_calibrating=True, collect_traj_of_comparts=False,
                         if_m_available_for_1st_tx=if_m_available,
@@ -45,11 +50,19 @@ def calibrate(if_m_available, calibration_seed):
     # run time
     print('Run time: {:.2f} seconds for {} trajectories.'.format(calibration.runTime, N_OF_CALIBRATION_ITERATIONS))
 
+    # store summary of calibration
+    file = TextFile(filename=ROOT_DIR+'/analysis/outputs/{}/calibration/stats.txt'.format(scenario_name))
+    file.write('Number of calibration iterations: {}\n'.format(N_OF_CALIBRATION_ITERATIONS))
+    file.write('Number of trajectories discarded: {}\n'.format(calibration.nTrajsDiscarded))
+    file.write('Calibration duration (seconds): {}\n'.format(round(calibration.runTime, 1)))
+    file.write('Number of trajectories with non-zero probability: {}\n'.format(calibration.nTrajsWithNonZeroProb))
+    file.close()
+
     # save calibration results
     calibration.save_results()
 
     # estimate parameters and draw histograms
-    scenario_name = get_scenario_name(if_m_available=if_m_available, calibration_seed=calibration_seed)
+
     estimate_parameters(n_of_resamples=N_OF_RESAMPLES_FOR_PARAM_ESTIMATION,
                         calibration_summary_file=sets.folderToSaveCalibrationResults+'/calibration_summary.csv',
                         calibration_folder=sets.folderToSaveCalibrationResults,
@@ -71,4 +84,8 @@ if __name__ == "__main__":
 
     for m_available in (True, False):
         for calib_seed in (None, 1):
+
+            scenario_name = get_scenario_name(if_m_available=m_available, calibration_seed=calib_seed)
+            print('\nCalibrating scenario {}:'.format(scenario_name))
+
             calibrate(if_m_available=m_available, calibration_seed=calib_seed)
