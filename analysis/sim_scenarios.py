@@ -67,5 +67,14 @@ if __name__ == "__main__":
     print('\n*** M is available for 1st Tx ***')
     simulate_scenarios(if_m_available_for_1st_tx=True)
 
+    print('\n*** M is available for 1st Tx with simulation duration of 30 years ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=30)
+
+    print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, calibration_seed=1)
+
     print('\n*** M is not available for 1st Tx***')
     simulate_scenarios(if_m_available_for_1st_tx=False)
+
+    print('\n*** M is not available for 1st Tx with simulation duration of 30 years ***')
+    simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=30)

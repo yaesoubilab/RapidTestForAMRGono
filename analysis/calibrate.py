@@ -39,6 +39,7 @@ def calibrate(if_m_available, calibration_seed):
     calibration.run(
         function_to_populate_model=build_model,
         num_of_iterations=N_OF_CALIBRATION_ITERATIONS,
+        initial_seed=calibration_seed,
         if_run_in_parallel=RUN_IN_PARALLEL)
 
     # run time
@@ -69,5 +70,5 @@ def calibrate(if_m_available, calibration_seed):
 if __name__ == "__main__":
 
     for m_available in (True, False):
-        # for calib_seed in (None):
-        calibrate(if_m_available=m_available, calibration_seed=None)
+        for calib_seed in (None, 1):
+            calibrate(if_m_available=m_available, calibration_seed=calib_seed)
