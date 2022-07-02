@@ -1,8 +1,9 @@
 import warnings
 
 import apacepy.calibration as calib
-from analyze_and_plot_scenarios import export_performance_summary_and_plots
 from apacepy.scenario_simulation import ScenarioSimulator
+
+from analyze_and_plot_scenarios import export_performance_summary_and_plots
 from definitions import get_scenario_names, get_list_sens_spec_coverage
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
@@ -14,8 +15,8 @@ To simulate and plot the impact of rapid tests with different characteristics
 The results will be saved under outputs/(with or no)-M/scenarios
 """
 
-N_OF_SIMS = 2
-RUN_IN_PARALLEL = False
+N_OF_SIMS = 160
+RUN_IN_PARALLEL = True
 
 
 def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration=None, calibration_seed=None):
