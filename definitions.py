@@ -11,9 +11,9 @@ END_OF_CALIB = 15
 RAPID_TEST_COVERAGE = 0.75
 
 # for sensitivity analysis
-SEN_VALUES = (0.5, 0.75)    # sensitivity
-SPE_VALUES = (0.95, 0.975)  # specificity
-COVERAGE_VALUES = (0.5, 0.75)      # coverage
+SEN_VALUES = (0.5, 0.75, 1.0)    # sensitivity
+SPE_VALUES = (0.95, 0.975, 1.0)  # specificity
+COVERAGE_VALUES = (0.5, 0.75, 1.0)      # coverage
 
 
 SYMP_STATES = ['Symp', 'Asym']
