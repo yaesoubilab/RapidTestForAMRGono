@@ -44,10 +44,11 @@ class Parameters(EpiParameters):
             par_ns=[55, 2, 270, 0, 170, 0, 0, 0], # [55, 2, 270, 0, 170, 0, 0, 0],
             if_ignore_0s=True)
 
+        # this is for debugging purposes ------------
         self.percIConstant = [None] * 8
-        self.percIConstant[RestProfile.SUS.value] = Constant(1)
-        self.percIConstant[RestProfile.CIP.value] = Constant(0)
-        self.percIConstant[RestProfile.TET.value] = Constant(0)
+        self.percIConstant[RestProfile.SUS.value] = Constant(0.8)
+        self.percIConstant[RestProfile.CIP.value] = Constant(0.2)
+        self.percIConstant[RestProfile.TET.value] = Constant(0.0)
         self.percIConstant[RestProfile.CRO.value] = Constant(0)
         self.percIConstant[RestProfile.CIP_TET.value] = Constant(0)
         self.percIConstant[RestProfile.CIP_CRO.value] = Constant(0)
@@ -55,10 +56,11 @@ class Parameters(EpiParameters):
         self.percIConstant[RestProfile.CIP_TET_CRO.value] = Constant(0)
         self.percIByRestProfileConstant = ValuesOfParams(
             parameters=self.percIConstant)
+        # --------------------
 
         # percent of I0 by resistance profile
         self.percIByRestProfile = []
-        debugging = True
+        debugging = False
         if not debugging:
             for p in range(len(RestProfile)):
                 self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
