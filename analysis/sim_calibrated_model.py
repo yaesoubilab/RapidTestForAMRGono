@@ -6,7 +6,7 @@ To simulate different scenarios with respect to the characteristics of rapid tes
 (sensitivity, specificity, coverage) 
 """
 
-N_OF_TRAJS = 160   # number of trajectories to simulate
+N_OF_TRAJS = 8   # number of trajectories to simulate
 
 
 def simulate_calibrated(sen=0.0, spe=1.0, coverage=0.0, if_m_available=True):
@@ -41,11 +41,11 @@ if __name__ == "__main__":
     # base (M is available)
     simulate_calibrated(sen=0, spe=1, coverage=0, if_m_available=True)
 
-    # M and rapid DST are available
-    simulate_calibrated(sen=0.75, spe=0.975, coverage=0.75, if_m_available=True)
-
-    # worse case (M is not available)
-    simulate_calibrated(sen=0, spe=1, coverage=0, if_m_available=False)
-
-    # worse case but rapid DST are available
-    simulate_calibrated(sen=0.75, spe=0.975, coverage=0.75, if_m_available=False)
+    # # M and rapid DST are available
+    # simulate_calibrated(sen=0.75, spe=0.975, coverage=0.75, if_m_available=True)
+    #
+    # # worse case (M is not available)
+    # simulate_calibrated(sen=0, spe=1, coverage=0, if_m_available=False)
+    #
+    # # worse case but rapid DST are available
+    # simulate_calibrated(sen=0.75, spe=0.975, coverage=0.75, if_m_available=False)

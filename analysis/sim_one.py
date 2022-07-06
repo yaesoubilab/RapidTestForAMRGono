@@ -5,7 +5,7 @@ from model.model_structure import build_model
 from model.plots import plot_trajectories
 
 # if drug M can be used for 1st line therapy
-IF_M_AVAILABLE_FOR_FIRST_TX = False
+IF_M_AVAILABLE_FOR_FIRST_TX = True
 # sensitivity, specificity, and coverage of the rapid test
 # the status quo is (0, 1, 0)
 SENS, SPEC, COVERAGE = 0, 1, 0
@@ -21,7 +21,7 @@ model = EpiModel(id=1, settings=sets)
 build_model(model)
 
 # simulate
-model.simulate(seed=273773726)
+model.simulate(seed=1984980876)
 # export trajectories
 model.export_trajectories()
 

@@ -1,6 +1,7 @@
 from apacepy.inputs import EpiParameters
 from deampy.parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
-    TenToPower, TimeDependentStepWise, Dirichlet, AnOutcomeOfAMultiVariateDist
+    TenToPower, TimeDependentStepWise, Dirichlet, AnOutcomeOfAMultiVariateDist, \
+    ValuesOfParams
 
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, END_OF_WARM_UP, ConvertSympAndResitAndAntiBio
 
@@ -37,25 +38,44 @@ class Parameters(EpiParameters):
         self.prevI0 = Uniform(0.03, 0.06)
         self.precIBySymp[SympStat.SYMP.value] = Uniform(0.0, 0.05)
 
+
         # the Dirichlet distribution for the percent of I0 by resistance profile
         # (comes from the Excel file under \data folder)
         self.percIByRestProfileDirichlet = Dirichlet(
-            par_ns=[55, 2, 270, 0, 170, 0, 0, 0],
+            par_ns=[55, 2, 270, 0, 170, 0, 0, 0], # [55, 2, 270, 0, 170, 0, 0, 0],
             if_ignore_0s=True)
+        self.percIByRestProfileConstant = [None]*8
+        self.percIByRestProfileConstant[RestProfile.SUS.value] = Constant(1)
+        self.percIByRestProfileConstant[RestProfile.CIP.value] = Constant(0)
+        self.percIByRestProfileConstant[RestProfile.TET.value] = Constant(0)
+        self.percIByRestProfileConstant[RestProfile.CRO.value] = Constant(0)
+        self.percIByRestProfileConstant[RestProfile.CIP_TET.value] = Constant(0)
+        self.percIByRestProfileConstant[RestProfile.CIP_CRO.value] = Constant(0)
+        self.percIByRestProfileConstant[RestProfile.TET_CRO.value] = Constant(0)
+        self.percIByRestProfileConstant[RestProfile.CIP_TET_CRO.value] = Constant(0)
+        self.percIByRestProfileDirichlet = ValuesOfParams(
+            parameters=self.percIByRestProfileConstant)
 
         # percent of I0 by resistance profile
         self.percIByRestProfile = []
-        for p in range(len(RestProfile)):
-            self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
-                par_multivariate=self.percIByRestProfileDirichlet,
-                outcome_index=p))
+        debugging = True
+        if not debugging:
+            for p in range(len(RestProfile)):
+                self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
+                    par_multivariate=self.percIByRestProfileDirichlet,
+                    outcome_index=p))
+        else:
+            for p in range(len(RestProfile)):
+                self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
+                    par_multivariate=self.percIByRestProfileConstant,
+                    outcome_index=p))
 
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
         # relative infectivity of resistance profiles to susceptible
         self.ratioInf[RestProfile.SUS.value] = Constant(1)
         self.ratioInf[RestProfile.CIP.value] = Uniform(0.9, 1)
-        self.ratioInf[RestProfile.TET.value] = Uniform(0.9, 1)
+        self.ratioInf[RestProfile.TET.value] = Uniform(0.09, 1)
         self.ratioInf[RestProfile.CRO.value] = Uniform(0.9, 1)
         self.ratioInf[RestProfile.CIP_TET.value] = Uniform(0.8, 1)
         self.ratioInf[RestProfile.CIP_CRO.value] = Uniform(0.8, 1)
@@ -65,7 +85,7 @@ class Parameters(EpiParameters):
         # exponent of the probability for the emergence of resistance for a drug
         self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
         self.exponProbRes[AB.TET.value] = Uniform(-5, -3)
-        self.exponProbRes[AB.CRO.value] = Uniform(-6, -3)  # Uniform(-5, -3)
+        self.exponProbRes[AB.CRO.value] = Uniform(-5, -3)
 
         self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
         self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)
@@ -158,6 +178,7 @@ class Parameters(EpiParameters):
              'Initial prevalence': self.prevI0,
              'Initial % I by symptom states': self.precIBySymp,
              'Dirichlet dist. of % I by resistance profile': self.percIByRestProfileDirichlet,
+             'Constant dist. of % I by resistance profile': self.percIByRestProfileConstant,
              'Initial % I by resistance profile': self.percIByRestProfile,
              # ----
              'Transmission parameter': self.transm,
