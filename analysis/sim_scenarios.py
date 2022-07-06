@@ -15,7 +15,7 @@ To simulate and plot the impact of rapid tests with different characteristics
 The results will be saved under outputs/(with or no)-M/scenarios
 """
 
-N_OF_SIMS = 160
+N_OF_SIMS = 16
 RUN_IN_PARALLEL = True
 
 

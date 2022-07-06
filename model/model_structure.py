@@ -438,21 +438,29 @@ def build_model(model):
         compartments=[counting_success_CIP_TET_CRO, counting_tx_M])
 
     # treated with each antibiotics
-    perc_treated_with_any = [None] * len(AB)
+
+    sum_stats_on_success_by_ab = [None] * len(AB)
     for a in range(len(AB)):
-        perc_treated_with_any[a] = RatioTimeSeries(
-            name='Time-averaged proportion of cases treatment with '+AB[a],
-            numerator_compartment_incd=counting_tx_success_by_ab[a],
+        sum_stats_on_success_by_ab[a] = SumIncidence(
+            name='Cases successfully treated with '+ANTIBIOTICS[a],
+            compartments=[counting_tx_success_by_ab[a]])
+
+    perc_success_treated_with_any = [None] * len(AB)
+    for a in range(len(AB)):
+        perc_success_treated_with_any[a] = RatioTimeSeries(
+            name='Time-averaged proportion of cases treated successfully with '+ANTIBIOTICS[a],
+            numerator_sum_time_series=sum_stats_on_success_by_ab[a],
             denominator_sum_time_series=n_treated,
             collect_stat_after_warm_up=True
         )
 
-    # treated with any antibiotics
-    n_treated_CIP_PEN_CRO = SumIncidence(name='Treated with CIP, TET, or CRO',
-                                         compartments=[counting_success_CIP_TET_CRO])
-    perc_treated_with_CIP_PEN_CRO = RatioTimeSeries(
-        name='Time-averaged proportion of cases treated with CIP, TET, or CRO',
-        numerator_sum_time_series=n_treated_CIP_PEN_CRO,
+    # treated successfully with any antibiotics
+    n_treated_successfully_CIP_PEN_CRO = SumIncidence(
+        name='Treated successfully with CIP, TET, or CRO',
+        compartments=[counting_success_CIP_TET_CRO])
+    perc_treated_sucessfully_with_CIP_PEN_CRO = RatioTimeSeries(
+        name='Time-averaged proportion of cases sucessfully treated with CIP, TET, or CRO',
+        numerator_sum_time_series=n_treated_successfully_CIP_PEN_CRO,
         denominator_sum_time_series=n_treated,
         collect_stat_after_warm_up=True)
 
@@ -609,11 +617,13 @@ def build_model(model):
                    + [counting_success_CIP_TET_CRO, counting_tx_M, counting_1st_tx_M]
 
     list_of_sum_time_series = [pop_size, n_infected, n_cases, n_cases_CRO_NS,
-                               n_cases_sympt, n_treated, n_treated_CIP_PEN_CRO]
+                               n_cases_sympt, n_treated, n_treated_successfully_CIP_PEN_CRO] \
+                              + sum_stats_on_success_by_ab
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
     list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CRO_NS,
-                                 perc_cases_sympt, perc_treated_with_CIP_PEN_CRO] + perc_treated_with_any
+                                 perc_cases_sympt, perc_treated_sucessfully_with_CIP_PEN_CRO] \
+                                + perc_success_treated_with_any
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     features = None
