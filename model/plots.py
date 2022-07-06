@@ -34,7 +34,7 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
     traj.X_RANGE = (0, SIM_DURATION+1)
     traj.X_TICKS = [traj.TIME_0, 5]  # x-axis ticks (min at 0 with interval of 5)
     traj.X_LABEL = 'Year'  # x-axis label
-    traj.TRAJ_TRANSPARENCY = 0.75 if filename == 'onetraj' else 0.25
+    traj.TRAJ_TRANSPARENCY = 0.75 if 'onetraj' in filename else 0.25
 
     # plot information
     S = traj.TrajPlotInfo(outcome_name='In: S',
