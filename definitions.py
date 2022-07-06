@@ -18,13 +18,13 @@ COVERAGE_VALUES = (0.5, 0.75, 1.0)      # coverage
 
 SYMP_STATES = ['Symp', 'Asym']
 REST_PROFILES = ['CIP-S, TET-S, CRO-S',        # SUSP
-                 'CIP-NS, TET-S, CRO-S',       # CIP
-                 'CIP-S, TET-NS, CRO-S',       # TET
-                 'CIP-S, TET-S, CRO-NS',       # CRO
-                 'CIP-NS, TET-NS, CRO-S',      # CIP+TET
-                 'CIP-NS, TET-S, CRO-NS',      # CIP+CRO
-                 'CIP-S, TET-NS, CRO-NS',      # TET+CRO
-                 'CIP-NS, TET-NS, CRO-NS',     # CIP+TET+CRO
+                 'CIP-NS, TET-S, CRO-S',       # not susceptible to CIP
+                 'CIP-S, TET-NS, CRO-S',       # not susceptible to TET
+                 'CIP-S, TET-S, CRO-NS',       # not susceptible to CRO
+                 'CIP-NS, TET-NS, CRO-S',      # not susceptible to CIP+TET
+                 'CIP-NS, TET-S, CRO-NS',      # not susceptible to CIP+CRO
+                 'CIP-S, TET-NS, CRO-NS',      # not susceptible to TET+CRO
+                 'CIP-NS, TET-NS, CRO-NS',     # not susceptible to CIP+TET+CRO
                  ]
 
 ANTIBIOTICS = ['CIP', 'TET', 'CRO']
