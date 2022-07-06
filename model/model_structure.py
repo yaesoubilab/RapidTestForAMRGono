@@ -459,7 +459,7 @@ def build_model(model):
         name='Treated successfully with CIP, TET, or CRO',
         compartments=[counting_success_CIP_TET_CRO])
     perc_treated_sucessfully_with_CIP_PEN_CRO = RatioTimeSeries(
-        name='Time-averaged proportion of cases sucessfully treated with CIP, TET, or CRO',
+        name='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO',
         numerator_sum_time_series=n_treated_successfully_CIP_PEN_CRO,
         denominator_sum_time_series=n_treated,
         collect_stat_after_warm_up=True)

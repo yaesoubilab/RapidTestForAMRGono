@@ -152,16 +152,36 @@ def get_rate_percentage_life(scenarios_df, scenario_name):
         scenario_name=scenario_name,
         outcome_name='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
         interval_type='p', deci=0, multiplier=100000, form=',')
-    proportion = scenarios_df.get_mean_interval(
+
+    proportion = []
+    proportion.append(scenarios_df.get_mean_interval(
         scenario_name=scenario_name,
-        outcome_name='Time-averaged proportion of cases treated with CIP, TET, or CRO '
+        outcome_name='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
                      '(average incidence after epidemic warm-up)',
-        interval_type='p', deci=1, form='%')
-    life = scenarios_df.get_mean_interval(
+        interval_type='p', deci=1, form='%'))
+
+    for ab in ANTIBIOTICS:
+        proportion.append(scenarios_df.get_mean_interval(
+            scenario_name=scenario_name,
+            outcome_name='Time-averaged proportion of cases treated successfully with {} '
+                         '(average incidence after epidemic warm-up)'.format(ab),
+            interval_type='p', deci=1, form='%'))
+
+    life = []
+    life.append(scenarios_df.get_mean_interval(
         scenario_name=scenario_name,
-        outcome_name='Time-averaged proportion of cases treated with CIP, TET, or CRO '
+        outcome_name='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
                      '(average incidence after epidemic warm-up)',
-        interval_type='p', deci=1, multiplier=SIM_DURATION)
+        interval_type='p', deci=1, multiplier=SIM_DURATION))
+
+    for ab in ANTIBIOTICS:
+        life.append(
+            scenarios_df.get_mean_interval(
+                scenario_name=scenario_name,
+                outcome_name='Time-averaged proportion of cases treated successfully with {} '
+                             '(average incidence after epidemic warm-up)'.format(ab),
+                interval_type='p', deci=1, multiplier=SIM_DURATION)
+        )
 
     return rate, proportion, life
 
@@ -173,11 +193,26 @@ def get_perc_change_rate_life(scenarios_df, scenario_name_base, scenario_name_ne
         scenario_names=scenario_name_new,
         outcome_name='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
         deci=1, form='%')
-    perc_change_life = scenarios_df.get_relative_diff_mean_interval(
+
+    perc_change_life = []
+    perc_change_life.append(scenarios_df.get_relative_diff_mean_interval(
         scenario_name_base=scenario_name_base,
         scenario_names=scenario_name_new,
-        outcome_name='Time-averaged proportion of cases treated with CIP, TET, or CRO (average incidence after epidemic warm-up)',
-        deci=1, form='%')
+        outcome_name='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
+                     '(average incidence after epidemic warm-up)',
+        deci=1, form='%'))
+
+    for ab in ANTIBIOTICS:
+        try:
+            perc_change_life.append(scenarios_df.get_relative_diff_mean_interval(
+                scenario_name_base=scenario_name_base,
+                scenario_names=scenario_name_new,
+                outcome_name='Time-averaged proportion of cases treated successfully with {} '
+                             '(average incidence after epidemic warm-up)'.format(ab),
+                deci=1, form='%')
+            )
+        except:
+            perc_change_life.append('')
 
     return perc_change_rate, perc_change_life
 
@@ -258,17 +293,24 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     rows = [
         ['Scenario name',
          'Rate of gonorrhea cases',
-         '% cases treated with CIP, TET, or CRO',
+         '% cases successfully treated with CIP, TET, or CRO',
+         '% cases successfully treated with CIP',
+         '% cases successfully treated with TET',
+         '% cases successfully treated with CRO',
          'Effective lifespan of CIP, TET, and CFX',
          'delta - Rate of gonorrhea cases',
          'delta - Effective lifespan of CIP, TET, and CFX',
+         'delta - Effective lifespan of CIP',
+         'delta - Effective lifespan of TET',
+         'delta - Effective lifespan of CFX',
          ]
     ]
 
     # status quo
     scenario_name_base = 'Status quo (no rapid test)'
-    rate, prop, life = get_rate_percentage_life(scenarios_df=scenarios_df, scenario_name=scenario_name_base)
-    rows.append([scenario_name_base, rate, prop, life, '', ''])
+    rate, prob_success, eff_life = get_rate_percentage_life(
+        scenarios_df=scenarios_df, scenario_name=scenario_name_base)
+    rows.append([scenario_name_base, rate] + prob_success + eff_life + ['', ''])
 
     #
     for test_coverage in coverage_values:
@@ -276,7 +318,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
         scenario_name = '(p=0.750, q=0.975, c={:.3f})'.format(test_coverage)
 
         # get rate, percentage treated with 1st-line drugs, and lifespan of 1st-line drugs
-        rate, prop, life = get_rate_percentage_life(
+        rate, prob_success, eff_life = get_rate_percentage_life(
             scenarios_df=scenarios_df, scenario_name=scenario_name)
 
         # get % change in rate, % change in lifespan
@@ -284,7 +326,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
             scenarios_df=scenarios_df, scenario_name_base=scenario_name_base, scenario_name_new=scenario_name)
 
         # append row
-        rows.append([scenario_name, rate, prop, life, perc_change_rate, perc_change_life])
+        rows.append([scenario_name, rate] + prob_success + eff_life + [perc_change_rate] + perc_change_life)
 
     # export to csv
     write_csv(rows=rows, file_name=csv_file_summary)
@@ -376,7 +418,7 @@ def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
         list_if_remove_base_scenario=[True] * len(SPE_VALUES),
-        effect_outcome='Time-averaged proportion of cases treated with CIP, TET, or CRO '
+        effect_outcome='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
                        '(average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
         labels=('Change in the effective lifespan of\nCIP, TET, and CRO (years)',
@@ -411,7 +453,7 @@ def plot_scenario_sa(csv_file_name, fig_file_name, x_range=None, y_range=None, l
         list_of_titles=list_of_titles,
         name_of_base_scenario='Status quo (no rapid test)',
         list_if_remove_base_scenario=[True] * len(SPE_VALUES),
-        effect_outcome='Time-averaged proportion of cases treated with CIP, TET, or CRO '
+        effect_outcome='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
                        '(average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
         x_range=x_range,
