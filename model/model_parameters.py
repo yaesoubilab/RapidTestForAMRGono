@@ -1,7 +1,7 @@
 from apacepy.inputs import EpiParameters
 from deampy.parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
     TenToPower, TimeDependentStepWise, Dirichlet, AnOutcomeOfAMultiVariateDist, \
-    ValuesOfParams
+    ValuesOfParams, TimeDependentSigmoid
 
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, END_OF_WARM_UP, ConvertSympAndResitAndAntiBio
 
@@ -19,6 +19,9 @@ class Parameters(EpiParameters):
         self.precIBySymp = [None] * len(SympStat)
         self.percIByRestProfile = [None] * (len(RestProfile) - 1)
         self.ratioInf = [None] * len(RestProfile)
+        self.fitnessFMins = [None] * len(RestProfile)
+        self.fitnessBs = [None] * len(RestProfile)
+        self.fitnessTMids = [None] * len(RestProfile)
         self.exponProbRes = [None] * len(AB)
 
         # rapid test characteristics
@@ -58,36 +61,27 @@ class Parameters(EpiParameters):
             parameters=self.percIConstant)
         # --------------------
 
-        # percent of I0 by resistance profile
-        self.percIByRestProfile = []
-        debugging = False
-        if not debugging:
-            for p in range(len(RestProfile)):
-                self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
-                    par_multivariate=self.percIByRestProfileDirichlet,
-                    outcome_index=p))
-        else:
-            for p in range(len(RestProfile)):
-                self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
-                    par_multivariate=self.percIByRestProfileConstant,
-                    outcome_index=p))
-
         # infectivity parameters
         self.transm = Uniform(0.5, 3)  # baseline infectivity
+
         # relative infectivity of resistance profiles to susceptible
-        self.ratioInf[RestProfile.SUS.value] = Constant(1)
-        self.ratioInf[RestProfile.CIP.value] = Uniform(0.9, 1)
-        self.ratioInf[RestProfile.TET.value] = Uniform(0.9, 1)
-        self.ratioInf[RestProfile.CRO.value] = Uniform(0.9, 1)
-        self.ratioInf[RestProfile.CIP_TET.value] = Uniform(0.8, 1)
-        self.ratioInf[RestProfile.CIP_CRO.value] = Uniform(0.8, 1)
-        self.ratioInf[RestProfile.TET_CRO.value] = Uniform(0.8, 1)
-        self.ratioInf[RestProfile.CIP_TET_CRO.value] = Uniform(0.7, 1)
+        self.fitnessFMins[RestProfile.SUS.value] = Constant(1)
+        self.fitnessFMins[RestProfile.CIP.value] = Uniform(0.9, 1)
+        self.fitnessFMins[RestProfile.TET.value] = Uniform(0.9, 1)
+        self.fitnessFMins[RestProfile.CRO.value] = Uniform(0.9, 1)
+        self.fitnessFMins[RestProfile.CIP_TET.value] = Uniform(0.8, 1)
+        self.fitnessFMins[RestProfile.CIP_CRO.value] = Uniform(0.8, 1)
+        self.fitnessFMins[RestProfile.TET_CRO.value] = Uniform(0.8, 1)
+        self.fitnessFMins[RestProfile.CIP_TET_CRO.value] = Uniform(0.7, 1)
+
+        for p in range(len(RestProfile)):
+            self.fitnessBs[p] = Uniform(0.1, 0.5)
+            self.fitnessTMids[p] = Uniform(7, 13)
 
         # exponent of the probability for the emergence of resistance for a drug
-        self.exponProbRes[AB.CIP.value] = Uniform(-500, -300)
-        self.exponProbRes[AB.TET.value] = Uniform(-500, -300)
-        self.exponProbRes[AB.CRO.value] = Uniform(-500, -300)
+        self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.TET.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.CRO.value] = Uniform(-5, -3)
 
         self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
         self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)
@@ -118,6 +112,20 @@ class Parameters(EpiParameters):
 
     def calculate_dependent_params(self, model_sets):
 
+        # percent of I0 by resistance profile
+        self.percIByRestProfile = []
+        debugging = False
+        if not debugging:
+            for p in range(len(RestProfile)):
+                self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
+                    par_multivariate=self.percIByRestProfileDirichlet,
+                    outcome_index=p))
+        else:
+            for p in range(len(RestProfile)):
+                self.percIByRestProfile.append(AnOutcomeOfAMultiVariateDist(
+                    par_multivariate=self.percIByRestProfileConstant,
+                    outcome_index=p))
+
         # prob of having a positive result for rapid CIP susceptibility test
         for i, p in enumerate(RestProfile):
             if p in (RestProfile.SUS, RestProfile.TET, RestProfile.CRO, RestProfile.TET_CRO):
@@ -147,6 +155,12 @@ class Parameters(EpiParameters):
 
         # infectivity by susceptibility profile
         for p in range(len(RestProfile)):
+            self.ratioInf[p] = TimeDependentSigmoid(
+                par_b=self.fitnessBs[p],
+                par_t_min=Constant(0),
+                par_t_middle=self.fitnessTMids[p],
+                par_min=self.fitnessFMins[p],
+                par_max=Constant(1))
             self.infectivityByRestProfile[p] = Product([self.transm, self.ratioInf[p]])
 
         # size of compartments
@@ -186,7 +200,11 @@ class Parameters(EpiParameters):
              'Initial % I by resistance profile': self.percIByRestProfile,
              # ----
              'Transmission parameter': self.transm,
+             'Fitness-f_min': self.fitnessFMins,
+             'Fitness-b': self.fitnessBs,
+             'Fitness-t_mid': self.fitnessTMids,
              'Relative infectivity by infectivity profile': self.ratioInf,
+
              # ----
              'Exponent for the prob of resistance by antibiotics': self.exponProbRes,
              # ----
