@@ -5,6 +5,7 @@ from apacepy.features_conditions import FeatureSurveillance, FeatureIntervention
 from apacepy.model_objects import Compartment, ChanceNode, EpiIndepEvent, EpiDepEvent
 from apacepy.time_series import SumPrevalence, SumIncidence, RatioTimeSeries
 from deampy.parameters import Constant
+
 from definitions import RestProfile, AB, SympStat, REST_PROFILES, ANTIBIOTICS, TreatmentOutcome, \
     ConvertSympAndResitAndAntiBio, get_profile_after_resit_or_failure
 from model.model_parameters import Parameters
@@ -135,7 +136,6 @@ def build_model(model):
 
             # if treatment failure is because of the development of resistance
             if reason_for_failure == TreatmentOutcome.RESISTANCE:
-
                 # destinations
                 dest_rest = Fs[covert_symp_resist.get_row_index(symp_state=s, rest_profile=next_p)]
                 dest_succ = counting_tx_success_by_ab[AB.CRO.value]
@@ -436,10 +436,22 @@ def build_model(model):
     n_treated = SumIncidence(
         name='Cases treated',
         compartments=[counting_success_CIP_TET_CRO, counting_tx_M])
+
+    # treated with each antibiotics
+    perc_treated_with_any = [None] * len(AB)
+    for a in range(len(AB)):
+        perc_treated_with_any[a] = RatioTimeSeries(
+            name='Time-averaged proportion of cases treatment with '+AB[a],
+            numerator_compartment_incd=counting_tx_success_by_ab[a],
+            denominator_sum_time_series=n_treated,
+            collect_stat_after_warm_up=True
+        )
+
+    # treated with any antibiotics
     n_treated_CIP_PEN_CRO = SumIncidence(name='Treated with CIP, TET, or CRO',
                                          compartments=[counting_success_CIP_TET_CRO])
     perc_treated_with_CIP_PEN_CRO = RatioTimeSeries(
-        name='Proportion of cases treated with CIP, TET, or CRO',
+        name='Time-averaged proportion of cases treated with CIP, TET, or CRO',
         numerator_sum_time_series=n_treated_CIP_PEN_CRO,
         denominator_sum_time_series=n_treated,
         collect_stat_after_warm_up=True)
@@ -601,7 +613,7 @@ def build_model(model):
     list_of_sum_time_series.extend(n_cases_by_resistance_profile)
 
     list_of_ratio_time_series = [prevalence, gono_rate, perc_cases_CRO_NS,
-                                 perc_cases_sympt, perc_treated_with_CIP_PEN_CRO]
+                                 perc_cases_sympt, perc_treated_with_CIP_PEN_CRO] + perc_treated_with_any
     list_of_ratio_time_series.extend(perc_cases_by_resistance_profile)
 
     features = None
