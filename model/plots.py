@@ -297,12 +297,15 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
          '% cases successfully treated with CIP',
          '% cases successfully treated with TET',
          '% cases successfully treated with CRO',
-         'Effective lifespan of CIP, TET, and CFX',
+         'Effective lifespan of CIP, TET, and CRO',
+         'Effective lifespan of CIP',
+         'Effective lifespan of TET',
+         'Effective lifespan of CRO',
          'delta - Rate of gonorrhea cases',
-         'delta - Effective lifespan of CIP, TET, and CFX',
+         'delta - Effective lifespan of CIP, TET, and CRO',
          'delta - Effective lifespan of CIP',
          'delta - Effective lifespan of TET',
-         'delta - Effective lifespan of CFX',
+         'delta - Effective lifespan of CRO',
          ]
     ]
 
@@ -310,7 +313,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     scenario_name_base = 'Status quo (no rapid test)'
     rate, prob_success, eff_life = get_rate_percentage_life(
         scenarios_df=scenarios_df, scenario_name=scenario_name_base)
-    rows.append([scenario_name_base, rate] + prob_success + eff_life + ['', ''])
+    rows.append([scenario_name_base, rate] + prob_success + eff_life + ['', '', '', '', ''])
 
     #
     for test_coverage in coverage_values:

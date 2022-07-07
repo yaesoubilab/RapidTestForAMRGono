@@ -11,7 +11,7 @@ different test characteristics. The results will be save under
 
 
 X_RANGE_WITH_M = [-0.1, 6.1]
-Y_RANGE_WITH_M = [-500, 1500]
+Y_RANGE_WITH_M = [-250, 1750]
 X_RANGE_NO_M = [-0.1, 6.1]
 Y_RANGE_NO_M = [-4000, 500]
 
