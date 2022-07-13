@@ -121,7 +121,7 @@ def estimate_parameters(n_of_resamples,
         'Time until seeking treatment (symptomatic)',
         'Time until seeking retreatment (symptomatic)',
         'Prob symptomatic'] \
-                           + ['Exponent for the prob of resistance by antibiotics-{}'.format(i) for i in range(2)] \
+                           + ['Exponent for the prob of resistance by antibiotics-{}'.format(i) for i in range(3)] \
                            + ['Fitness-f_min-{}'.format(i) for i in range(8)] \
                            + ['Fitness-b-{}'.format(i) for i in range(8)] \
                            + ['Fitness-t_mid-{}'.format(i) for i in range(8)] \
