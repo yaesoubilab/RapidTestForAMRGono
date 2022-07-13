@@ -120,15 +120,13 @@ def estimate_parameters(n_of_resamples,
         'Time until screened',
         'Time until seeking treatment (symptomatic)',
         'Time until seeking retreatment (symptomatic)',
-        'Prob symptomatic',
-
-        'Exponent for the prob of resistance by antibiotics-0',
-        'Exponent for the prob of resistance by antibiotics-1',
-        'Exponent for the prob of resistance by antibiotics-2'] \
-        + ['Relative infectivity by infectivity profile-{}'.format(i) for i in range(8)] \
-        + ['Initial prevalence',
-           'Initial % I by symptom states-0'] \
-        + ['Initial % I by resistance profile-{}'.format(i) for i in range(8)]
+        'Prob symptomatic'] \
+                           + ['Exponent for the prob of resistance by antibiotics-{}'.format(i) for i in range(2)] \
+                           + ['Fitness-f_min-{}'.format(i) for i in range(8)] \
+                           + ['Fitness-b-{}'.format(i) for i in range(8)] \
+                           + ['Fitness-t_mid-{}'.format(i) for i in range(8)] \
+                           + ['Initial prevalence', 'Initial % I by symptom states-0'] \
+                           + ['Initial % I by resistance profile-{}'.format(i) for i in range(8)]
 
     param_list_for_figure = [
         'Transmission parameter',
