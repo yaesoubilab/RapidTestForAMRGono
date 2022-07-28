@@ -34,7 +34,7 @@ def calibrate(if_m_available, calibration_seed):
                         if_m_available_for_1st_tx=if_m_available,
                         calibration_seed=calibration_seed)
     # calibrate under the status quo scenario (no rapid test)
-    sets.update_settings(sens=0, spec=1, prob_rapid_test=0)
+    sets.update_settings(cip_sens=0, cip_spec=1, prob_rapid_test=0)
 
     # --------- calibration ----------
     # calibrate the model
@@ -71,7 +71,7 @@ def calibrate(if_m_available, calibration_seed):
     sets = GonoSettings(if_calibrating=False, collect_traj_of_comparts=True,
                         if_m_available_for_1st_tx=if_m_available,
                         calibration_seed=calibration_seed)
-    sets.update_settings(sens=0, spec=1, prob_rapid_test=0)
+    sets.update_settings(cip_sens=0, cip_spec=1, prob_rapid_test=0)
 
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS_TO_USE_FOR_SIMULATION,
                               calibration_seed=calibration_seed,

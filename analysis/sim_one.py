@@ -7,13 +7,15 @@ from model.plots import plot_trajectories
 # if drug M can be used for 1st line therapy
 IF_M_AVAILABLE_FOR_FIRST_TX = True
 # sensitivity, specificity, and coverage of the rapid test
-# the status quo is (0, 1, 0)
-SENS, SPEC, COVERAGE = 0, 1, 0
+# the status quo is (0, 1, 0, 1, 0)
+CIP_SENS, CIP_SPEC, TET_SENS, TET_SPEC, COVERAGE = 0, 1, 0, 1, 0
 
 # -------------------
 # get model settings
 sets = GonoSettings(if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
-sets.update_settings(sens=SENS, spec=SPEC, prob_rapid_test=COVERAGE)
+sets.update_settings(cip_sens=CIP_SENS, cip_spec=CIP_SPEC,
+                     tet_sens=TET_SENS, tet_spec=TET_SPEC,
+                     prob_rapid_test=COVERAGE)
 
 # make an (empty) epidemic model
 model = EpiModel(id=1, settings=sets)

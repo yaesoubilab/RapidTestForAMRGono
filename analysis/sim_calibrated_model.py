@@ -9,25 +9,29 @@ To simulate different scenarios with respect to the characteristics of rapid tes
 N_OF_TRAJS = 16   # number of trajectories to simulate
 
 
-def simulate_calibrated(sen=0.0, spe=1.0, coverage=0.0, if_m_available=True):
+def simulate_calibrated(cip_sens=0.0, cip_spec=1.0, tet_sens=0.0, tet_spec=1.0, coverage=0.0, if_m_available=True):
     """
     simulates trajectories from the calibrated model
-    :param sen: (float) sensitivity of the rapid test (default 0)
-    :param spe: (float) specificity of the rapid test (default 1)
+    :param cip_sens: (float) sensitivity of the rapid test for CIP susceptibility (default 0)
+    :param cip_spec: (float) specificity of the rapid test for CIP susceptibility (default 1)
+    :param tet_sens: (float) sensitivity of the rapid test for TET susceptibility (default 0)
+    :param tet_spec: (float) specificity of the rapid test for TET susceptibility (default 1)
     :param coverage: (float) coverage of the rapid test (default 0)
     :param if_m_available: (bool) if drug M is available for 1st line therapy
     """
 
     if if_m_available:
-        figure_filename = 'Calibrated with M p{} q{} c{}.png'.format(
-            sen, spe, coverage)
+        figure_filename = 'With M p({}, {}) q({}, {}) c{}.png'.format(
+            cip_sens, tet_sens, cip_spec, tet_spec, coverage)
     else:
-        figure_filename = 'Calibration no M p{} q{} c{}.png'.format(
-            sen, spe, coverage)
+        figure_filename = 'No M p({}, {}) q({}, {}) c{}.png'.format(
+            cip_sens, tet_sens, cip_spec, tet_spec, coverage)
 
     # get model settings
     sets = GonoSettings(if_m_available_for_1st_tx=if_m_available)
-    sets.update_settings(sens=sen, spec=spe, prob_rapid_test=coverage)
+    sets.update_settings(cip_sens=cip_sens, cip_spec=cip_spec,
+                         tet_sens=tet_sens, tet_spec=tet_spec,
+                         prob_rapid_test=coverage)
 
     print('\n --- '+figure_filename+' ---')
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS,
@@ -40,13 +44,31 @@ def simulate_calibrated(sen=0.0, spe=1.0, coverage=0.0, if_m_available=True):
 if __name__ == "__main__":
 
     # base (M is available)
-    simulate_calibrated(sen=0, spe=1, coverage=0, if_m_available=True)
+    # simulate_calibrated(cip_sens=0, cip_spec=1,
+    #                     tet_sens=0, tet_spec=1,
+    #                     coverage=0, if_m_available=True)
 
     # M and rapid DST are available
-    simulate_calibrated(sen=0.75, spe=0.975, coverage=0.75, if_m_available=True)
+    simulate_calibrated(cip_sens=0, cip_spec=1,
+                        tet_sens=1, tet_spec=1,
+                        coverage=1, if_m_available=True)
 
-    # worse case (M is not available)
-    simulate_calibrated(sen=0, spe=1, coverage=0, if_m_available=False)
+    # # M and rapid DST are available
+    # simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
+    #                     tet_sens=0, tet_spec=1,
+    #                     coverage=0.75, if_m_available=True)
+    #
+    # # M and rapid DST are available
+    # simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
+    #                     tet_sens=0.75, tet_spec=0.98,
+    #                     coverage=0.75, if_m_available=True)
 
-    # worse case but rapid DST are available
-    simulate_calibrated(sen=0.75, spe=0.975, coverage=0.75, if_m_available=False)
+    # # worse case (M is not available)
+    # simulate_calibrated(cip_sens=0, cip_spec=1,
+    #                     tet_sens=0, tet_spec=1,
+    #                     coverage=0, if_m_available=False)
+    #
+    # # worse case but rapid DST are available
+    # simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
+    #                     tet_sens=0.75, tet_spec=0.98,
+    #                     coverage=0.75, if_m_available=False)
