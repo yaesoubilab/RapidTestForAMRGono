@@ -4,7 +4,7 @@ import apacepy.analysis.visualize_scenarios as vis
 from deampy.in_out_functions import write_csv
 
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
-    SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, get_scenario_name
+    SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, get_scenario_name, CIP_SEN, CIP_SPE
 from model import data as D
 
 traj.SUBPLOT_W_SPACE = 0.25
@@ -318,7 +318,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     #
     for test_coverage in coverage_values:
         # scenario name
-        scenario_name = '(p=0.750, q=0.975, c={:.3f})'.format(test_coverage)
+        scenario_name = '(p=({:.3f}, 0.750), q=({:.3f}, 0.975), c={:.3f})'.format(CIP_SEN, CIP_SPE, test_coverage)
 
         # get rate, percentage treated with 1st-line drugs, and lifespan of 1st-line drugs
         rate, prob_success, eff_life = get_rate_percentage_life(
@@ -376,8 +376,8 @@ def get_scenarios_with_spec_cov(scenarios_df, i, spec, test_coverage):
         color=SCENARIO_COLORS[i],
         marker='o',
         conditions_on_variables=[
-            scen.ConditionOnVariable(var_name='sensitivity', if_included_in_label=True, label_format='{:.2f}'),
-            scen.ConditionOnVariable(var_name='specificity', values=[spec]),
+            scen.ConditionOnVariable(var_name='TET-sens', if_included_in_label=True, label_format='{:.2f}'),
+            scen.ConditionOnVariable(var_name='TET-spec', values=[spec]),
             scen.ConditionOnVariable(var_name='rapid test coverage', values=[test_coverage])
         ],
         if_find_frontier=False,

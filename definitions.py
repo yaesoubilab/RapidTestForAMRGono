@@ -11,6 +11,8 @@ END_OF_CALIB = 15
 RAPID_TEST_COVERAGE = 0.75
 
 # for sensitivity analysis
+CIP_SEN = 0.98
+CIP_SPE = 0.98
 SEN_VALUES = (0.5, 0.75, 1.0)    # sensitivity
 SPE_VALUES = (0.95, 0.975, 1.0)  # specificity
 COVERAGE_VALUES = (0.5, 0.75, 1.0)      # coverage
@@ -169,28 +171,29 @@ def get_survey_size(mean, l, u, multiplier=1):
 
 def get_list_sens_spec_coverage():
     """
-    :return: (list) of [sensitivity, specificity, coverage of rapid test]
+    :return: (list) of [CIP-sensitivity, CIP-specificity, TET-sensitivity, TET-specificity, coverage of rapid test]
     """
 
     values = []
     for cov in COVERAGE_VALUES:
         for sens in reversed(SEN_VALUES):
             for spec in SPE_VALUES:
-                values.append([sens, spec, cov])
+                values.append([CIP_SEN, CIP_SPE, sens, spec, cov])
 
     return values
 
 
 def get_scenario_names():
     """
-    :return: (list) of scenario names based on [sensitivity, specificity, coverage of rapid test]
+    :return: (list) of scenario names based on
+        [CIP-sensitivity, CIP-specificity, TET-sensitivity, TET-specificity, coverage of rapid test]
     """
 
     scenario_names = ['Status quo (no rapid test)']
     values_p_q_c = get_list_sens_spec_coverage()
     for v in values_p_q_c:
-        scenario_names.append('(p={:.3f}, q={:.3f}, c={:.3f})'.format(
-            v[0], v[1], v[2]))
+        scenario_names.append('(p=({:.3f}, {:.3f}), q=({:.3f}, {:.3f}), c={:.3f})'.format(
+            v[0], v[2], v[1], v[3], v[4]))
 
     return scenario_names
 

@@ -49,34 +49,16 @@ if __name__ == "__main__":
                         coverage=0, if_m_available=True)
 
     # M and rapid DST are available
-    # simulate_calibrated(cip_sens=0, cip_spec=1,
-    #                     tet_sens=1, tet_spec=1,
-    #                     coverage=1, if_m_available=True)
-    #
-    # simulate_calibrated(cip_sens=1, cip_spec=1,
-    #                     tet_sens=0, tet_spec=1,
-    #                     coverage=1, if_m_available=True)
-    #
-    simulate_calibrated(cip_sens=1, cip_spec=1,
-                        tet_sens=1, tet_spec=1,
-                        coverage=1, if_m_available=True)
+    simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
+                        tet_sens=0.75, tet_spec=0.98,
+                        coverage=0.75, if_m_available=True)
 
-    # # M and rapid DST are available
-    # simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
-    #                     tet_sens=0, tet_spec=1,
-    #                     coverage=0.75, if_m_available=True)
-    #
-    # # M and rapid DST are available
-    # simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
-    #                     tet_sens=0.75, tet_spec=0.98,
-    #                     coverage=0.75, if_m_available=True)
+    # worse case (M is not available)
+    simulate_calibrated(cip_sens=0, cip_spec=1,
+                        tet_sens=0, tet_spec=1,
+                        coverage=0, if_m_available=False)
 
-    # # worse case (M is not available)
-    # simulate_calibrated(cip_sens=0, cip_spec=1,
-    #                     tet_sens=0, tet_spec=1,
-    #                     coverage=0, if_m_available=False)
-    #
-    # # worse case but rapid DST are available
-    # simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
-    #                     tet_sens=0.75, tet_spec=0.98,
-    #                     coverage=0.75, if_m_available=False)
+    # worse case but rapid DST are available
+    simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
+                        tet_sens=0.75, tet_spec=0.98,
+                        coverage=0.75, if_m_available=False)

@@ -1,9 +1,8 @@
 import warnings
 
 import apacepy.calibration as calib
-from apacepy.scenario_simulation import ScenarioSimulator
-
 from analyze_and_plot_scenarios import export_performance_summary_and_plots
+from apacepy.scenario_simulation import ScenarioSimulator
 from definitions import get_scenario_names, get_list_sens_spec_coverage
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
@@ -15,7 +14,7 @@ To simulate and plot the impact of rapid tests with different characteristics
 The results will be saved under outputs/(with or no)-M/scenarios
 """
 
-N_OF_SIMS = 160
+N_OF_SIMS = 16
 RUN_IN_PARALLEL = True
 
 
@@ -31,12 +30,12 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration=None, cali
     scenario_names = get_scenario_names()
 
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
-    var_names = ['sensitivity', 'specificity', 'rapid test coverage']
+    var_names = ['CIP-sens', 'CIP-spec', 'TET-sens', 'TET-spec', 'rapid test coverage']
 
     # variable values
     # rows correspond to scenario names defined above, and columns correspond to variable names defined above
-    # [0.0, 1.0, 0.0]  # status quo (no rapid test)
-    scenario_definitions = [[0.0, 1.0, 0.0]] + get_list_sens_spec_coverage()
+    # [0.0, 1.0, 0.0, 1.0, 0.0]  # status quo (no rapid test)
+    scenario_definitions = [[0.0, 1.0, 0.0, 1.0, 0.0]] + get_list_sens_spec_coverage()
 
     # get the seeds and probability weights
     seeds, lns, weights = calib.get_seeds_lnl_probs(sets.folderToSaveCalibrationResults+'/calibration_summary.csv')
