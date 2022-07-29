@@ -11,8 +11,12 @@ END_OF_CALIB = 15
 RAPID_TEST_COVERAGE = 0.75
 
 # for sensitivity analysis
-CIP_SEN = 0.98
-CIP_SPE = 0.98
+# mean, st_dev, min, max
+CIP_SENS_DIST = 0.98, 0.005, 0.95, 1
+CIP_SPEC_DIST = 0.98, 0.005, 0.95, 1
+TET_SENS_DIST = 0.80, 0.01, 0.5, 1
+TET_SPEC_DIST = 0.95, 0.005, 0.9, 1
+
 SEN_VALUES = (0.5, 0.75, 1.0)    # sensitivity
 SPE_VALUES = (0.95, 0.975, 1.0)  # specificity
 COVERAGE_VALUES = (0.5, 0.75, 1.0)      # coverage
@@ -178,7 +182,7 @@ def get_list_sens_spec_coverage():
     for cov in COVERAGE_VALUES:
         for sens in reversed(SEN_VALUES):
             for spec in SPE_VALUES:
-                values.append([CIP_SEN, CIP_SPE, sens, spec, cov])
+                values.append([CIP_SENS_DIST, CIP_SPEC_DIST, sens, spec, cov])
 
     return values
 

@@ -1,9 +1,10 @@
 from apacepy.inputs import EpiParameters
 from deampy.parameters import Constant, Inverse, Product, OneMinus, Uniform, Equal, \
     TenToPower, TimeDependentStepWise, Dirichlet, AnOutcomeOfAMultiVariateDist, \
-    ValuesOfParams, TimeDependentSigmoid
+    ValuesOfParams, TimeDependentSigmoid, Beta
 
-from definitions import RestProfile, AB, SympStat, REST_PROFILES, END_OF_WARM_UP, ConvertSympAndResitAndAntiBio
+from definitions import RestProfile, AB, SympStat, REST_PROFILES, END_OF_WARM_UP, ConvertSympAndResitAndAntiBio, \
+    CIP_SENS_DIST, CIP_SPEC_DIST, TET_SENS_DIST, TET_SPEC_DIST
 
 
 class Parameters(EpiParameters):
@@ -25,10 +26,21 @@ class Parameters(EpiParameters):
         self.exponProbRes = [None] * len(AB)
 
         # rapid test characteristics
-        self.sensCIP = Constant(model_sets.sensCIP)
-        self.specCIP = Constant(model_sets.specCIP)
-        self.sensTET = Constant(model_sets.sensTET)
-        self.specTET = Constant(model_sets.specTET)
+        # beta distributions for sensitivity and specificity
+        self.sensCIPBeta = Beta(
+            mean=CIP_SENS_DIST[0], st_dev=CIP_SENS_DIST[1], minimum=CIP_SENS_DIST[2], maximum=CIP_SENS_DIST[3])
+        self.specCIPBeta = Beta(
+            mean=CIP_SPEC_DIST[0], st_dev=CIP_SPEC_DIST[1], minimum=CIP_SPEC_DIST[2], maximum=CIP_SPEC_DIST[3])
+        self.sensTETBeta = Beta(
+            mean=TET_SENS_DIST[0], st_dev=TET_SENS_DIST[1], minimum=TET_SENS_DIST[2], maximum=TET_SENS_DIST[3])
+        self.specTETBeta = Beta(
+            mean=TET_SPEC_DIST[0], st_dev=TET_SPEC_DIST[1], minimum=TET_SPEC_DIST[2], maximum=TET_SPEC_DIST[3])
+
+        # use constant if sensitivity/specificity is not provided otherwise, use beta
+        self.sensCIP = Equal(self.sensCIPBeta) if model_sets.sensCIP is None else Constant(model_sets.sensCIP)
+        self.specCIP = Equal(self.specCIPBeta) if model_sets.specCIP is None else Constant(model_sets.specCIP)
+        self.sensTET = Equal(self.sensTETBeta) if model_sets.sensTET is None else Constant(model_sets.sensTET)
+        self.specTET = Equal(self.specTETBeta) if model_sets.specTET is None else Constant(model_sets.specTET)
 
         # if will receive a rapid test
         self.probRapidTest = TimeDependentStepWise(ts=[END_OF_WARM_UP],
@@ -182,7 +194,12 @@ class Parameters(EpiParameters):
     def build_dict_of_params(self):
 
         self.dictOfParams = dict(
-            {'Sensitivity for CIP': self.sensCIP,
+            {
+             'Sensitivity distribution for CIP': self.sensCIPBeta,
+             'Specificity distribution for CIP': self.specCIPBeta,
+             'Sensitivity distribution for TET': self.sensTETBeta,
+             'Specificity distribution for TET': self.specTETBeta,
+             'Sensitivity for CIP': self.sensCIP,
              'Specificity for CIP': self.specCIP,
              'Sensitivity for TET': self.sensTET,
              'Specificity for TET': self.specTET,

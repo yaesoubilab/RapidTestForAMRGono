@@ -42,10 +42,10 @@ class GonoSettings(ModelSettings):
         self.storeProjectedOutcomes = True
 
         # sensitivity and specificity
-        self.sensCIP = 0
-        self.specCIP = 1
-        self.sensTET = 0
-        self.specTET = 1
+        self.sensCIP = None
+        self.specCIP = None
+        self.sensTET = None
+        self.specTET = None
 
         # probability of receiving a rapid test
         self.probRapidTest = 0 if if_calibrating else 1
