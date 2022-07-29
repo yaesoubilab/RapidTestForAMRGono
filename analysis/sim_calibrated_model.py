@@ -57,12 +57,12 @@ if __name__ == "__main__":
     # worst-case scenario (neither M nor rapid DST is available)
     simulate_calibrated(cip_sens=0, cip_spec=1,
                         tet_sens=0, tet_spec=1,
-                        coverage=0, if_m_available=True)
+                        coverage=0, if_m_available=False)
 
     # M not available but and rapid DST is available
     simulate_calibrated(cip_sens=None, cip_spec=None,
                         tet_sens=None, tet_spec=None,
-                        coverage=0.75, if_m_available=True)
+                        coverage=0.75, if_m_available=False)
 
 
     # # M and rapid DST are available

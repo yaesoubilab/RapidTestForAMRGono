@@ -180,9 +180,9 @@ def get_list_sens_spec_coverage():
 
     values = []
     for cov in COVERAGE_VALUES:
-        for sens in reversed(SEN_VALUES):
-            for spec in SPE_VALUES:
-                values.append([CIP_SENS_DIST, CIP_SPEC_DIST, sens, spec, cov])
+        for tet_sens in reversed(SEN_VALUES):
+            for tet_spec in SPE_VALUES:
+                values.append([None, None, tet_sens, tet_spec, cov])
 
     return values
 
@@ -196,8 +196,13 @@ def get_scenario_names():
     scenario_names = ['Status quo (no rapid test)']
     values_p_q_c = get_list_sens_spec_coverage()
     for v in values_p_q_c:
-        scenario_names.append('(p=({:.3f}, {:.3f}), q=({:.3f}, {:.3f}), c={:.3f})'.format(
-            v[0], v[2], v[1], v[3], v[4]))
+        cip_sens = 'None' if v[0] is None else '{:.3f}'.format(v[0])
+        cip_spec = 'None' if v[1] is None else '{:.3f}'.format(v[1])
+        tet_sens = 'None' if v[2] is None else '{:.3f}'.format(v[2])
+        tet_spec = 'None' if v[3] is None else '{:.3f}'.format(v[3])
+
+        scenario_names.append('(p=({}, {}), q=({}, {}), c={:.3f})'.format(
+            cip_sens, tet_sens, cip_spec, tet_spec, v[4]))
 
     return scenario_names
 

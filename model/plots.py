@@ -4,7 +4,7 @@ import apacepy.analysis.visualize_scenarios as vis
 from deampy.in_out_functions import write_csv
 
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
-    SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, get_scenario_name, CIP_SENS_DIST, CIP_SPEC_DIST
+    SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, get_scenario_name
 from model import data as D
 
 traj.SUBPLOT_W_SPACE = 0.25
@@ -318,7 +318,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     #
     for test_coverage in coverage_values:
         # scenario name
-        scenario_name = '(p=({:.3f}, 0.750), q=({:.3f}, 0.975), c={:.3f})'.format(CIP_SENS_DIST, CIP_SPEC_DIST, test_coverage)
+        scenario_name = '(p=(None, None), q=(None, None), c={:.3f})'.format(test_coverage)
 
         # get rate, percentage treated with 1st-line drugs, and lifespan of 1st-line drugs
         rate, prob_success, eff_life = get_rate_percentage_life(
