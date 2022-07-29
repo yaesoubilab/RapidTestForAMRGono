@@ -9,6 +9,7 @@ IF_M_AVAILABLE_FOR_FIRST_TX = True
 # sensitivity, specificity, and coverage of the rapid test
 # the status quo is (0, 1, 0, 1, 0)
 CIP_SENS, CIP_SPEC, TET_SENS, TET_SPEC, COVERAGE = 0, 1, 0, 1, 0
+# CIP_SENS, CIP_SPEC, TET_SENS, TET_SPEC, COVERAGE = None, None, None, None, 0.75
 
 # -------------------
 # get model settings

@@ -9,7 +9,8 @@ To simulate different scenarios with respect to the characteristics of rapid tes
 N_OF_TRAJS = 16   # number of trajectories to simulate
 
 
-def simulate_calibrated(cip_sens=0.0, cip_spec=1.0, tet_sens=0.0, tet_spec=1.0, coverage=0.0, if_m_available=True):
+def simulate_calibrated(cip_sens=None, cip_spec=None,
+                        tet_sens=None, tet_spec=None, coverage=0.0, if_m_available=True):
     """
     simulates trajectories from the calibrated model
     :param cip_sens: (float) sensitivity of the rapid test for CIP susceptibility (default 0)
@@ -47,6 +48,22 @@ if __name__ == "__main__":
     simulate_calibrated(cip_sens=0, cip_spec=1,
                         tet_sens=0, tet_spec=1,
                         coverage=0, if_m_available=True)
+
+    # M and rapid DST is available
+    simulate_calibrated(cip_sens=None, cip_spec=None,
+                        tet_sens=None, tet_spec=None,
+                        coverage=0.75, if_m_available=True)
+
+    # worst-case scenario (neither M nor rapid DST is available)
+    simulate_calibrated(cip_sens=0, cip_spec=1,
+                        tet_sens=0, tet_spec=1,
+                        coverage=0, if_m_available=True)
+
+    # M not available but and rapid DST is available
+    simulate_calibrated(cip_sens=None, cip_spec=None,
+                        tet_sens=None, tet_spec=None,
+                        coverage=0.75, if_m_available=True)
+
 
     # # M and rapid DST are available
     # simulate_calibrated(cip_sens=0.98, cip_spec=0.98,
