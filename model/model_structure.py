@@ -39,7 +39,7 @@ def build_model(model):
     ifs_will_receive_rapid_test = [None] * covert_symp_resist.length
     ifs_rapid_CIP_outcome = [None] * covert_symp_resist.length
     ifs_rapid_TET_outcome_after_susp_CIP = [None] * covert_symp_resist.length
-    ifs_rapid_TET_outcome_after_reduced_susp_CIP = [None] * covert_symp_resist.length
+    ifs_rapid_TET_outcome_after_non_susp_CIP = [None] * covert_symp_resist.length
 
     # chance nodes to model if using CIP or TET when susceptible to both
     ifs_CIP_or_TET = [None] * covert_symp_resist.length
@@ -49,7 +49,7 @@ def build_model(model):
     # chance nodes to model if will seek re-treatment by resistance profile and symptom status
     ifs_re_tx = [None] * covert_symp_resist.length
     ifs_symp_from_emerg_rest = [None] * len(RestProfile)
-    ifs_resist_after_re_tx_cfx = [None] * covert_symp_resist.length
+    ifs_resist_after_re_tx_cro = [None] * covert_symp_resist.length
 
     counting_symp = []   # chance nodes counting symptomatic cases
     counting_rest_to = []  # chance nodes counting resistance or intermediate resistance to different profiles
@@ -139,7 +139,7 @@ def build_model(model):
                 # destinations
                 dest_rest = Fs[covert_symp_resist.get_row_index(symp_state=s, rest_profile=next_p)]
                 dest_succ = counting_tx_success_by_ab[AB.CRO.value]
-                ifs_resist_after_re_tx_cfx[i] = ChanceNode(
+                ifs_resist_after_re_tx_cro[i] = ChanceNode(
                     name='If resistance after re-tx with CRO in '+str_symp_susp,
                     destination_compartments=[dest_rest, dest_succ],
                     probability_params=params.probResEmerge[AB.CRO.value])
@@ -148,7 +148,7 @@ def build_model(model):
                 dest_fail = counting_tx_M
                 dest_succ = counting_tx_success_by_ab[AB.CRO.value]
                 # this is a dummy chance node which will never be used.
-                ifs_resist_after_re_tx_cfx[i] = ChanceNode(
+                ifs_resist_after_re_tx_cro[i] = ChanceNode(
                     name='If treatment failure after re-tx with CRO in ' + str_symp_susp,
                     destination_compartments=[dest_fail, dest_succ],
                     probability_params=Constant(1))
@@ -285,7 +285,7 @@ def build_model(model):
             dest_neg_result = ifs_tx_outcome[covert_symp_resist_antibio.get_row_index(
                 symp_state=s, rest_profile=p, antibiotic=AB.CRO.value)]
 
-            ifs_rapid_TET_outcome_after_reduced_susp_CIP[i] = ChanceNode(
+            ifs_rapid_TET_outcome_after_non_susp_CIP[i] = ChanceNode(
                 name=name,
                 destination_compartments=[dest_pos_result, dest_neg_result],
                 probability_params=params.posTETTest[p])
@@ -299,7 +299,7 @@ def build_model(model):
             # if CIP test result is positive (susceptibility to CIP)
             dest_pos_result = ifs_rapid_TET_outcome_after_susp_CIP[i]
             # if CIP test results is negative (reduced susceptibility to CIP)
-            dest_neg_result = ifs_rapid_TET_outcome_after_reduced_susp_CIP[i]
+            dest_neg_result = ifs_rapid_TET_outcome_after_non_susp_CIP[i]
 
             ifs_rapid_CIP_outcome[i] = ChanceNode(
                 name=name,
@@ -345,7 +345,7 @@ def build_model(model):
             r.setup_history(collect_incd=True)
         for r in ifs_rapid_TET_outcome_after_susp_CIP:
             r.setup_history(collect_incd=True)
-        for r in ifs_rapid_TET_outcome_after_reduced_susp_CIP:
+        for r in ifs_rapid_TET_outcome_after_non_susp_CIP:
             r.setup_history(collect_incd=True)
         for r in ifs_CIP_or_TET:
             r.setup_history(collect_incd=True)
@@ -355,7 +355,7 @@ def build_model(model):
             r.setup_history(collect_incd=True)
         for r in ifs_re_tx:
             r.setup_history(collect_incd=True)
-        for r in ifs_resist_after_re_tx_cfx:
+        for r in ifs_resist_after_re_tx_cro:
             if r is not None:
                 r.setup_history(collect_incd=True)
         for s in counting_1st_tx_M_by_symp_profile:
@@ -630,7 +630,7 @@ def build_model(model):
 
             # if susceptible to CRO, then will check if resistance could be developed
             if reason_for_failure == TreatmentOutcome.RESISTANCE:
-                dest = ifs_resist_after_re_tx_cfx[p]
+                dest = ifs_resist_after_re_tx_cro[p]
             # if resistant to CRO, then will receive M
             elif reason_for_failure == TreatmentOutcome.INEFFECTIVE:
                 dest = counting_tx_M
@@ -648,10 +648,10 @@ def build_model(model):
                    + ifs_will_receive_rapid_test \
                    + ifs_rapid_CIP_outcome \
                    + ifs_rapid_TET_outcome_after_susp_CIP \
-                   + ifs_rapid_TET_outcome_after_reduced_susp_CIP \
+                   + ifs_rapid_TET_outcome_after_non_susp_CIP \
                    + ifs_CIP_or_TET + ifs_tx_outcome \
                    + ifs_re_tx + ifs_symp_from_emerg_rest \
-                   + ifs_resist_after_re_tx_cfx \
+                   + ifs_resist_after_re_tx_cro \
                    + counting_tx_success_by_ab \
                    + counting_1st_tx_M_by_symp_profile \
                    + [counting_success_CIP_TET_CRO, counting_tx_M, counting_1st_tx_M]

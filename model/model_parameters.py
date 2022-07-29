@@ -31,7 +31,7 @@ class Parameters(EpiParameters):
         self.specTET = Constant(model_sets.specTET)
 
         # if will receive a rapid test
-        self.probRapidTest = TimeDependentStepWise(ts=[END_OF_WARM_UP], # year 5
+        self.probRapidTest = TimeDependentStepWise(ts=[END_OF_WARM_UP],
                                                    vs=[model_sets.probRapidTest])
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = Constant(model_sets.probTxCIPIfSuspToCIPAndTET)
@@ -44,7 +44,7 @@ class Parameters(EpiParameters):
         # the Dirichlet distribution for the percent of I0 by resistance profile
         # (comes from the Excel file under \data folder)
         self.percIByRestProfileDirichlet = Dirichlet(
-            par_ns=[55, 2, 270, 0, 170, 0, 0, 0], # [55, 2, 270, 0, 170, 0, 0, 0],
+            par_ns=[55, 2, 270, 0, 170, 0, 0, 0],
             if_ignore_0s=True)
 
         # this is for debugging purposes ------------
@@ -90,6 +90,7 @@ class Parameters(EpiParameters):
         self.tToRetreatment = Uniform(1 * one_over_364, 14 * one_over_364)
 
         # calculate dependent parameters
+        # probability of positive CIP or TET tests
         self.posCIPTest = [None] * len(RestProfile)
         self.posTETTest = [None] * len(RestProfile)
 
@@ -127,6 +128,7 @@ class Parameters(EpiParameters):
                     outcome_index=p))
 
         # prob of having a positive result for rapid CIP susceptibility test
+        # (i.e. the test detects susceptibility to CIP)
         for i, p in enumerate(RestProfile):
             if p in (RestProfile.SUS, RestProfile.TET, RestProfile.CRO, RestProfile.TET_CRO):
                 self.posCIPTest[i] = Equal(par=self.sensCIP)
@@ -134,6 +136,7 @@ class Parameters(EpiParameters):
                 self.posCIPTest[i] = OneMinus(par=self.specCIP)
 
         # prob of having a positive result for rapid TET susceptibility test
+        # (i.e., the test detects susceptibility to TET)
         for i, p in enumerate(RestProfile):
             if p in (RestProfile.SUS, RestProfile.CIP, RestProfile.CRO, RestProfile.CIP_CRO):
                 self.posTETTest[i] = Equal(par=self.sensTET)

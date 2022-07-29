@@ -44,12 +44,20 @@ def simulate_calibrated(cip_sens=0.0, cip_spec=1.0, tet_sens=0.0, tet_spec=1.0, 
 if __name__ == "__main__":
 
     # base (M is available)
-    # simulate_calibrated(cip_sens=0, cip_spec=1,
-    #                     tet_sens=0, tet_spec=1,
-    #                     coverage=0, if_m_available=True)
+    simulate_calibrated(cip_sens=0, cip_spec=1,
+                        tet_sens=0, tet_spec=1,
+                        coverage=0, if_m_available=True)
 
     # M and rapid DST are available
-    simulate_calibrated(cip_sens=0, cip_spec=1,
+    # simulate_calibrated(cip_sens=0, cip_spec=1,
+    #                     tet_sens=1, tet_spec=1,
+    #                     coverage=1, if_m_available=True)
+    #
+    # simulate_calibrated(cip_sens=1, cip_spec=1,
+    #                     tet_sens=0, tet_spec=1,
+    #                     coverage=1, if_m_available=True)
+    #
+    simulate_calibrated(cip_sens=1, cip_spec=1,
                         tet_sens=1, tet_spec=1,
                         coverage=1, if_m_available=True)
 
