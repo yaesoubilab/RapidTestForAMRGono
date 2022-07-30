@@ -4,7 +4,7 @@ import apacepy.analysis.visualize_scenarios as vis
 from deampy.in_out_functions import write_csv
 
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
-    SPE_VALUES, SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, get_scenario_name
+    SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, get_scenario_name, get_name_of_sensitivity_analysis
 from model import data as D
 
 traj.SUBPLOT_W_SPACE = 0.25
@@ -167,7 +167,7 @@ def get_rate_percentage_life(scenarios_df, scenario_name):
                          '(average incidence after epidemic warm-up)'.format(ab),
             interval_type='p', deci=1, form='%'))
 
-    life = []
+    life=[]
     life.append(scenarios_df.get_mean_interval(
         scenario_name=scenario_name,
         outcome_name='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
@@ -264,13 +264,16 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
 
 
 def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
+                                    include_sens_analysis_on_sens_spec=False,
                                     simulation_duration=None, calibration_seed=None):
     """
     export performance of different scenarios of test characteristics
     :param if_m_available_for_1st_tx: (bool) if m is available for first-line therapy
+    :param coverage_values: (float) specific coverage value for the test
+    :param include_sens_analysis_on_sens_spec: (bool) if include analyses to vary sensitivity and specificity
+        of CIP and TET
     :param simulation_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
-    :param coverage_values: (float) specific coverage value for the test
     :return: saves a csv file with the following columns for each scenario:
         (rate of gonorrhea cases, % cases treated with CIP, TET, or CRO, lifespan of CIP, TET, or CRO,
         % increase in cases with respect to the status quo,
@@ -318,7 +321,8 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     #
     for test_coverage in coverage_values:
         # scenario name
-        scenario_name = '(p=(None, None), q=(None, None), c={:.3f})'.format(test_coverage)
+        scenario_name = get_name_of_sensitivity_analysis(
+            cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None, coverage=test_coverage)
 
         # get rate, percentage treated with 1st-line drugs, and lifespan of 1st-line drugs
         rate, prob_success, eff_life = get_rate_percentage_life(
@@ -387,7 +391,7 @@ def get_scenarios_with_spec_cov(scenarios_df, i, spec, test_coverage):
 
 
 def plot_scenarios(csv_file_name, fig_file_name, test_coverage, x_range, y_range, print_all_scenarios=False):
-    """ plots the cost-effectiveness figure for a specific text coverage
+    """ plots the cost-effectiveness figure for a specific test coverage
     :param csv_file_name: (string) csv filename where the summary of simulated scenarios are located
     :param fig_file_name: (string) filename of the figure to save the results as
     :param test_coverage: (float) specific value of test coverage

@@ -1,4 +1,0 @@
-Number of calibration iterations: 160
-Number of trajectories discarded: 26569
-Calibration duration (seconds): 284.5
-Number of trajectories with non-zero probability: 61

@@ -3,7 +3,7 @@ import warnings
 import apacepy.calibration as calib
 from analyze_and_plot_scenarios import export_performance_summary_and_plots
 from apacepy.scenario_simulation import ScenarioSimulator
-from definitions import get_scenario_names, get_list_sens_spec_coverage
+from definitions import get_sens_analysis_names_and_definitions
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
 
@@ -18,7 +18,8 @@ N_OF_SIMS = 16
 RUN_IN_PARALLEL = True
 
 
-def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration=None, calibration_seed=None):
+def simulate_scenarios(if_m_available_for_1st_tx, include_sens_analysis_on_sens_spec=False,
+                       simulation_duration=None, calibration_seed=None):
 
     # get model settings
     sets = GonoSettings(if_m_available_for_1st_tx=if_m_available_for_1st_tx,
@@ -26,16 +27,12 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration=None, cali
                         calibration_seed=calibration_seed)
     sets.exportTrajectories = False
 
-    # names of the scenarios to evaluate
-    scenario_names = get_scenario_names()
-
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
     var_names = ['CIP-sens', 'CIP-spec', 'TET-sens', 'TET-spec', 'rapid test coverage']
 
-    # variable values
-    # rows correspond to scenario names defined above, and columns correspond to variable names defined above
-    # [0.0, 1.0, 0.0, 1.0, 0.0]  # status quo (no rapid test)
-    scenario_definitions = [[0.0, 1.0, 0.0, 1.0, 0.0]] + get_list_sens_spec_coverage()
+    # names of the scenarios to evaluate
+    scenario_names, scenario_definitions = get_sens_analysis_names_and_definitions(
+        include_sens_analysis_on_sens_spec=include_sens_analysis_on_sens_spec)
 
     # get the seeds and probability weights
     seeds, lns, weights = calib.get_seeds_lnl_probs(sets.folderToSaveCalibrationResults+'/calibration_summary.csv')
@@ -65,7 +62,7 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration=None, cali
 if __name__ == "__main__":
 
     print('\n*** M is available for 1st Tx ***')
-    simulate_scenarios(if_m_available_for_1st_tx=True)
+    simulate_scenarios(if_m_available_for_1st_tx=True, include_sens_analysis_on_sens_spec=False)
 
     # print('\n*** M is available for 1st Tx with simulation duration of 30 years ***')
     # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=30)

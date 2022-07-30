@@ -16,7 +16,7 @@ X_RANGE_NO_M = [-0.1, 6.1]
 Y_RANGE_NO_M = [-4000, 500]
 
 
-def plot_scenarios_for_a_test_coverage(
+def plot_sa_for_a_test_coverage(
         if_m_available_for_1st_tx, test_coverage, sim_duration=None, calibration_seed=None):
     """
     plots a cost-effectiveness plan visualizing the performance of a rapid test for
@@ -50,11 +50,14 @@ def plot_scenarios_for_a_test_coverage(
         y_range=y_range)
 
 
-def plot_scenarios_sa(if_m_available_for_1st_tx, sim_duration=None, calibration_seed=None):
+def plot_scenarios_sa(if_m_available_for_1st_tx, include_sens_analysis_on_sens_spec=False,
+                      sim_duration=None, calibration_seed=None):
     """
     plots a 3-panel figure of cost-effectiveness planes visualizing the performance of the rapid test for
         the specified scenario for the availability of M
     :param if_m_available_for_1st_tx: (bool) if M is available for the first-line therapy
+    :param include_sens_analysis_on_sens_spec: (bool) if include analyses to vary sensitivity and specificity
+        of CIP and TET
     :param sim_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     """
@@ -80,10 +83,13 @@ def plot_scenarios_sa(if_m_available_for_1st_tx, sim_duration=None, calibration_
                      fig_size=(8, 3.5))
 
 
-def export_performance_summary_and_plots(if_m_available, simulation_duration=None, calibration_seed=None):
+def export_performance_summary_and_plots(if_m_available, include_sens_analysis_on_sens_spec=False,
+                                         simulation_duration=None, calibration_seed=None):
     """
     exports performance summary and cost-effectiveness plots for this scenario for the availability of M
     :param if_m_available: (bool) if M is available for the first-line therapy
+    :param include_sens_analysis_on_sens_spec: (bool) if include analyses to vary sensitivity and specificity
+        of CIP and TET
     :param simulation_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     """
@@ -91,6 +97,7 @@ def export_performance_summary_and_plots(if_m_available, simulation_duration=Non
     # export performance of different scenarios of test characteristics
     export_performance_of_scenarios(
         if_m_available_for_1st_tx=if_m_available,
+        include_sens_analysis_on_sens_spec=include_sens_analysis_on_sens_spec,
         simulation_duration=simulation_duration,
         calibration_seed=calibration_seed,
         coverage_values=COVERAGE_VALUES)
@@ -99,6 +106,7 @@ def export_performance_summary_and_plots(if_m_available, simulation_duration=Non
     #  the specified scenario for the availability of M
     plot_scenarios_sa(
         if_m_available_for_1st_tx=if_m_available,
+        include_sens_analysis_on_sens_spec=include_sens_analysis_on_sens_spec,
         sim_duration=simulation_duration,
         calibration_seed=calibration_seed
     )
@@ -106,7 +114,7 @@ def export_performance_summary_and_plots(if_m_available, simulation_duration=Non
     for c in COVERAGE_VALUES:
         # plot a cost-effectiveness plan visualizing the performance of the rapid test for
         # the specified scenario for the availability of M and test coverage
-        plot_scenarios_for_a_test_coverage(
+        plot_sa_for_a_test_coverage(
             if_m_available_for_1st_tx=if_m_available,
             sim_duration=simulation_duration,
             calibration_seed=calibration_seed,

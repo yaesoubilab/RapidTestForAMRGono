@@ -17,8 +17,11 @@ CIP_SPEC_DIST = 0.98, 0.005, 0.95, 1
 TET_SENS_DIST = 0.80, 0.01, 0.5, 1
 TET_SPEC_DIST = 0.95, 0.005, 0.9, 1
 
-SEN_VALUES = (0.5, 0.75, 1.0)    # sensitivity
-SPE_VALUES = (0.95, 0.975, 1.0)  # specificity
+CIP_SENS_VALUES = (0.95, 0.975, 1.0)
+CIP_SPEC_VALUES = (0.95, 0.975, 1.0)
+TET_SENS_VALUES = (0.5, 0.75, 1.0)
+TET_SPEC_VALUES = (0.9, 0.95, 1.0)
+
 COVERAGE_VALUES = (0.5, 0.75, 1.0)      # coverage
 
 
@@ -173,38 +176,54 @@ def get_survey_size(mean, l, u, multiplier=1):
     return var * pow(z/hw, 2)
 
 
-def get_list_sens_spec_coverage():
+def get_name_of_sensitivity_analysis(cip_sens, cip_spec, tet_sens, tet_spec, coverage):
+
+    cip_sens_name = 'None' if cip_sens is None else '{:.3f}'.format(cip_sens)
+    cip_spec_name = 'None' if cip_spec is None else '{:.3f}'.format(cip_spec)
+    tet_sens_name = 'None' if tet_sens is None else '{:.3f}'.format(tet_sens)
+    tet_spec_name = 'None' if tet_spec is None else '{:.3f}'.format(tet_spec)
+
+    return '(p={}, {}), q=({}, {}), c={:0.3f})'.format(
+        cip_sens_name, tet_sens_name, cip_spec_name, tet_spec_name, coverage)
+
+
+def get_sens_analysis_names_and_definitions(include_sens_analysis_on_sens_spec=False):
     """
-    :return: (list) of [CIP-sensitivity, CIP-specificity, TET-sensitivity, TET-specificity, coverage of rapid test]
-    """
-
-    values = []
-    for cov in COVERAGE_VALUES:
-        for tet_sens in reversed(SEN_VALUES):
-            for tet_spec in SPE_VALUES:
-                values.append([None, None, tet_sens, tet_spec, cov])
-
-    return values
-
-
-def get_scenario_names():
-    """
-    :return: (list) of scenario names based on
+    :param include_sens_analysis_on_sens_spec: (bool) if include analyses to vary sensitivity and specificity
+        of CIP and TET
+    :return: (tuple of two list) (scenario names, scenarios definitions)
+        according to:
         [CIP-sensitivity, CIP-specificity, TET-sensitivity, TET-specificity, coverage of rapid test]
     """
 
-    scenario_names = ['Status quo (no rapid test)']
-    values_p_q_c = get_list_sens_spec_coverage()
-    for v in values_p_q_c:
-        cip_sens = 'None' if v[0] is None else '{:.3f}'.format(v[0])
-        cip_spec = 'None' if v[1] is None else '{:.3f}'.format(v[1])
-        tet_sens = 'None' if v[2] is None else '{:.3f}'.format(v[2])
-        tet_spec = 'None' if v[3] is None else '{:.3f}'.format(v[3])
+    names = ['Status quo (no rapid test)']
+    definitions = [[0.0, 1.0, 0.0, 1.0, 0.0]]
 
-        scenario_names.append('(p=({}, {}), q=({}, {}), c={:.3f})'.format(
-            cip_sens, tet_sens, cip_spec, tet_spec, v[4]))
+    # sensitivity analysis by varying coverage but using beta distributions for
+    # sensitivity and specificity of tests
+    for cov in COVERAGE_VALUES:
+        names.append(get_name_of_sensitivity_analysis(
+            cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None, coverage=cov))
+        definitions.append([None, None, None, None, cov])
 
-    return scenario_names
+    if include_sens_analysis_on_sens_spec:
+        # use beta distributions for CIP and vary characteristics of TET
+        for cov in COVERAGE_VALUES:
+            for tet_sens in reversed(TET_SENS_VALUES):
+                for tet_spec in TET_SPEC_VALUES:
+                    names.append(get_name_of_sensitivity_analysis(
+                        cip_sens=None, cip_spec=None, tet_sens=tet_sens, tet_spec=tet_spec, coverage=cov))
+                    definitions.append([None, None, tet_sens, tet_spec, cov])
+
+        # use beta distributions for TET and vary characteristics of CIP
+        for cov in COVERAGE_VALUES:
+            for cip_sens in reversed(CIP_SENS_VALUES):
+                for cip_spec in CIP_SPEC_VALUES:
+                    names.append(get_name_of_sensitivity_analysis(
+                        cip_sens=cip_sens, cip_spec=cip_spec, tet_sens=None, tet_spec=None, coverage=cov))
+                    definitions.append([cip_sens, cip_spec, None, None, cov])
+
+    return names, definitions
 
 
 def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None):
@@ -226,6 +245,6 @@ def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None):
         name += '-{}yrs'.format(sim_duration)
 
     if calibration_seed is not None:
-        name += '-{}'.format(calibration_seed)
+        name += '-{}seed'.format(calibration_seed)
 
     return name
