@@ -24,6 +24,8 @@ TET_SPEC_VALUES = (0.9, 0.95, 1.0)
 
 COVERAGE_VALUES = (0.5, 0.75, 1.0)      # coverage
 
+# plots
+COLOR_VARYING_COVERAGE = 'blue'
 
 SYMP_STATES = ['Symp', 'Asym']
 REST_PROFILES = ['CIP-S, TET-S, CRO-S',        # SUSP

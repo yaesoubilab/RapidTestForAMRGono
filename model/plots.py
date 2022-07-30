@@ -2,10 +2,11 @@ import apacepy.analysis.scenarios as scen
 import apacepy.analysis.trajectories as traj
 import apacepy.analysis.visualize_scenarios as vis
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
-    SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES
+    SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, COLOR_VARYING_COVERAGE
 from model import data as D
 from model.scenario_and_sensitivity_analyses import get_rate_percentage_life, get_scenarios_with_spec_coverage, \
     get_sa_scenarios_varying_coverage
+
 
 traj.SUBPLOT_W_SPACE = 0.25
 scen.POLY_DEGREES = 1
@@ -156,7 +157,8 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_r
     scen.ERROR_BAR_ALPHA = 0.2
 
     # sets of scenarios to display on the cost-effectiveness plane
-    list_of_scenario_sets = [get_sa_scenarios_varying_coverage(scenarios_df=scenarios_df, color='green')]
+    list_of_scenario_sets = [get_sa_scenarios_varying_coverage(
+        scenarios_df=scenarios_df, color=COLOR_VARYING_COVERAGE)]
 
     vis.plot_sets_of_scenarios(
         list_of_scenario_sets=list_of_scenario_sets,
