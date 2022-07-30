@@ -167,7 +167,7 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_r
         effect_outcome='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
                        '(average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
-        labels=('Change in the effective lifespan of\nCIP, TET, and CRO (years)',
+        labels=('Change in the effective lifespan of\n first-line antibiotics (years)',
                 'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)'),
         health_measure='u',
         x_range=x_range,
@@ -175,7 +175,7 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_r
         cost_multiplier=100000,
         effect_multiplier=sim_duration,
         file_name=fig_file_name,
-        fig_size=(5, 5))
+        fig_size=(4.6, 4.6))
 
 
 def plot_sa_for_a_specific_coverage(csv_file_name, fig_file_name, test_coverage, x_range, y_range, print_all_scenarios=False):

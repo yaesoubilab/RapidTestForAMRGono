@@ -18,7 +18,7 @@ N_OF_SIMS = 16
 RUN_IN_PARALLEL = True
 
 
-def simulate_scenarios(if_m_available_for_1st_tx,simulation_duration,
+def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration,
                        include_sens_analysis_on_sens_spec=False, calibration_seed=None):
 
     # get model settings
@@ -62,18 +62,17 @@ def simulate_scenarios(if_m_available_for_1st_tx,simulation_duration,
 if __name__ == "__main__":
 
     print('\n*** M is available for 1st Tx ***')
-    simulate_scenarios(if_m_available_for_1st_tx=True,
-                       simulation_duration=SIM_DURATION,
-                       include_sens_analysis_on_sens_spec=False)
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION)
 
-    # print('\n*** M is available for 1st Tx with simulation duration of 30 years ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=30)
-    #
-    # print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=True, calibration_seed=1)
-    #
-    # print('\n*** M is not available for 1st Tx***')
-    # simulate_scenarios(if_m_available_for_1st_tx=False)
-    #
-    # print('\n*** M is not available for 1st Tx with simulation duration of 30 years ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=30)
+    print('\n*** M is available for 1st Tx with simulation duration of 30 years ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
+
+    print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
+                       calibration_seed=1)
+
+    print('\n*** M is not available for 1st Tx***')
+    simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=SIM_DURATION)
+
+    print('\n*** M is not available for 1st Tx with simulation duration of 30 years ***')
+    simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=35)

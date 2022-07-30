@@ -15,7 +15,7 @@ The results will be saved under analysis/outputs/with-M or analysis/outputs/no-M
 """
 
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 16*1    # total number of trajectories to simulate as part of calibration
+N_OF_CALIBRATION_ITERATIONS = 16*10    # total number of trajectories to simulate as part of calibration
 N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*1   # number of trajectories with the highest likelihood to keep
 N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*1  # number of parameter values to resample for parameter estimation
 
@@ -27,7 +27,8 @@ def calibrate(if_m_available, calibration_seed):
     """
 
     # scenario name
-    scenario_name = get_scenario_name(if_m_available=if_m_available, calibration_seed=calibration_seed)
+    scenario_name = get_scenario_name(
+        if_m_available=if_m_available, calibration_seed=calibration_seed, sim_duration=None)
 
     # get model settings
     sets = GonoSettings(if_calibrating=True, collect_traj_of_comparts=False,
@@ -85,7 +86,8 @@ if __name__ == "__main__":
     for m_available in [True, False]:
         for calib_seed in [None, 1]:
 
-            scenario_name = get_scenario_name(if_m_available=m_available, calibration_seed=calib_seed)
+            scenario_name = get_scenario_name(
+                if_m_available=m_available, calibration_seed=calib_seed, sim_duration=None)
             print("\nCalibrating scenario '{}':".format(scenario_name))
 
             calibrate(if_m_available=m_available, calibration_seed=calib_seed)
