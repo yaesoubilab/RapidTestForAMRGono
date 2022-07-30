@@ -56,7 +56,7 @@ class GonoSettings(ModelSettings):
 
         # folders
         scenario_name = get_scenario_name(if_m_available=self.ifMAvailableFor1stTx,
-                                          sim_duration=sim_duration,
+                                          sim_duration=self.simulationDuration,
                                           calibration_seed=self.calibSeed)
         scenario_name_without_sim_duration = get_scenario_name(if_m_available=self.ifMAvailableFor1stTx,
                                                                sim_duration=None,

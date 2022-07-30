@@ -61,7 +61,7 @@ def simulate_multi_trajectories(n, sim_duration=None, calibration_seed=None,
                       filename=figure_filename)
 
 
-def simulate_calibrated_model(n_of_sims, sim_duration=None, calibration_seed=None,
+def simulate_calibrated_model(n_of_sims, sim_duration, calibration_seed=None,
                               sample_seeds_by_weights=True,
                               if_run_in_parallel=True, settings=None,
                               figure_filename='Calibrated.png'):

@@ -1,7 +1,7 @@
 import apacepy.calibration as calib
 from deampy.in_out_functions import TextFile
 
-from definitions import get_scenario_name, ROOT_DIR
+from definitions import get_scenario_name, ROOT_DIR, SIM_DURATION
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
 from model.support import estimate_parameters, simulate_calibrated_model
@@ -15,7 +15,7 @@ The results will be saved under analysis/outputs/with-M or analysis/outputs/no-M
 """
 
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 16*10    # total number of trajectories to simulate as part of calibration
+N_OF_CALIBRATION_ITERATIONS = 16*1    # total number of trajectories to simulate as part of calibration
 N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*1   # number of trajectories with the highest likelihood to keep
 N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*1  # number of parameter values to resample for parameter estimation
 
@@ -74,6 +74,7 @@ def calibrate(if_m_available, calibration_seed):
     sets.update_settings(cip_sens=0, cip_spec=1, tet_sens=0, tet_spec=1, prob_rapid_test=0)
 
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS_TO_USE_FOR_SIMULATION,
+                              sim_duration=SIM_DURATION,
                               calibration_seed=calibration_seed,
                               sample_seeds_by_weights=False,
                               settings=sets)
@@ -82,7 +83,8 @@ def calibrate(if_m_available, calibration_seed):
 if __name__ == "__main__":
 
     for m_available in (True, False):
-        for calib_seed in (None, 1):
+        # TODO: update
+        for calib_seed in [None]: # , 1
 
             scenario_name = get_scenario_name(if_m_available=m_available, calibration_seed=calib_seed)
             print("\nCalibrating scenario '{}':".format(scenario_name))

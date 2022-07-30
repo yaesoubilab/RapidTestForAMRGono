@@ -1,6 +1,7 @@
-from definitions import COVERAGE_VALUES
-from model.plots import plot_scenarios, plot_scenario_sa, \
-    get_scenarios_csv_filename_and_fig_filename, export_performance_of_scenarios
+from definitions import COVERAGE_VALUES, SIM_DURATION
+from model.plots import plot_sa_for_a_specific_coverage, plot_sa_for_varying_coverage, plot_scenario_sa
+from model.scenario_and_sensitivity_analyses import get_scenarios_csv_filename_and_fig_filename, \
+    export_performance_of_scenarios
 
 """
 To plot the cost-effectiveness plan visualizing the performance of rapid tests for 
@@ -14,6 +15,7 @@ X_RANGE_WITH_M = [-0.1, 6.1]
 Y_RANGE_WITH_M = [-250, 1750]
 X_RANGE_NO_M = [-0.1, 6.1]
 Y_RANGE_NO_M = [-4000, 500]
+
 
 
 def plot_sa_for_a_test_coverage(
@@ -42,7 +44,7 @@ def plot_sa_for_a_test_coverage(
         x_range = X_RANGE_NO_M
         y_range = Y_RANGE_NO_M
 
-    plot_scenarios(
+    plot_sa_for_a_specific_coverage(
         csv_file_name=csv_file_name,
         fig_file_name=fig_file_name,
         test_coverage=test_coverage,
@@ -83,7 +85,46 @@ def plot_scenarios_sa(if_m_available_for_1st_tx, include_sens_analysis_on_sens_s
                      fig_size=(8, 3.5))
 
 
-def export_performance_summary_and_plots(if_m_available, include_sens_analysis_on_sens_spec=False,
+def export_performance_summary_and_plots(if_m_available,
+                                         simulation_duration, calibration_seed=None):
+    """
+    exports performance summary and cost-effectiveness plots for this scenario for the availability of M
+    :param if_m_available: (bool) if M is available for the first-line therapy
+    :param simulation_duration: (float) simulation duration (for sensitivity analysis)
+    :param calibration_seed: (int) calibration seed (for sensitivity analysis)
+    """
+
+    # export performance of different scenarios of test characteristics
+    export_performance_of_scenarios(
+        if_m_available_for_1st_tx=if_m_available,
+        include_sens_analysis_on_sens_spec=False,
+        simulation_duration=simulation_duration,
+        calibration_seed=calibration_seed,
+        coverage_values=COVERAGE_VALUES)
+
+    # get the filename of csv file where the scenario analysis and the
+    # figure name which the figure for the scenario analysis should be saved as
+    csv_file_name, fig_file_name = get_scenarios_csv_filename_and_fig_filename(
+        if_m_available_for_1st_tx=if_m_available,
+        sim_duration=simulation_duration,
+        calibration_seed=calibration_seed)
+
+    if if_m_available:
+        x_range = X_RANGE_WITH_M
+        y_range = Y_RANGE_WITH_M
+    else:
+        x_range = X_RANGE_NO_M
+        y_range = Y_RANGE_NO_M
+
+    plot_sa_for_varying_coverage(
+        csv_file_name=csv_file_name,
+        sim_duration=simulation_duration,
+        fig_file_name=fig_file_name,
+        x_range=x_range,
+        y_range=y_range)
+
+
+def export_performance_summary_and_plots_old(if_m_available, include_sens_analysis_on_sens_spec=False,
                                          simulation_duration=None, calibration_seed=None):
     """
     exports performance summary and cost-effectiveness plots for this scenario for the availability of M
@@ -120,8 +161,9 @@ def export_performance_summary_and_plots(if_m_available, include_sens_analysis_o
             calibration_seed=calibration_seed,
             test_coverage=c)
 
-
 if __name__ == "__main__":
+
+    export_performance_summary_and_plots(if_m_available=True, simulation_duration=SIM_DURATION)
 
     # for scenarios where drug M is and is not available for 1st-line therapy
     for m_available in (True, False):
