@@ -226,7 +226,7 @@ def get_sens_analysis_names_and_definitions(include_sens_analysis_on_sens_spec=F
     return names, definitions
 
 
-def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None):
+def get_scenario_name(if_m_available, sim_duration, calibration_seed=None):
     """
     :param if_m_available:
     :param sim_duration:

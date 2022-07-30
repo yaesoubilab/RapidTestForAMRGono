@@ -129,14 +129,11 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
 
 
 def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
-                                    include_sens_analysis_on_sens_spec=False,
-                                    simulation_duration=None, calibration_seed=None):
+                                    simulation_duration, calibration_seed=None):
     """
     export performance of different scenarios of test characteristics
     :param if_m_available_for_1st_tx: (bool) if m is available for first-line therapy
     :param coverage_values: (float) specific coverage value for the test
-    :param include_sens_analysis_on_sens_spec: (bool) if include analyses to vary sensitivity and specificity
-        of CIP and TET
     :param simulation_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     :return: saves a csv file with the following columns for each scenario:
@@ -191,7 +188,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
 
         # get rate, percentage treated with 1st-line drugs, and lifespan of 1st-line drugs
         rate, prob_success, eff_life = get_rate_percentage_life(
-            scenarios_df=scenarios_df, scenario_name=scenario_name)
+            scenarios_df=scenarios_df, scenario_name=scenario_name, sim_duration=simulation_duration)
 
         # get % change in rate, % change in lifespan
         perc_change_rate, perc_change_life = get_perc_change_rate_life(

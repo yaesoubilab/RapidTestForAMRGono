@@ -1,3 +1,4 @@
+from definitions import SIM_DURATION
 from model.model_settings import GonoSettings
 from model.support import simulate_calibrated_model
 
@@ -36,6 +37,7 @@ def simulate_calibrated(cip_sens=None, cip_spec=None,
 
     print('\n --- '+figure_filename+' ---')
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS,
+                              sim_duration=SIM_DURATION,
                               sample_seeds_by_weights=False,
                               if_run_in_parallel=True,
                               settings=sets,

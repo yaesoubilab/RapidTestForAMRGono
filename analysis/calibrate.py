@@ -82,9 +82,8 @@ def calibrate(if_m_available, calibration_seed):
 
 if __name__ == "__main__":
 
-    for m_available in (True, False):
-        # TODO: update
-        for calib_seed in [None]: # , 1
+    for m_available in [True, False]:
+        for calib_seed in [None, 1]:
 
             scenario_name = get_scenario_name(if_m_available=m_available, calibration_seed=calib_seed)
             print("\nCalibrating scenario '{}':".format(scenario_name))

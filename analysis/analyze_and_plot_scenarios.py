@@ -97,7 +97,6 @@ def export_performance_summary_and_plots(if_m_available,
     # export performance of different scenarios of test characteristics
     export_performance_of_scenarios(
         if_m_available_for_1st_tx=if_m_available,
-        include_sens_analysis_on_sens_spec=False,
         simulation_duration=simulation_duration,
         calibration_seed=calibration_seed,
         coverage_values=COVERAGE_VALUES)
@@ -138,7 +137,6 @@ def export_performance_summary_and_plots_old(if_m_available, include_sens_analys
     # export performance of different scenarios of test characteristics
     export_performance_of_scenarios(
         if_m_available_for_1st_tx=if_m_available,
-        include_sens_analysis_on_sens_spec=include_sens_analysis_on_sens_spec,
         simulation_duration=simulation_duration,
         calibration_seed=calibration_seed,
         coverage_values=COVERAGE_VALUES)
@@ -165,7 +163,7 @@ if __name__ == "__main__":
 
     export_performance_summary_and_plots(if_m_available=True, simulation_duration=SIM_DURATION)
 
-    # for scenarios where drug M is and is not available for 1st-line therapy
-    for m_available in (True, False):
-        export_performance_summary_and_plots(if_m_available=m_available)
+    # # for scenarios where drug M is and is not available for 1st-line therapy
+    # for m_available in (True, False):
+    #     export_performance_summary_and_plots(if_m_available=m_available)
 

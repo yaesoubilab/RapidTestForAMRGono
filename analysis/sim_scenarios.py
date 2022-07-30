@@ -3,7 +3,7 @@ import warnings
 import apacepy.calibration as calib
 from analyze_and_plot_scenarios import export_performance_summary_and_plots
 from apacepy.scenario_simulation import ScenarioSimulator
-from definitions import get_sens_analysis_names_and_definitions
+from definitions import get_sens_analysis_names_and_definitions, SIM_DURATION
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
 
@@ -18,8 +18,8 @@ N_OF_SIMS = 16
 RUN_IN_PARALLEL = True
 
 
-def simulate_scenarios(if_m_available_for_1st_tx, include_sens_analysis_on_sens_spec=False,
-                       simulation_duration=None, calibration_seed=None):
+def simulate_scenarios(if_m_available_for_1st_tx,simulation_duration,
+                       include_sens_analysis_on_sens_spec=False, calibration_seed=None):
 
     # get model settings
     sets = GonoSettings(if_m_available_for_1st_tx=if_m_available_for_1st_tx,
@@ -62,7 +62,9 @@ def simulate_scenarios(if_m_available_for_1st_tx, include_sens_analysis_on_sens_
 if __name__ == "__main__":
 
     print('\n*** M is available for 1st Tx ***')
-    simulate_scenarios(if_m_available_for_1st_tx=True, include_sens_analysis_on_sens_spec=False)
+    simulate_scenarios(if_m_available_for_1st_tx=True,
+                       simulation_duration=SIM_DURATION,
+                       include_sens_analysis_on_sens_spec=False)
 
     # print('\n*** M is available for 1st Tx with simulation duration of 30 years ***')
     # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=30)
