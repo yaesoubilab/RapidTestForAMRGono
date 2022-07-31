@@ -26,6 +26,7 @@ COVERAGE_VALUES = (0.5, 0.75, 1.0)      # coverage
 
 # plots
 COLOR_VARYING_COVERAGE = 'blue'
+COLOR_BY_SPEC = ['red', 'green', 'purple']
 
 SYMP_STATES = ['Symp', 'Asym']
 REST_PROFILES = ['CIP-S, TET-S, CRO-S',        # SUSP

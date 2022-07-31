@@ -1,9 +1,8 @@
 import warnings
 
 import apacepy.calibration as calib
+from analyze_and_plot_scenarios import export_summary_and_plots_for_varying_coverage, plot_by_sens_spec
 from apacepy.scenario_simulation import ScenarioSimulator
-
-from analyze_and_plot_scenarios import export_summary_and_plots_for_varying_coverage, plot_by_sens_spec_coverage
 from definitions import get_sens_analysis_names_and_definitions, SIM_DURATION
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
@@ -60,7 +59,7 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration,
     )
 
     if include_sens_analysis_on_sens_spec:
-        plot_by_sens_spec_coverage(
+        plot_by_sens_spec(
             if_m_available=if_m_available_for_1st_tx,
             simulation_duration=simulation_duration,
             calibration_seed=calibration_seed)

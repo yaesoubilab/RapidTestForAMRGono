@@ -202,7 +202,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
 
 
 def get_scenarios_csv_filename_and_fig_filename(
-        if_m_available_for_1st_tx, test_coverage=None, sim_duration=None, calibration_seed=None):
+        if_m_available_for_1st_tx, ab=None, test_coverage=None, sim_duration=None, calibration_seed=None):
     """
     :param if_m_available_for_1st_tx: (bool) if M is available for first-line therapy
     :param test_coverage: (float) coverage of rapid text
@@ -218,7 +218,7 @@ def get_scenarios_csv_filename_and_fig_filename(
         calibration_seed=calibration_seed)
 
     if test_coverage is not None:
-        fig_file_name = 'figures/SA/{}-coverage {:.2f}.png'.format(scenario_name, test_coverage)
+        fig_file_name = 'figures/SA/{}-{}-coverage {:.2f}.png'.format(scenario_name, ab, test_coverage)
     else:
         fig_file_name = 'figures/SA/{}-coverage.png'.format(scenario_name)
 
@@ -241,6 +241,9 @@ def get_sa_scenarios_varying_coverage(scenarios_df, color):
         marker='o',
         conditions_on_variables=[
             scen.ConditionOnVariable(var_name='CIP-sens', values=[None, '']),
+            scen.ConditionOnVariable(var_name='CIP-spec', values=[None, '']),
+            scen.ConditionOnVariable(var_name='TET-sens', values=[None, '']),
+            scen.ConditionOnVariable(var_name='TET-spec', values=[None, '']),
             scen.ConditionOnVariable(var_name='rapid test coverage', if_included_in_label=True, label_format='{:.0%}')
         ],
         if_find_frontier=False,
@@ -249,14 +252,23 @@ def get_sa_scenarios_varying_coverage(scenarios_df, color):
         labels_shift_y=0.01)
 
 
-def get_scenarios_with_spec_coverage(scenarios_df, spec, test_coverage, color):
+def get_sa_scenarios_with_specific_spec_coverage_ab(
+        scenarios_df, spec, test_coverage, ab, color):
     """
     :param scenarios_df: dataframe of simulated scenarios
     :param spec: (float) specificity
     :param test_coverage: (float) test coverage
+    :param ab: (string): 'CIP' or 'TET'
     :param color: (string) color of set
     :return: set of scenarios varying sensitivity for the specified specificity and test coverage
     """
+
+    if ab == 'CIP':
+        other_ab = 'TET'
+    elif ab == 'TET':
+        other_ab = 'CIP'
+    else:
+        raise ValueError('Invalid value for antibiotic.')
 
     return scen.SetOfScenarios(
         name='Specificity = {:.3f}'.format(spec),
@@ -264,8 +276,10 @@ def get_scenarios_with_spec_coverage(scenarios_df, spec, test_coverage, color):
         color=color,
         marker='o',
         conditions_on_variables=[
-            scen.ConditionOnVariable(var_name='TET-sens', if_included_in_label=True, label_format='{:.2f}'),
-            scen.ConditionOnVariable(var_name='TET-spec', values=[spec]),
+            scen.ConditionOnVariable(var_name='{}-sens'.format(other_ab), values=[None, '']),
+            scen.ConditionOnVariable(var_name='{}-spec'.format(other_ab), values=[None, '']),
+            scen.ConditionOnVariable(var_name='{}-sens'.format(ab), if_included_in_label=True, label_format='{:.2f}'),
+            scen.ConditionOnVariable(var_name='{}-spec'.format(ab), values=[spec]),
             scen.ConditionOnVariable(var_name='rapid test coverage', values=[test_coverage])
         ],
         if_find_frontier=False,

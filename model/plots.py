@@ -2,9 +2,9 @@ import apacepy.analysis.scenarios as scen
 import apacepy.analysis.trajectories as traj
 import apacepy.analysis.visualize_scenarios as vis
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
-    SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, COLOR_VARYING_COVERAGE
+    SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, COLOR_VARYING_COVERAGE, CIP_SPEC_VALUES, TET_SPEC_VALUES, COLOR_BY_SPEC
 from model import data as D
-from model.scenario_and_sensitivity_analyses import get_rate_percentage_life, get_scenarios_with_spec_coverage, \
+from model.scenario_and_sensitivity_analyses import get_rate_percentage_life, get_sa_scenarios_with_specific_spec_coverage_ab, \
     get_sa_scenarios_varying_coverage
 
 
@@ -178,10 +178,12 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_r
         fig_size=(4.6, 4.6))
 
 
-def plot_sa_for_a_specific_coverage(csv_file_name, fig_file_name, test_coverage, x_range, y_range, print_all_scenarios=False):
-    """ plots the cost-effectiveness figure for a specific test coverage
+def plot_sa_for_specific_ab_and_coverage(csv_file_name, fig_file_name, ab, test_coverage,
+                                         x_range, y_range, print_all_scenarios=False):
+    """ plots the cost-effectiveness figure for a specific antibiotic and test coverage
     :param csv_file_name: (string) csv filename where the summary of simulated scenarios are located
     :param fig_file_name: (string) filename of the figure to save the results as
+    :param ab: (string) 'CIP' or 'TET'
     :param test_coverage: (float) specific value of test coverage
     :param x_range: range of x-axis
     :param y_range: range of y-axis
@@ -204,15 +206,23 @@ def plot_sa_for_a_specific_coverage(csv_file_name, fig_file_name, test_coverage,
     # sets of scenarios to display on the cost-effectiveness plane
     list_of_scenario_sets = []
 
-    for i, spec in enumerate(SPE_VALUES):
+    if ab == 'CIP':
+        spec_values = CIP_SPEC_VALUES
+    elif ab == 'TET':
+        spec_values = TET_SPEC_VALUES
+    else:
+        raise ValueError('Invalid value for antibiotic.')
+
+    for i, spec in enumerate(spec_values):
         list_of_scenario_sets.append(
-            get_scenarios_with_spec_coverage(scenarios_df=scenarios_df, i=i, spec=spec, test_coverage=test_coverage)
+            get_sa_scenarios_with_specific_spec_coverage_ab(
+                scenarios_df=scenarios_df, spec=spec, test_coverage=test_coverage, ab=ab, color=COLOR_BY_SPEC[i])
         )
 
     vis.plot_sets_of_scenarios(
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
-        list_if_remove_base_scenario=[True] * len(SPE_VALUES),
+        list_if_remove_base_scenario=[True] * len(spec_values),
         effect_outcome='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
                        '(average incidence after epidemic warm-up)',
         cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
@@ -239,7 +249,7 @@ def plot_scenario_sa(csv_file_name, fig_file_name, x_range=None, y_range=None, l
         list_of_scenario_sets = []
         for i, spec in enumerate(SPE_VALUES):
             list_of_scenario_sets.append(
-                get_scenarios_with_spec_coverage(scenarios_df=scenarios_df, i=i, spec=spec, test_coverage=c)
+                get_sa_scenarios_with_specific_spec_coverage_ab(scenarios_df=scenarios_df, i=i, spec=spec, test_coverage=c)
             )
         list_list_series.append(list_of_scenario_sets)
 
