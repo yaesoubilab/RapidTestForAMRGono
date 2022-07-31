@@ -205,11 +205,12 @@ def get_scenarios_csv_filename_and_fig_filename(
         if_m_available_for_1st_tx, ab=None, test_coverage=None, sim_duration=None, calibration_seed=None):
     """
     :param if_m_available_for_1st_tx: (bool) if M is available for first-line therapy
+    :param ab: (string) 'CIP' or 'TET'
     :param test_coverage: (float) coverage of rapid text
-    :return: (tuple) name of csv file containing the summary of simulated scenarios,
-                     name of figure to save the results as
     :param sim_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
+    :return: (tuple) name of csv file containing the summary of simulated scenarios,
+                 name of figure to save the results as
     """
 
     scenario_name = get_scenario_name(
@@ -220,7 +221,10 @@ def get_scenarios_csv_filename_and_fig_filename(
     if test_coverage is not None:
         fig_file_name = 'figures/SA/{}-{}-coverage {:.2f}.png'.format(scenario_name, ab, test_coverage)
     else:
-        fig_file_name = 'figures/SA/{}-coverage.png'.format(scenario_name)
+        if ab is None:
+            fig_file_name = 'figures/SA/{}.png'.format(scenario_name)
+        else:
+            fig_file_name = 'figures/SA/{}-{}-coverage.png'.format(scenario_name, ab)
 
     csv_file_name = 'outputs/{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
 
