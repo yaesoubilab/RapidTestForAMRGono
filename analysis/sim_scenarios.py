@@ -1,8 +1,9 @@
 import warnings
 
 import apacepy.calibration as calib
-from analyze_and_plot_scenarios import export_summary_and_plots_for_varying_coverage, plot_by_sens_spec_coverage
 from apacepy.scenario_simulation import ScenarioSimulator
+
+from analyze_and_plot_scenarios import export_summary_and_plots_for_varying_coverage, plot_by_sens_spec_coverage
 from definitions import get_sens_analysis_names_and_definitions, SIM_DURATION
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
@@ -14,7 +15,7 @@ To simulate and plot the impact of rapid tests with different characteristics
 The results will be saved under outputs/(with or no)-M/scenarios
 """
 
-N_OF_SIMS = 16
+N_OF_SIMS = 160
 RUN_IN_PARALLEL = True
 
 
@@ -71,15 +72,15 @@ if __name__ == "__main__":
     simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
                        include_sens_analysis_on_sens_spec=True)
 
-    # print('\n*** M is available for 1st Tx with simulation duration of 30 years ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
-    #
-    # print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
-    #                    calibration_seed=1)
-    #
-    # print('\n*** M is not available for 1st Tx***')
-    # simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=SIM_DURATION)
-    #
-    # print('\n*** M is not available for 1st Tx with simulation duration of 30 years ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=35)
+    print('\n*** M is available for 1st Tx with simulation duration of 30 years ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
+
+    print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
+                       calibration_seed=1)
+
+    print('\n*** M is not available for 1st Tx***')
+    simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=SIM_DURATION)
+
+    print('\n*** M is not available for 1st Tx with simulation duration of 30 years ***')
+    simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=35)
