@@ -28,7 +28,7 @@ def get_rate_percentage_life(scenarios_df, scenario_name, sim_duration):
     for ab in ANTIBIOTICS:
         proportion.append(scenarios_df.get_mean_interval(
             scenario_name=scenario_name,
-            outcome_name='Time-averaged proportion of cases treated successfully with {} '
+            outcome_name='Time-averaged proportion of cases {}-S '
                          '(average incidence after epidemic warm-up)'.format(ab),
             interval_type='p', deci=1, form='%'))
 
@@ -43,7 +43,7 @@ def get_rate_percentage_life(scenarios_df, scenario_name, sim_duration):
         life.append(
             scenarios_df.get_mean_interval(
                 scenario_name=scenario_name,
-                outcome_name='Time-averaged proportion of cases treated successfully with {} '
+                outcome_name='Time-averaged proportion of cases {}-S '
                              '(average incidence after epidemic warm-up)'.format(ab),
                 interval_type='p', deci=1, multiplier=sim_duration)
         )
@@ -72,7 +72,7 @@ def get_perc_change_rate_life(scenarios_df, scenario_name_base, scenario_name_ne
             perc_change_life.append(scenarios_df.get_relative_diff_mean_interval(
                 scenario_name_base=scenario_name_base,
                 scenario_names=scenario_name_new,
-                outcome_name='Time-averaged proportion of cases treated successfully with {} '
+                outcome_name='Time-averaged proportion of cases {}-S '
                              '(average incidence after epidemic warm-up)'.format(ab),
                 deci=1, form='%')
             )
@@ -162,6 +162,25 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
          '% cases successfully treated with CIP',
          '% cases successfully treated with TET',
          '% cases successfully treated with CRO',
+         'Effective lifespan of CIP, TET, and CRO',
+         'Effective lifespan of CIP',
+         'Effective lifespan of TET',
+         'Effective lifespan of CRO',
+         'delta - Rate of gonorrhea cases',
+         'delta - Effective lifespan of CIP, TET, and CRO',
+         'delta - Effective lifespan of CIP',
+         'delta - Effective lifespan of TET',
+         'delta - Effective lifespan of CRO',
+         ]
+    ]
+
+    rows = [
+        ['Scenario name',
+         'Rate of gonorrhea cases',
+         '% cases successfully treated with CIP, TET, or CRO',
+         '% cases susceptible to CIP',
+         '% cases susceptible to TET',
+         '% cases susceptible to CRO',
          'Effective lifespan of CIP, TET, and CRO',
          'Effective lifespan of CIP',
          'Effective lifespan of TET',
