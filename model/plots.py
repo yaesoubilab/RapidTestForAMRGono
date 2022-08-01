@@ -3,7 +3,8 @@ import apacepy.analysis.trajectories as traj
 import apacepy.analysis.visualize_scenarios as vis
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
     SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, COLOR_VARYING_COVERAGE, \
-    CIP_SPEC_VALUES, TET_SPEC_VALUES, COLOR_BY_SPEC, SINGLE_FIG_SIZE
+    CIP_SPEC_VALUES, TET_SPEC_VALUES, COLOR_BY_SPEC, SINGLE_FIG_SIZE, \
+    EFFECT_OUTCOME, COST_OUTCOME, EFFECT_COST_LABELS, EFFECT_COST_LABELS_NO_LINE_BREAK
 from model import data as D
 from model.scenario_and_sensitivity_analyses import get_rate_percentage_life, get_sa_scenarios_with_specific_spec_coverage_ab, \
     get_sa_scenarios_varying_coverage
@@ -165,11 +166,9 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_r
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
         list_if_remove_base_scenario=[True],
-        effect_outcome='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
-                       '(average incidence after epidemic warm-up)',
-        cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
-        labels=('Change in the effective lifespan of\n first-line antibiotics (years)',
-                'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)'),
+        effect_outcome=EFFECT_OUTCOME,
+        cost_outcome=COST_OUTCOME,
+        labels=EFFECT_COST_LABELS,
         health_measure='u',
         x_range=x_range,
         y_range=y_range,
@@ -224,11 +223,9 @@ def plot_sa_for_specific_ab_and_coverage(csv_file_name, fig_file_name, ab, test_
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
         list_if_remove_base_scenario=[True] * len(spec_values),
-        effect_outcome='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
-                       '(average incidence after epidemic warm-up)',
-        cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
-        labels=('Change in the effective lifespan of\nCIP, TET, and CRO (years)',
-                'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)'),
+        effect_outcome=EFFECT_OUTCOME,
+        cost_outcome=COST_OUTCOME,
+        labels=EFFECT_COST_LABELS,
         health_measure='u',
         x_range=x_range,
         y_range=y_range,
@@ -268,13 +265,11 @@ def plot_sa_for_specific_ab(ab, csv_file_name, fig_file_name,
         list_of_titles=list_of_titles,
         name_of_base_scenario='Status quo (no rapid test)',
         list_if_remove_base_scenario=[True] * len(spec_values),
-        effect_outcome='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
-                       '(average incidence after epidemic warm-up)',
-        cost_outcome='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
+        effect_outcome=EFFECT_OUTCOME,
+        cost_outcome=COST_OUTCOME,
         x_range=x_range,
         y_range=y_range,
-        labels=('Change in the effective lifespan of ciprofloxacin, tetracycline, and ceftriaxone (years)',
-                'Change in the annual rate of incident gonorrhea cases\n(per 100,000 MSM population)'),
+        labels=EFFECT_COST_LABELS_NO_LINE_BREAK,
         cost_multiplier=100000,
         effect_multiplier=SIM_DURATION,
         fig_size=fig_size,
