@@ -4,8 +4,8 @@ from deampy.random_variats import Beta
 # [mean, stDev, min, max]
 CIP_SENS_DIST = 0.98, 0.01, 0, 1
 CIP_SPEC_DIST = 0.98, 0.01, 0, 1
-TET_SENS_DIST = 0.80, 0.1, 0, 1
-TET_SPEC_DIST = 0.95, 0.02, 0, 1
+TET_SENS_DIST = 0.855, 0.014, 0, 1
+TET_SPEC_DIST = 0.965, 0.008, 0, 1
 
 
 def print_intervals(name, mean_std_min_max):

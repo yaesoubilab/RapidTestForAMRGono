@@ -14,8 +14,8 @@ RAPID_TEST_COVERAGE = 0.75
 # mean, st_dev, min, max of beta distributions
 CIP_SENS_DIST = 0.98, 0.01, 0, 1
 CIP_SPEC_DIST = 0.98, 0.01, 0, 1
-TET_SENS_DIST = 0.80, 0.1, 0, 1
-TET_SPEC_DIST = 0.95, 0.02, 0, 1
+TET_SENS_DIST = 0.855, 0.014, 0, 1
+TET_SPEC_DIST = 0.965, 0.008, 0, 1
 
 CIP_SENS_VALUES = (0.5, 0.75, 1.0)
 CIP_SPEC_VALUES = (0.9, 0.95, 1.0)
