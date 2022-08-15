@@ -10,5 +10,5 @@ plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalenc
                   incd_multiplier=1,  # to show weeks on the x-axis of incidence data
                   obs_prev_multiplier=1,
                   obs_incd_multiplier=1,
-                  dir_of_traj_files='outputs/with-M/trajectories',
+                  dir_of_traj_files='outputs/with M-25yrs/trajectories',
                   filename='Calibrated.png')

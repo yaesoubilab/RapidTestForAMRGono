@@ -442,7 +442,7 @@ def build_model(model):
                      counting_rest_to[RestProfile.TET_CRO.value])
     # cases susceptible to TET
     n_cases_TET_S = SumIncidence(
-        name='Cases CIP-S',
+        name='Cases TET-S',
         compartments=counting_rest_to[RestProfile.SUS.value] +
                      counting_rest_to[RestProfile.CIP.value] +
                      counting_rest_to[RestProfile.CRO.value] +
