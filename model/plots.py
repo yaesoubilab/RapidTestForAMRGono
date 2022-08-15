@@ -118,7 +118,7 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
 
     perc_cases_rest_cro = traj.TrajPlotInfo(
         outcome_name='Proportion of cases CRO-NS',
-        title='Cases resistant to CRO',
+        title='Cases with CRO-NS (%)',
         x_multiplier=obs_incd_multiplier,
         y_multiplier=100, y_range=(0, 100))
 

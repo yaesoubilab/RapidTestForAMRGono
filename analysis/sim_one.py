@@ -24,7 +24,7 @@ model = EpiModel(id=1, settings=sets)
 build_model(model)
 
 # simulate
-model.simulate(seed=625657653)
+model.simulate(seed=1980183620)
 # export trajectories
 model.export_trajectories()
 
