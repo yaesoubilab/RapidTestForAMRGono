@@ -523,7 +523,7 @@ def build_model(model):
                                                  survey_sizes=sets.percSympN)
         # % cases with resistance to CRO
         perc_cases_CRO_NS.add_feasible_conditions(feasible_conditions=FeasibleConditions(
-            min_threshold_to_hit=0.05))
+            min_threshold_to_hit=0.1))
 
     # ------------- interventions ---------------
     # interventions

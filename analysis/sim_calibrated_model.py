@@ -7,7 +7,7 @@ To simulate different scenarios with respect to the characteristics of rapid tes
 (sensitivity, specificity, coverage) 
 """
 
-N_OF_TRAJS = 16   # number of trajectories to simulate
+N_OF_TRAJS = 32   # number of trajectories to simulate
 
 
 def simulate_calibrated(cip_sens=None, cip_spec=None,
@@ -50,19 +50,19 @@ if __name__ == "__main__":
     simulate_calibrated(cip_sens=0, cip_spec=1,
                         tet_sens=0, tet_spec=1,
                         coverage=0, if_m_available=True)
-
-    # M and rapid DST is available
-    simulate_calibrated(cip_sens=None, cip_spec=None,
-                        tet_sens=None, tet_spec=None,
-                        coverage=0.75, if_m_available=True)
-
-    # worst-case scenario (neither M nor rapid DST is available)
-    simulate_calibrated(cip_sens=0, cip_spec=1,
-                        tet_sens=0, tet_spec=1,
-                        coverage=0, if_m_available=False)
-
-    # M not available but and rapid DST is available
-    simulate_calibrated(cip_sens=None, cip_spec=None,
-                        tet_sens=None, tet_spec=None,
-                        coverage=0.75, if_m_available=False)
+    #
+    # # M and rapid DST is available
+    # simulate_calibrated(cip_sens=None, cip_spec=None,
+    #                     tet_sens=None, tet_spec=None,
+    #                     coverage=0.75, if_m_available=True)
+    #
+    # # worst-case scenario (neither M nor rapid DST is available)
+    # simulate_calibrated(cip_sens=0, cip_spec=1,
+    #                     tet_sens=0, tet_spec=1,
+    #                     coverage=0, if_m_available=False)
+    #
+    # # M not available but and rapid DST is available
+    # simulate_calibrated(cip_sens=None, cip_spec=None,
+    #                     tet_sens=None, tet_spec=None,
+    #                     coverage=0.75, if_m_available=False)
 
