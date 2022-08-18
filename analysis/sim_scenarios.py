@@ -1,8 +1,9 @@
 import warnings
 
 import apacepy.calibration as calib
-from analyze_and_plot_scenarios import export_summary_and_plots_for_varying_coverage, plot_by_sens_spec
 from apacepy.scenario_simulation import ScenarioSimulator
+
+from analyze_and_plot_scenarios import export_summary_and_plots_for_varying_coverage, plot_by_sens_spec
 from definitions import get_sens_analysis_names_and_definitions, SIM_DURATION
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
@@ -71,7 +72,7 @@ if __name__ == "__main__":
     simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
                        include_sens_analysis_on_sens_spec=True)
 
-    print('\n*** M is available for 1st Tx with simulation duration of 30 years ***')
+    print('\n*** M is available for 1st Tx with simulation duration of 35 years ***')
     simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
 
     print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
