@@ -292,7 +292,7 @@ def get_sa_scenarios_with_specific_spec_coverage_ab(
         raise ValueError('Invalid value for antibiotic.')
 
     return scen.SetOfScenarios(
-        name='Specificity = {:.3f}'.format(spec),
+        name='Specificity = {:.2f}'.format(spec),
         scenario_df=scenarios_df,
         color=color,
         marker='o',
