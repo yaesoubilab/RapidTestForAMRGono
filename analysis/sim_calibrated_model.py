@@ -49,8 +49,8 @@ def simulate_calibrated(cip_sens=None, cip_spec=None,
 
 if __name__ == "__main__":
 
-    make_directory(ROOT_DIR + 'analysis/outputs/summary/')
-    sys.stdout = open(ROOT_DIR + 'analysis/outputs/scenario_performance.txt', 'w')
+    make_directory(ROOT_DIR + '/analysis/outputs/')
+    sys.stdout = open(ROOT_DIR + '/analysis/outputs/scenario_performance.txt', 'w')
 
     # base (M is available)
     simulate_calibrated(cip_sens=0, cip_spec=1,
