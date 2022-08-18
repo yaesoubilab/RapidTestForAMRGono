@@ -1,4 +1,7 @@
-from definitions import SIM_DURATION
+import sys
+
+from deampy.in_out_functions import make_directory
+from definitions import SIM_DURATION, ROOT_DIR
 from model.model_settings import GonoSettings
 from model.support import simulate_calibrated_model
 
@@ -46,6 +49,9 @@ def simulate_calibrated(cip_sens=None, cip_spec=None,
 
 if __name__ == "__main__":
 
+    make_directory(ROOT_DIR + 'analysis/outputs/summary/')
+    sys.stdout = open(ROOT_DIR + 'analysis/outputs/scenario_performance.txt', 'w')
+
     # base (M is available)
     simulate_calibrated(cip_sens=0, cip_spec=1,
                         tet_sens=0, tet_spec=1,
@@ -66,3 +72,4 @@ if __name__ == "__main__":
                         tet_sens=None, tet_spec=None,
                         coverage=0.75, if_m_available=False)
 
+    sys.stdout.close()
