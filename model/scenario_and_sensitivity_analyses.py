@@ -1,4 +1,5 @@
 import apacepy.analysis.scenarios as scen
+
 from deampy.in_out_functions import write_csv
 from definitions import get_scenario_name, ANTIBIOTICS, get_name_of_sensitivity_analysis
 
@@ -18,12 +19,11 @@ def get_rate_percentage_life(scenarios_df, scenario_name, sim_duration):
         outcome_name='Rate of gonorrhea cases (average incidence after epidemic warm-up)',
         interval_type='p', deci=0, multiplier=100000, form=',')
 
-    proportion = []
-    proportion.append(scenarios_df.get_mean_interval(
+    proportion = [scenarios_df.get_mean_interval(
         scenario_name=scenario_name,
         outcome_name='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
                      '(average incidence after epidemic warm-up)',
-        interval_type='p', deci=1, form='%'))
+        interval_type='p', deci=1, form='%')]
 
     for ab in ANTIBIOTICS:
         proportion.append(scenarios_df.get_mean_interval(
@@ -32,12 +32,11 @@ def get_rate_percentage_life(scenarios_df, scenario_name, sim_duration):
                          '(average incidence after epidemic warm-up)'.format(ab),
             interval_type='p', deci=1, form='%'))
 
-    life=[]
-    life.append(scenarios_df.get_mean_interval(
+    life = [scenarios_df.get_mean_interval(
         scenario_name=scenario_name,
         outcome_name='Time-averaged proportion of cases treated successfully with CIP, TET, or CRO '
                      '(average incidence after epidemic warm-up)',
-        interval_type='p', deci=1, multiplier=sim_duration))
+        interval_type='p', deci=1, multiplier=sim_duration)]
 
     for ab in ANTIBIOTICS:
         life.append(
@@ -52,7 +51,6 @@ def get_rate_percentage_life(scenarios_df, scenario_name, sim_duration):
 
 
 def get_perc_change_rate_life(scenarios_df, scenario_name_base, scenario_name_new):
-
     perc_change_rate = scenarios_df.get_relative_diff_mean_interval(
         scenario_name_base=scenario_name_base,
         scenario_names=scenario_name_new,
