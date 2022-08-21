@@ -14,7 +14,7 @@ different test characteristics. The results will be save under
 X_RANGE_WITH_M = [-0.1, 6.1]
 Y_RANGE_WITH_M = [-250, 1750]
 X_RANGE_NO_M = [-0.1, 6.1]
-Y_RANGE_NO_M = [-4000, 500]
+Y_RANGE_NO_M = [-5000, 500]
 
 
 def plot_by_sens_spec_coverage(if_m_available_for_1st_tx, ab,

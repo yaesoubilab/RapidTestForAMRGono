@@ -8,20 +8,17 @@ param_csvfile = ROOT_DIR + '/analysis/outputs/with M-25yrs/summary/parameter_val
 
 # selected parameters to include in partial rank correlation analysis
 selected_params = [
-    'Sensitivity distribution for CIP',
-    'Specificity distribution for CIP',
-    'Sensitivity distribution for TET',
-    'Specificity distribution for TET',
-    'Initial prevalence',
-    'Initial % I by symptom states-0',
     'Transmission parameter',
-    'Exponent for the prob of resistance by antibiotics-0',
-    'Exponent for the prob of resistance by antibiotics-1',
-    'Exponent for the prob of resistance by antibiotics-2',
-    'Prob symptomatic',
     'Time until natural recovery',
     'Time until screened',
     'Time until seeking treatment (symptomatic)',
+    'Time until seeking retreatment (symptomatic)',
+    'Prob symptomatic',
+    'Initial prevalence',
+    'Initial % I by symptom states-0',
+    'Exponent for the prob of resistance by antibiotics-0',
+    'Exponent for the prob of resistance by antibiotics-1',
+    'Exponent for the prob of resistance by antibiotics-2',
     'Fitness-f_min-1',
     'Fitness-f_min-2',
     'Fitness-f_min-3',
@@ -29,7 +26,6 @@ selected_params = [
     'Fitness-f_min-5',
     'Fitness-f_min-6',
     'Fitness-f_min-7',
-    'Fitness-b-0',
     'Fitness-b-1',
     'Fitness-b-2',
     'Fitness-b-3',
@@ -37,7 +33,6 @@ selected_params = [
     'Fitness-b-5',
     'Fitness-b-6',
     'Fitness-b-7',
-    'Fitness-t_mid-0',
     'Fitness-t_mid-1',
     'Fitness-t_mid-2',
     'Fitness-t_mid-3',
@@ -45,6 +40,10 @@ selected_params = [
     'Fitness-t_mid-5',
     'Fitness-t_mid-6',
     'Fitness-t_mid-7',
+    'Sensitivity distribution for CIP',
+    'Specificity distribution for CIP',
+    'Sensitivity distribution for TET',
+    'Specificity distribution for TET'
 ]
 
 # create a dictionary of all parameters along with their values
