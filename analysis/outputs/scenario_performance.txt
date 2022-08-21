@@ -1,0 +1,60 @@
+
+ --- With M p(0, 0) q(1, 1) c0.png ---
+
+Simulation run time (seconds): 3.57089 (3.03369, 4.04305)
+Rate of gonorrhea cases (average incidence after epidemic warm-up):  0.066017 (0.051751, 0.078511)
+Time-averaged proportion of cases CIP-S (average incidence after epidemic warm-up):  0.72243 (0.5686, 0.87282)
+Time-averaged proportion of cases TET-S (average incidence after epidemic warm-up):  0.17831 (0.11972, 0.26195)
+Time-averaged proportion of cases CRO-S (average incidence after epidemic warm-up):  0.95206 (0.91594, 0.96778)
+Time-averaged proportion of cases CIP/TET-NS (average incidence after epidemic warm-up):  0.79923 (0.71456, 0.86598)
+Time-averaged proportion of cases treated successfully with CIP, TET, or CRO (average incidence after epidemic warm-up):  0.49056 (0.3384, 0.63326)
+Time-averaged proportion of cases treated successfully with CIP (average incidence after epidemic warm-up):  0 (0, 0)
+Time-averaged proportion of cases treated successfully with TET (average incidence after epidemic warm-up):  0 (0, 0)
+Time-averaged proportion of cases treated successfully with CRO (average incidence after epidemic warm-up):  0.49056 (0.3384, 0.63326)
+Duration of 1st line therapy with CRO (after epidemic warm-up):  11.375 (7.575, 15)
+Duration of 1st line therapy with Drug M (after epidemic warm-up):  12.625 (9, 16.425)
+
+ --- With M p(None, None) q(None, None) c0.75.png ---
+
+Simulation run time (seconds): 4.86748 (4.22699, 5.50212)
+Rate of gonorrhea cases (average incidence after epidemic warm-up):  0.070305 (0.055489, 0.085651)
+Time-averaged proportion of cases CIP-S (average incidence after epidemic warm-up):  0.66705 (0.48415, 0.82542)
+Time-averaged proportion of cases TET-S (average incidence after epidemic warm-up):  0.15602 (0.10261, 0.22993)
+Time-averaged proportion of cases CRO-S (average incidence after epidemic warm-up):  0.96325 (0.92763, 0.98071)
+Time-averaged proportion of cases CIP/TET-NS (average incidence after epidemic warm-up):  0.84748 (0.77366, 0.90247)
+Time-averaged proportion of cases treated successfully with CIP, TET, or CRO (average incidence after epidemic warm-up):  0.61379 (0.39636, 0.85107)
+Time-averaged proportion of cases treated successfully with CIP (average incidence after epidemic warm-up):  0.2633 (0.14575, 0.41476)
+Time-averaged proportion of cases treated successfully with TET (average incidence after epidemic warm-up):  0.030211 (0.017742, 0.047449)
+Time-averaged proportion of cases treated successfully with CRO (average incidence after epidemic warm-up):  0.32028 (0.21779, 0.42825)
+Duration of 1st line therapy with CRO (after epidemic warm-up):  14.453 (9, 20.425)
+Duration of 1st line therapy with Drug M (after epidemic warm-up):  9.5469 (3.575, 15)
+
+ --- No M p(0, 0) q(1, 1) c0.png ---
+
+Simulation run time (seconds): 3.76470 (3.12114, 4.16638)
+Rate of gonorrhea cases (average incidence after epidemic warm-up):  0.16815 (0.080343, 0.32128)
+Time-averaged proportion of cases CIP-S (average incidence after epidemic warm-up):  0.7186 (0.57175, 0.86758)
+Time-averaged proportion of cases TET-S (average incidence after epidemic warm-up):  0.16712 (0.12047, 0.26279)
+Time-averaged proportion of cases CRO-S (average incidence after epidemic warm-up):  0.66992 (0.46534, 0.83177)
+Time-averaged proportion of cases CIP/TET-NS (average incidence after epidemic warm-up):  0.64957 (0.4686, 0.78121)
+Time-averaged proportion of cases treated successfully with CIP, TET, or CRO (average incidence after epidemic warm-up):  0.70035 (0.49334, 0.86008)
+Time-averaged proportion of cases treated successfully with CIP (average incidence after epidemic warm-up):  0 (0, 0)
+Time-averaged proportion of cases treated successfully with TET (average incidence after epidemic warm-up):  0 (0, 0)
+Time-averaged proportion of cases treated successfully with CRO (average incidence after epidemic warm-up):  0.70035 (0.49334, 0.86008)
+Duration of 1st line therapy with CRO (after epidemic warm-up):  24 (24, 24)
+Duration of 1st line therapy with Drug M (after epidemic warm-up):  0 (0, 0)
+
+ --- No M p(None, None) q(None, None) c0.75.png ---
+
+Simulation run time (seconds): 6.18693 (5.74715, 6.58962)
+Rate of gonorrhea cases (average incidence after epidemic warm-up):  0.13014 (0.062314, 0.27626)
+Time-averaged proportion of cases CIP-S (average incidence after epidemic warm-up):  0.54209 (0.34989, 0.7424)
+Time-averaged proportion of cases TET-S (average incidence after epidemic warm-up):  0.12246 (0.075276, 0.19076)
+Time-averaged proportion of cases CRO-S (average incidence after epidemic warm-up):  0.78641 (0.53854, 0.96915)
+Time-averaged proportion of cases CIP/TET-NS (average incidence after epidemic warm-up):  0.88036 (0.8123, 0.92754)
+Time-averaged proportion of cases treated successfully with CIP, TET, or CRO (average incidence after epidemic warm-up):  0.81293 (0.5714, 0.97789)
+Time-averaged proportion of cases treated successfully with CIP (average incidence after epidemic warm-up):  0.35129 (0.22115, 0.49043)
+Time-averaged proportion of cases treated successfully with TET (average incidence after epidemic warm-up):  0.041181 (0.025271, 0.064424)
+Time-averaged proportion of cases treated successfully with CRO (average incidence after epidemic warm-up):  0.42047 (0.28144, 0.54398)
+Duration of 1st line therapy with CRO (after epidemic warm-up):  24 (24, 24)
+Duration of 1st line therapy with Drug M (after epidemic warm-up):  0 (0, 0)

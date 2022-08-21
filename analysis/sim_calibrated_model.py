@@ -1,6 +1,7 @@
 import sys
 
 from deampy.in_out_functions import make_directory
+
 from definitions import SIM_DURATION, ROOT_DIR
 from model.model_settings import GonoSettings
 from model.support import simulate_calibrated_model
@@ -10,7 +11,7 @@ To simulate different scenarios with respect to the characteristics of rapid tes
 (sensitivity, specificity, coverage) 
 """
 
-N_OF_TRAJS = 16   # number of trajectories to simulate
+N_OF_TRAJS = 64   # number of trajectories to simulate
 
 
 def simulate_calibrated(cip_sens=None, cip_spec=None,
