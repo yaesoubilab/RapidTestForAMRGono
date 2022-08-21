@@ -1,7 +1,7 @@
 import apacepy.analysis.scenarios as scen
-
 from deampy.in_out_functions import write_csv
-from definitions import get_scenario_name, ANTIBIOTICS, get_name_of_sensitivity_analysis
+from deampy.sensitivity_analysis import SensitivityAnalysis
+from definitions import ROOT_DIR, get_scenario_name, ANTIBIOTICS, get_name_of_sensitivity_analysis
 
 SCENARIO_COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
 
@@ -307,3 +307,18 @@ def get_sa_scenarios_with_specific_spec_coverage_ab(
         if_show_fitted_curve=False,
         labels_shift_x=0.01,
         labels_shift_y=0.01)
+
+
+def print_corr(scenarios, dict_select_params, outcome, outcome_label):
+
+    # find the increase in effective lifespan
+    increase = scenarios.scenarios['(p=None, None), q=(None, None), c=0.750)'].outcomes[outcome] - \
+               scenarios.scenarios['Status quo (no rapid test)'].outcomes[outcome]
+    print('Increase in {}:'.format(outcome_label), sum(increase) / len(increase))
+
+    # calculate the partial correlation coefficients of all parameters
+    sa = SensitivityAnalysis(dic_parameter_values=dict_select_params,
+                             output_values=increase)
+
+    sa.export_to_csv(corrs=['r', 'p', 'pr'], decimal=4,
+                     file_name=ROOT_DIR + '/analysis/outputs/partial_corr_{}.csv'.format(outcome_label))
