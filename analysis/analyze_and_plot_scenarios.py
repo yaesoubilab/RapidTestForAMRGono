@@ -12,18 +12,19 @@ different test characteristics. The results will be save under
 
 
 X_RANGE_WITH_M = [-0.1, 6.1]
-Y_RANGE_WITH_M = [-250, 1750]
+Y_RANGE_WITH_M = [-250, 2000]
 X_RANGE_NO_M = [-0.1, 6.1]
 Y_RANGE_NO_M = [-5000, 500]
 
 
-def plot_by_sens_spec_coverage(if_m_available_for_1st_tx, ab,
+def plot_by_sens_spec_coverage(if_m_available_for_1st_tx, ab, include_sens_labels,
                                sim_duration=None, calibration_seed=None):
     """
     plots a 3-panel figure of cost-effectiveness planes visualizing the performance of the rapid test for
         the specified scenario for the availability of M
     :param if_m_available_for_1st_tx: (bool) if M is available for the first-line therapy
     :param ab: (string) 'CIP' or 'TET'
+    :param include_sens_labels: (bool) set to True to show the sensitivity values on the figure
     :param sim_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     """
@@ -45,7 +46,8 @@ def plot_by_sens_spec_coverage(if_m_available_for_1st_tx, ab,
         y_range = Y_RANGE_NO_M
 
     plot_sa_for_specific_ab(
-        ab=ab, csv_file_name=csv_file_name, fig_file_name=fig_file_name,
+        ab=ab, include_sens_labels=include_sens_labels,
+        csv_file_name=csv_file_name, fig_file_name=fig_file_name,
         x_range=x_range, y_range=y_range,
         l_b_r_t=(0.1, 0.15, 0.97, 0.9), fig_size=TRIPLE_FIG_SIZE)
 
@@ -111,6 +113,7 @@ def plot_by_sens_spec(
         #  the specified scenario for the availability of M
         plot_by_sens_spec_coverage(
             ab=ab,
+            include_sens_labels=True if ab == 'CIP' else False,
             if_m_available_for_1st_tx=if_m_available,
             sim_duration=simulation_duration,
             calibration_seed=calibration_seed
@@ -133,6 +136,7 @@ def plot_by_sens_spec(
                 csv_file_name=csv_file_name,
                 fig_file_name=fig_file_name,
                 ab=ab,
+                include_sens_labels=True if ab == 'CIP' else False,
                 test_coverage=c,
                 x_range=x_range,
                 y_range=y_range)
@@ -142,7 +146,7 @@ if __name__ == "__main__":
 
     # plot for when sensitivity and specificity of tests have Beta distribution
     export_summary_and_plots_for_varying_coverage(
-        if_m_available=True, simulation_duration=SIM_DURATION)
+        if_m_available=True,  simulation_duration=SIM_DURATION)
 
     export_summary_and_plots_for_varying_coverage(
         if_m_available=True, simulation_duration=35)

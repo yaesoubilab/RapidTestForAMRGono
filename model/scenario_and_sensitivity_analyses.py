@@ -1,6 +1,7 @@
 import apacepy.analysis.scenarios as scen
 from deampy.in_out_functions import write_csv
 from deampy.sensitivity_analysis import SensitivityAnalysis
+
 from definitions import ROOT_DIR, get_scenario_name, ANTIBIOTICS, get_name_of_sensitivity_analysis
 
 SCENARIO_COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
@@ -274,13 +275,14 @@ def get_sa_scenarios_varying_coverage(scenarios_df, color):
 
 
 def get_sa_scenarios_with_specific_spec_coverage_ab(
-        scenarios_df, spec, test_coverage, ab, color):
+        scenarios_df, spec, test_coverage, ab, color, include_sens_labels):
     """
     :param scenarios_df: dataframe of simulated scenarios
     :param spec: (float) specificity
     :param test_coverage: (float) test coverage
     :param ab: (string): 'CIP' or 'TET'
     :param color: (string) color of set
+    :param include_sens_labels: (bool) set to True to show the sensitivity values on the figure
     :return: set of scenarios varying sensitivity for the specified specificity and test coverage
     """
 
@@ -299,7 +301,8 @@ def get_sa_scenarios_with_specific_spec_coverage_ab(
         conditions_on_variables=[
             scen.ConditionOnVariable(var_name='{}-sens'.format(other_ab), values=[None, '']),
             scen.ConditionOnVariable(var_name='{}-spec'.format(other_ab), values=[None, '']),
-            scen.ConditionOnVariable(var_name='{}-sens'.format(ab), if_included_in_label=True, label_format='{:.2f}'),
+            scen.ConditionOnVariable(var_name='{}-sens'.format(ab),
+                                     if_included_in_label=include_sens_labels, label_format='{:.2f}'),
             scen.ConditionOnVariable(var_name='{}-spec'.format(ab), values=[spec]),
             scen.ConditionOnVariable(var_name='rapid test coverage', values=[test_coverage])
         ],

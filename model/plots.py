@@ -1,14 +1,15 @@
 import apacepy.analysis.scenarios as scen
 import apacepy.analysis.trajectories as traj
 import apacepy.analysis.visualize_scenarios as vis
+
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
     SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, COLOR_VARYING_COVERAGE, \
     CIP_SPEC_VALUES, TET_SPEC_VALUES, COLOR_BY_SPEC, SINGLE_FIG_SIZE, \
     EFFECT_OUTCOME, COST_OUTCOME, EFFECT_COST_LABELS, EFFECT_COST_LABELS_NO_LINE_BREAK
 from model import data as D
-from model.scenario_and_sensitivity_analyses import get_rate_percentage_life, get_sa_scenarios_with_specific_spec_coverage_ab, \
+from model.scenario_and_sensitivity_analyses import get_rate_percentage_life, \
+    get_sa_scenarios_with_specific_spec_coverage_ab, \
     get_sa_scenarios_varying_coverage
-
 
 traj.SUBPLOT_W_SPACE = 0.25
 scen.POLY_DEGREES = 1
@@ -184,13 +185,14 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_r
         fig_size=SINGLE_FIG_SIZE)
 
 
-def plot_sa_for_specific_ab_and_coverage(csv_file_name, fig_file_name, ab, test_coverage,
+def plot_sa_for_specific_ab_and_coverage(csv_file_name, fig_file_name, ab, test_coverage, include_sens_labels,
                                          x_range, y_range, print_all_scenarios=False):
     """ plots the cost-effectiveness figure for a specific antibiotic and test coverage
     :param csv_file_name: (string) csv filename where the summary of simulated scenarios are located
     :param fig_file_name: (string) filename of the figure to save the results as
     :param ab: (string) 'CIP' or 'TET'
     :param test_coverage: (float) specific value of test coverage
+    :param include_sens_labels: (bool) set to True to show the sensitivity values on the figure
     :param x_range: range of x-axis
     :param y_range: range of y-axis
     :param print_all_scenarios: (bool) set True to print the performance of different scenarios
@@ -222,7 +224,9 @@ def plot_sa_for_specific_ab_and_coverage(csv_file_name, fig_file_name, ab, test_
     for i, spec in enumerate(spec_values):
         list_of_scenario_sets.append(
             get_sa_scenarios_with_specific_spec_coverage_ab(
-                scenarios_df=scenarios_df, spec=spec, test_coverage=test_coverage, ab=ab, color=COLOR_BY_SPEC[i])
+                scenarios_df=scenarios_df, spec=spec,
+                test_coverage=test_coverage, ab=ab, color=COLOR_BY_SPEC[i],
+                include_sens_labels=include_sens_labels)
         )
 
     vis.plot_sets_of_scenarios(
@@ -241,7 +245,7 @@ def plot_sa_for_specific_ab_and_coverage(csv_file_name, fig_file_name, ab, test_
         fig_size=SINGLE_FIG_SIZE)
 
 
-def plot_sa_for_specific_ab(ab, csv_file_name, fig_file_name,
+def plot_sa_for_specific_ab(ab, include_sens_labels,  csv_file_name, fig_file_name,
                             x_range=None, y_range=None, l_b_r_t=None, fig_size=None):
 
     # read scenarios into a dataframe
@@ -262,7 +266,8 @@ def plot_sa_for_specific_ab(ab, csv_file_name, fig_file_name,
         for i, spec in enumerate(spec_values):
             list_of_scenario_sets.append(
                 get_sa_scenarios_with_specific_spec_coverage_ab(
-                    scenarios_df=scenarios_df, spec=spec, test_coverage=c, ab=ab, color=COLOR_BY_SPEC[i])
+                    scenarios_df=scenarios_df, spec=spec, test_coverage=c, ab=ab, color=COLOR_BY_SPEC[i],
+                    include_sens_labels=include_sens_labels)
             )
         list_list_series.append(list_of_scenario_sets)
 
