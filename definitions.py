@@ -33,9 +33,9 @@ TRIPLE_FIG_SIZE = (8, 3.5)
 EFFECT_OUTCOME = 'Time-averaged proportion of cases treated successfully with CIP, TET, or CRO ' \
                  '(average incidence after epidemic warm-up)'
 COST_OUTCOME = 'Rate of gonorrhea cases (average incidence after epidemic warm-up)'
-EFFECT_COST_LABELS = ('Change in the effective lifespan of\n first-line antibiotics (years)',
+EFFECT_COST_LABELS = ('Change in the combined effective lifespan of\n first-line antibiotics (years)',
                       'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)')
-EFFECT_COST_LABELS_NO_LINE_BREAK = ('Change in the effective lifespan of first-line antibiotics (years)',
+EFFECT_COST_LABELS_NO_LINE_BREAK = ('Change in the combined effective lifespan of first-line antibiotics (years)',
                                     'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)')
 
 
