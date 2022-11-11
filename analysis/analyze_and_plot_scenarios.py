@@ -109,16 +109,6 @@ def plot_by_sens_spec(
 
     for ab in ('CIP', 'TET'):
 
-        #  plots a 3-panel figure of cost-effectiveness planes visualizing the performance of the rapid test for
-        #  the specified scenario for the availability of M
-        plot_by_sens_spec_coverage(
-            ab=ab,
-            include_sens_labels=True if ab == 'CIP' else False,
-            if_m_available_for_1st_tx=if_m_available,
-            sim_duration=simulation_duration,
-            calibration_seed=calibration_seed
-        )
-
         for c in COVERAGE_VALUES:
             # plot a cost-effectiveness plan visualizing the performance of the rapid test for
             # the specified scenario for the availability of M, test coverage, and the antibiotic
@@ -141,6 +131,18 @@ def plot_by_sens_spec(
                 x_range=x_range,
                 y_range=y_range)
 
+    for ab in ('CIP', 'TET'):
+
+        #  plots a 3-panel figure of cost-effectiveness planes visualizing the performance of the rapid test for
+        #  the specified scenario for the availability of M
+        plot_by_sens_spec_coverage(
+            ab=ab,
+            include_sens_labels=True if ab == 'CIP' else False,
+            if_m_available_for_1st_tx=if_m_available,
+            sim_duration=simulation_duration,
+            calibration_seed=calibration_seed
+        )
+
 
 if __name__ == "__main__":
 
@@ -148,18 +150,18 @@ if __name__ == "__main__":
     export_summary_and_plots_for_varying_coverage(
         if_m_available=True,  simulation_duration=SIM_DURATION)
 
-    export_summary_and_plots_for_varying_coverage(
-        if_m_available=True, simulation_duration=35)
-
-    export_summary_and_plots_for_varying_coverage(
-        if_m_available=True, simulation_duration=SIM_DURATION, calibration_seed=1)
-
-    export_summary_and_plots_for_varying_coverage(
-        if_m_available=False, simulation_duration=SIM_DURATION)
-
-    export_summary_and_plots_for_varying_coverage(
-        if_m_available=False, simulation_duration=35)
-
+    # export_summary_and_plots_for_varying_coverage(
+    #     if_m_available=True, simulation_duration=35)
+    #
+    # export_summary_and_plots_for_varying_coverage(
+    #     if_m_available=True, simulation_duration=SIM_DURATION, calibration_seed=1)
+    #
+    # export_summary_and_plots_for_varying_coverage(
+    #     if_m_available=False, simulation_duration=SIM_DURATION)
+    #
+    # export_summary_and_plots_for_varying_coverage(
+    #     if_m_available=False, simulation_duration=35)
+    #
     plot_by_sens_spec(
         if_m_available=True,
         simulation_duration=SIM_DURATION)
