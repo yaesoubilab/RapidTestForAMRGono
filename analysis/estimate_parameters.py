@@ -1,5 +1,5 @@
 from calibrate import N_OF_RESAMPLES_FOR_PARAM_ESTIMATION
-from definitions import get_scenario_name, ROOT_DIR
+from definitions import get_scenario_name, ROOT_DIR, SIM_DURATION
 from model.support import estimate_parameters
 
 """
@@ -11,7 +11,8 @@ and to plot the the posterior distribution and correlation between parameters
 def estimate_parameters_of_a_scenario(if_m_available, calibration_seed):
 
     # scenario name
-    scenario_name = get_scenario_name(if_m_available=if_m_available, calibration_seed=calibration_seed)
+    scenario_name = get_scenario_name(
+        if_m_available=if_m_available, sim_duration=SIM_DURATION, calibration_seed=calibration_seed)
 
     calibration_folder = ROOT_DIR+'/analysis/outputs/{}/calibration'.format(scenario_name)
 

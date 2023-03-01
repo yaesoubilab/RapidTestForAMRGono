@@ -108,11 +108,16 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
 
     perc_cases_by_rest_profile = []
     for p in range(len(REST_PROFILES)):
+
+        y_range = (0, 80)
+        if p in (3, 5, 6, 7):
+            y_range = (0, 20)
+
         perc_cases_by_rest_profile.append(traj.TrajPlotInfo(
             outcome_name='Proportion of cases resistant to '+REST_PROFILES[p],
             title='Cases with profile\n{} (%)'.format(REST_PROFILES[p]),
             x_multiplier=obs_incd_multiplier,
-            y_multiplier=100, y_range=(0, 100),
+            y_multiplier=100, y_range=y_range,
             calibration_info=traj.CalibrationTargetPlotInfo(
                 rows_of_data=D.PercResistProfile[REST_PROFILES[p]]))
         )
@@ -121,15 +126,17 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
         outcome_name='Proportion of cases CRO-NS',
         title='Cases with CRO-NS (%)',
         x_multiplier=obs_incd_multiplier,
-        y_multiplier=100, y_range=(0, 100))
+        y_multiplier=100, y_range=(0, 50))
 
     calibration_filename = dir_of_traj_figs+'/(summary) ' + filename
 
-    list_plot_info = [prev, gono_rate, perc_symp] + perc_cases_by_rest_profile + [perc_cases_rest_cro]
+    list_plot_info = [prev, gono_rate, perc_symp, perc_cases_rest_cro] \
+                     + perc_cases_by_rest_profile[0:3] + [perc_cases_by_rest_profile[4]] \
+                     + [perc_cases_by_rest_profile[3]] + perc_cases_by_rest_profile[5:8]
 
-    sim_outcomes.plot_multi_panel(n_rows=4, n_cols=3,
+    sim_outcomes.plot_multi_panel(n_rows=3, n_cols=4,
                                   list_plot_info=list_plot_info,
-                                  figure_size=(3*2.2, 4*2.3), show_subplot_labels=True,
+                                  figure_size=(4*2.1, 3*2.1), show_subplot_labels=True,
                                   file_name=calibration_filename)
 
     # ------------- Successful treatment with different antibiotics ---------------
