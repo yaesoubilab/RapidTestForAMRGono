@@ -9,13 +9,14 @@ class GonoSettings(ModelSettings):
     """ settings of the gonorrhea model """
 
     def __init__(self, if_calibrating=False, collect_traj_of_comparts=True,
-                 if_m_available_for_1st_tx=False, sim_duration=None, calibration_seed=None):
+                 if_m_available_for_1st_tx=False, sim_duration=None, calibration_seed=None, if_wider_prior=False):
         """
         :param if_calibrating: (bool) if calibrating the model
         :param collect_traj_of_comparts: (bool) if collect the trajectories of all compartments
         :param if_m_available_for_1st_tx: (bool) if M is available for 1st_tx
         :param sim_duration: (float) simulation duration (for sensitivity analysis)
         :param calibration_seed: (int) calibration seed (for sensitivity analysis)
+        :param if_wider_prior: (bool) set to True for using wider prior distribution (for sensitivity analysis)
         """
 
         ModelSettings.__init__(self)
@@ -50,6 +51,9 @@ class GonoSettings(ModelSettings):
         # probability of receiving a rapid test
         self.probRapidTest = 0 if if_calibrating else 1
 
+        # adjusting the transmission parameter
+        self.transmissionFactor = 1
+
         # if M is available for the 1st-Tx
         self.ifMAvailableFor1stTx = if_m_available_for_1st_tx
         self.switchThreshold = 0.05
@@ -57,10 +61,12 @@ class GonoSettings(ModelSettings):
         # folders
         scenario_name = get_scenario_name(if_m_available=self.ifMAvailableFor1stTx,
                                           sim_duration=self.simulationDuration,
-                                          calibration_seed=self.calibSeed)
+                                          calibration_seed=self.calibSeed,
+                                          if_wider_priors=if_wider_prior)
         calib_scenario = get_scenario_name(if_m_available=True,
-                                                               sim_duration=None,
-                                                               calibration_seed=self.calibSeed)
+                                           sim_duration=None,
+                                           calibration_seed=self.calibSeed,
+                                           if_wider_priors=if_wider_prior)
 
         self.folderToSaveTrajs = 'outputs/{}/trajectories'.format(scenario_name)
         self.folderToSaveSummary = 'outputs/{}/summary'.format(scenario_name)
@@ -73,6 +79,7 @@ class GonoSettings(ModelSettings):
         # calibration targets
         if if_calibrating:
             self.simulationDuration = END_OF_CALIB
+            self.ifWiderPrior = if_wider_prior
             self.prevMean = []
             self.prevN = []
             self.gonoRateMean = []
@@ -116,7 +123,7 @@ class GonoSettings(ModelSettings):
                                                           u=PercSymptomatic[j][3],
                                                           multiplier=0.01))
 
-    def update_settings(self, cip_sens, cip_spec, tet_sens, tet_spec, prob_rapid_test=0):
+    def update_settings(self, cip_sens, cip_spec, tet_sens, tet_spec, prob_rapid_test=0, transmission_factor=1):
         """
         updates certain model parameters and settings
         :param cip_sens: (float) sensitivity of the rapid test for CIP susceptibility
@@ -124,6 +131,7 @@ class GonoSettings(ModelSettings):
         :param tet_sens: (float) sensitivity of the rapid test for TET susceptibility
         :param tet_spec: (float) specificity of the rapid test for TET susceptibility
         :param prob_rapid_test: (float) probability of receiving a rapid test
+        :param transmission_factor: (float) to increase or decrease the transmission parameter for sensitivity analysis
         """
 
         self.sensCIP = cip_sens
@@ -131,6 +139,7 @@ class GonoSettings(ModelSettings):
         self.sensTET = tet_sens
         self.specTET = tet_spec
         self.probRapidTest = prob_rapid_test
+        self.transmissionFactor = transmission_factor
 
     @staticmethod
     def get_list_mean_ci_of_resistance(file_name):

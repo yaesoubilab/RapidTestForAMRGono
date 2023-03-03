@@ -73,7 +73,9 @@ class Parameters(EpiParameters):
             parameters=self.percIConstant)
         # --------------------
 
-        # infectivity parameters
+        # transmission parameters
+        self.transmFactor = Constant(model_sets.transmissionFactor) # to adjust transmission for sensitivity analysis
+        self.transmBase = Uniform(0.5, 3)  # baseline infectivity
         self.transm = Uniform(0.5, 3)  # baseline infectivity
 
         # relative infectivity of resistance profiles to susceptible
@@ -124,6 +126,9 @@ class Parameters(EpiParameters):
         self.build_dict_of_params()
 
     def calculate_dependent_params(self, model_sets):
+
+        # transmission
+        self.transm = Product(parameters=[self.transmBase, self.transmFactor])
 
         # percent of I0 by resistance profile
         self.percIByRestProfile = []
@@ -219,6 +224,8 @@ class Parameters(EpiParameters):
 
              'Initial % I by resistance profile': self.percIByRestProfile,
              # ----
+             'Transmission parameter-base': self.transmBase,
+             'Transmission factor': self.transmFactor,
              'Transmission parameter': self.transm,
              'Fitness-f_min': self.fitnessFMins,
              'Fitness-b': self.fitnessBs,

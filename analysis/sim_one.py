@@ -16,7 +16,8 @@ CIP_SENS, CIP_SPEC, TET_SENS, TET_SPEC, COVERAGE = 0, 1, 0, 1, 0
 sets = GonoSettings(if_m_available_for_1st_tx=IF_M_AVAILABLE_FOR_FIRST_TX)
 sets.update_settings(cip_sens=CIP_SENS, cip_spec=CIP_SPEC,
                      tet_sens=TET_SENS, tet_spec=TET_SPEC,
-                     prob_rapid_test=COVERAGE)
+                     prob_rapid_test=COVERAGE,
+                     transmission_factor=1.0)
 
 # make an (empty) epidemic model
 model = EpiModel(id=1, settings=sets)
@@ -24,7 +25,7 @@ model = EpiModel(id=1, settings=sets)
 build_model(model)
 
 # simulate
-model.simulate(seed=720098724) # 12- 1802331721.csv
+model.simulate(seed=720098724)
 # export trajectories
 model.export_trajectories()
 

@@ -240,11 +240,12 @@ def get_sens_analysis_names_and_definitions(include_sens_analysis_on_sens_spec=F
     return names, definitions
 
 
-def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None):
+def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None, if_wider_priors=None):
     """
-    :param if_m_available:
-    :param sim_duration:
-    :param calibration_seed:
+    :param if_m_available: (bool) if M is available for first-line therapy
+    :param sim_duration: (float) simulation duration
+    :param calibration_seed: (int or None) calibration seed (for sensitivity analysis)
+    :param if_wider_priors: (bool) set to True if the winder prior distributions should be used
     :return: the name the scenario being simulated
     """
 
@@ -260,5 +261,8 @@ def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None):
 
     if calibration_seed is not None:
         name += '-{}seed'.format(calibration_seed)
+
+    if if_wider_priors is not None:
+        name += '-wider priors'
 
     return name

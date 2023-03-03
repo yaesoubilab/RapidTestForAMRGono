@@ -15,25 +15,28 @@ The results will be saved under analysis/outputs/with-M or analysis/outputs/no-M
 """
 
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 16*2*100    # total number of trajectories to simulate as part of calibration
-N_OF_TRAJS_TO_USE_FOR_SIMULATION = 16*2*10   # number of trajectories with the highest likelihood to keep
-N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 16*2*10  # number of parameter values to resample for parameter estimation
+N_OF_CALIBRATION_ITERATIONS = 8*1    # total number of trajectories to simulate as part of calibration
+N_OF_TRAJS_TO_USE_FOR_SIMULATION = 4  # 16*2*10   # number of trajectories with the highest likelihood to keep
+N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 4 # 16*2*10  # number of parameter values to resample for parameter estimation
 
 
-def calibrate(if_m_available, calibration_seed):
+def calibrate(if_m_available, calibration_seed, if_wider_priors=False):
     """ calibrate and simulate the calibrated model
     :param if_m_available: (bool) if M is available for first-line therapy
     :param calibration_seed: (int or None) calibration seed (for sensitivity analysis)
+    :param if_wider_priors: (bool) set to True if the winder prior distributions should be used
     """
 
     # scenario name
     scenario_name = get_scenario_name(
-        if_m_available=if_m_available, calibration_seed=calibration_seed, sim_duration=None)
+        if_m_available=if_m_available, calibration_seed=calibration_seed,
+        sim_duration=None, if_wider_priors=if_wider_priors)
 
     # get model settings
     sets = GonoSettings(if_calibrating=True, collect_traj_of_comparts=False,
                         if_m_available_for_1st_tx=if_m_available,
-                        calibration_seed=calibration_seed)
+                        calibration_seed=calibration_seed,
+                        if_wider_prior=if_wider_priors)
     # calibrate under the status quo scenario (no rapid test)
     sets.update_settings(cip_sens=0, cip_spec=1, tet_sens=0, tet_spec=1, prob_rapid_test=0)
 
@@ -83,10 +86,17 @@ def calibrate(if_m_available, calibration_seed):
 if __name__ == "__main__":
 
     # for m_available in [True, False]:
-    for calib_seed in [None, 1]:
+    # for calib_seed in [None, 1]:
+    #
+    #     scenario_name = get_scenario_name(
+    #         if_m_available=True, calibration_seed=calib_seed, sim_duration=None)
+    #     print("\nCalibrating scenario '{}':".format(scenario_name))
+    #
+    #     calibrate(if_m_available=True, calibration_seed=calib_seed)
 
-        scenario_name = get_scenario_name(
-            if_m_available=True, calibration_seed=calib_seed, sim_duration=None)
-        print("\nCalibrating scenario '{}':".format(scenario_name))
+    # calibrating the model using wider prior distributions
+    scenario_name = get_scenario_name(
+        if_m_available=True, calibration_seed=None, sim_duration=None, if_wider_priors=True)
+    print("\nCalibrating scenario '{}':".format(scenario_name))
 
-        calibrate(if_m_available=True, calibration_seed=calib_seed)
+    calibrate(if_m_available=True, calibration_seed=None, if_wider_priors=True)
