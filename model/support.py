@@ -135,10 +135,10 @@ def estimate_parameters(n_of_resamples,
         'Relative infectivity by infectivity profile-1',
         'Relative infectivity by infectivity profile-2',
         'Relative infectivity by infectivity profile-3',
-        'Prob symptomatic',
-        'Exponent for the prob of resistance by antibiotics-0',
-        'Exponent for the prob of resistance by antibiotics-1',
-        'Exponent for the prob of resistance by antibiotics-2'
+        'Prob symptomatic'
+        # 'Exponent for the prob of resistance by antibiotics-0',
+        # 'Exponent for the prob of resistance by antibiotics-1',
+        # 'Exponent for the prob of resistance by antibiotics-2'
     ]
     # print('\nPosterior distributions:')
     # estimator.print_means_and_intervals(param_names=param_list_for_table)
@@ -148,4 +148,5 @@ def estimate_parameters(n_of_resamples,
 
     estimator.plot_pairwise(fig_filename=figure_folder+'/posterior.png',
                             par_names=param_list_for_figure,
-                            prior_info_csv_file=ROOT_DIR + '/model/data/priors.csv')
+                            prior_info_csv_file=ROOT_DIR + '/model/data/priors.csv',
+                            figure_size=(9, 9))
