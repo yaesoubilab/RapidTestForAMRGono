@@ -62,7 +62,6 @@ def calibrate(if_m_available, calibration_seed):
     calibration.save_results()
 
     # estimate parameters and draw histograms
-
     estimate_parameters(n_of_resamples=N_OF_RESAMPLES_FOR_PARAM_ESTIMATION,
                         calibration_summary_file=sets.folderToSaveCalibrationResults+'/calibration_summary.csv',
                         calibration_folder=sets.folderToSaveCalibrationResults,

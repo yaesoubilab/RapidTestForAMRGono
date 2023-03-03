@@ -52,14 +52,15 @@ def plot_by_sens_spec_coverage(if_m_available_for_1st_tx, ab, include_sens_label
         l_b_r_t=(0.1, 0.15, 0.97, 0.9), fig_size=TRIPLE_FIG_SIZE)
 
 
-def export_summary_and_plots_for_varying_coverage(if_m_available,
-                                                  simulation_duration, calibration_seed=None):
+def export_summary_and_plots_for_varying_coverage(
+        if_m_available, simulation_duration, calibration_seed=None, interval='c'):
     """
     exports performance summary and plot the cost-effectiveness figure for varying coverage level under
         this scenario of the availability for M
     :param if_m_available: (bool) if M is available for the first-line therapy
     :param simulation_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
+    :param interval: (string) 'c' for confidence interval and 'p' for prediction interval
     """
 
     # export performance of different scenarios of test characteristics
@@ -88,7 +89,8 @@ def export_summary_and_plots_for_varying_coverage(if_m_available,
         sim_duration=simulation_duration,
         fig_file_name=fig_file_name,
         x_range=x_range,
-        y_range=y_range)
+        y_range=y_range,
+        interval=interval)
 
 
 def plot_by_sens_spec(
@@ -148,7 +150,7 @@ if __name__ == "__main__":
 
     # plot for when sensitivity and specificity of tests have Beta distribution
     export_summary_and_plots_for_varying_coverage(
-        if_m_available=True,  simulation_duration=SIM_DURATION)
+        if_m_available=True,  simulation_duration=SIM_DURATION, interval='c')
 
     # export_summary_and_plots_for_varying_coverage(
     #     if_m_available=True, simulation_duration=35)
@@ -162,6 +164,6 @@ if __name__ == "__main__":
     # export_summary_and_plots_for_varying_coverage(
     #     if_m_available=False, simulation_duration=35)
     #
-    plot_by_sens_spec(
-        if_m_available=True,
-        simulation_duration=SIM_DURATION)
+    # plot_by_sens_spec(
+    #     if_m_available=True,
+    #     simulation_duration=SIM_DURATION)

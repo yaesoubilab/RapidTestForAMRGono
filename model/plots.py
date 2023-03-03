@@ -157,13 +157,14 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
                                   file_name=dir_of_traj_figs+'/(valid-Tx) ' + filename)
 
 
-def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_range, y_range):
+def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_range, y_range, interval='c'):
     """ plots the cost-effectiveness figure for varying test coverage under unknown sensitivity and specificity values
     :param csv_file_name: (string) csv filename where the summary of simulated scenarios are located
     :param sim_duration: (float) simulation duration
     :param fig_file_name: (string) filename of the figure to save the results as
     :param x_range: range of x-axis
     :param y_range: range of y-axis
+    :param interval: (string) 'c' for confidence interval and 'p' for prediction interval
     """
 
     # read scenarios into a dataframe
@@ -184,6 +185,7 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_r
         cost_outcome=COST_OUTCOME,
         labels=EFFECT_COST_LABELS,
         health_measure='u',
+        interval_type=interval,
         x_range=x_range,
         y_range=y_range,
         cost_multiplier=100000,
