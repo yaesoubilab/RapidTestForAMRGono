@@ -79,23 +79,24 @@ class Parameters(EpiParameters):
         self.transm = Uniform(0.5, 3)  # baseline infectivity
 
         # relative infectivity of resistance profiles to susceptible
+        if_base_prior = not model_sets.ifWiderPrior
         self.fitnessFMins[RestProfile.SUS.value] = Constant(1)
-        self.fitnessFMins[RestProfile.CIP.value] = Uniform(0.9, 1)
-        self.fitnessFMins[RestProfile.TET.value] = Uniform(0.9, 1)
-        self.fitnessFMins[RestProfile.CRO.value] = Uniform(0.9, 1)
-        self.fitnessFMins[RestProfile.CIP_TET.value] = Uniform(0.8, 1)
-        self.fitnessFMins[RestProfile.CIP_CRO.value] = Uniform(0.8, 1)
-        self.fitnessFMins[RestProfile.TET_CRO.value] = Uniform(0.8, 1)
-        self.fitnessFMins[RestProfile.CIP_TET_CRO.value] = Uniform(0.7, 1)
+        self.fitnessFMins[RestProfile.CIP.value] = Uniform(0.9, 1) if if_base_prior else Uniform(0.8, 1)
+        self.fitnessFMins[RestProfile.TET.value] = Uniform(0.9, 1) if if_base_prior else Uniform(0.8, 1)
+        self.fitnessFMins[RestProfile.CRO.value] = Uniform(0.9, 1) if if_base_prior else Uniform(0.8, 1)
+        self.fitnessFMins[RestProfile.CIP_TET.value] = Uniform(0.8, 1) if if_base_prior else Uniform(0.7, 1)
+        self.fitnessFMins[RestProfile.CIP_CRO.value] = Uniform(0.8, 1) if if_base_prior else Uniform(0.7, 1)
+        self.fitnessFMins[RestProfile.TET_CRO.value] = Uniform(0.8, 1) if if_base_prior else Uniform(0.7, 1)
+        self.fitnessFMins[RestProfile.CIP_TET_CRO.value] = Uniform(0.7, 1) if if_base_prior else Uniform(0.6, 1)
 
         for p in range(len(RestProfile)):
-            self.fitnessBs[p] = Uniform(0.1, 0.5)
-            self.fitnessTMids[p] = Uniform(7, 13)
+            self.fitnessBs[p] = Uniform(0.1, 0.5) if if_base_prior else Uniform(0.0, 0.7)
+            self.fitnessTMids[p] = Uniform(7, 13) if if_base_prior else Uniform(5, 15)
 
         # exponent of the probability for the emergence of resistance for a drug
-        self.exponProbRes[AB.CIP.value] = Uniform(-5, -3)
-        self.exponProbRes[AB.TET.value] = Uniform(-5, -3)
-        self.exponProbRes[AB.CRO.value] = Uniform(-5, -3)
+        self.exponProbRes[AB.CIP.value] = Uniform(-5, -3) if if_base_prior else Uniform(-6, -2)
+        self.exponProbRes[AB.TET.value] = Uniform(-5, -3) if if_base_prior else Uniform(-6, -2)
+        self.exponProbRes[AB.CRO.value] = Uniform(-5, -3) if if_base_prior else Uniform(-6, -2)
 
         self.probSym = Uniform(0.2, 0.8)  # Constant(0.75)
         self.tToNaturalRecovery = Uniform(1/12, 5)  # Constant(4)
