@@ -15,7 +15,7 @@ The results will be saved under analysis/outputs/with-M or analysis/outputs/no-M
 """
 
 RUN_IN_PARALLEL = True
-N_OF_CALIBRATION_ITERATIONS = 8*1    # total number of trajectories to simulate as part of calibration
+N_OF_CALIBRATION_ITERATIONS = 16*1    # total number of trajectories to simulate as part of calibration
 N_OF_TRAJS_TO_USE_FOR_SIMULATION = 4  # 16*2*10   # number of trajectories with the highest likelihood to keep
 N_OF_RESAMPLES_FOR_PARAM_ESTIMATION = 4 # 16*2*10  # number of parameter values to resample for parameter estimation
 
