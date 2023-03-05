@@ -54,7 +54,7 @@ def calibrate(if_m_available, calibration_seed, if_wider_priors=False):
     print('Run time: {:.2f} seconds for {} trajectories.'.format(calibration.runTime, N_OF_CALIBRATION_ITERATIONS))
 
     # store summary of calibration
-    file = TextFile(filename=ROOT_DIR+'/analysis/outputs/{}/calibration/stats.txt'.format(scenario_name))
+    file = TextFile(filename=ROOT_DIR+'/analysis/outputs/calib-{}/calibration/stats.txt'.format(scenario_name))
     file.write('Number of calibration iterations: {}\n'.format(N_OF_CALIBRATION_ITERATIONS))
     file.write('Number of trajectories discarded: {}\n'.format(calibration.nTrajsDiscarded))
     file.write('Calibration duration (seconds): {}\n'.format(round(calibration.runTime, 1)))
@@ -68,7 +68,7 @@ def calibrate(if_m_available, calibration_seed, if_wider_priors=False):
     estimate_parameters(n_of_resamples=N_OF_RESAMPLES_FOR_PARAM_ESTIMATION,
                         calibration_summary_file=sets.folderToSaveCalibrationResults+'/calibration_summary.csv',
                         calibration_folder=sets.folderToSaveCalibrationResults,
-                        figure_folder='figures/'+scenario_name)
+                        figure_folder='figures/calib-'+scenario_name)
 
     # simulate the calibrated model
     sets = GonoSettings(if_calibrating=False, collect_traj_of_comparts=True,
@@ -86,14 +86,14 @@ def calibrate(if_m_available, calibration_seed, if_wider_priors=False):
 
 if __name__ == "__main__":
 
-    # # for m_available in [True, False]:
-    # for calib_seed in [None, 1]:
-    #
-    #     scenario_name = get_scenario_name(
-    #         if_m_available=True, calibration_seed=calib_seed, sim_duration=None)
-    #     print("\nCalibrating scenario '{}':".format(scenario_name))
-    #
-    #     calibrate(if_m_available=True, calibration_seed=calib_seed)
+    # for m_available in [True, False]:
+    for calib_seed in [None, 1]:
+
+        scenario_name = get_scenario_name(
+            if_m_available=True, calibration_seed=calib_seed, sim_duration=None)
+        print("\nCalibrating scenario '{}':".format(scenario_name))
+
+        calibrate(if_m_available=True, calibration_seed=calib_seed)
 
     # calibrating the model using wider prior distributions
     scenario_name = get_scenario_name(

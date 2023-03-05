@@ -68,10 +68,10 @@ class GonoSettings(ModelSettings):
                                            calibration_seed=self.calibSeed,
                                            if_wider_priors=if_wider_prior)
 
-        self.folderToSaveTrajs = 'outputs/{}/trajectories'.format(scenario_name)
-        self.folderToSaveSummary = 'outputs/{}/summary'.format(scenario_name)
-        self.folderToSaveScenarioAnalysis = 'outputs/{}/scenarios'.format(scenario_name)
-        self.folderToSaveCalibrationResults = 'outputs/{}/calibration'.format(calib_scenario)
+        self.folderToSaveTrajs = 'outputs/sim-{}/trajectories'.format(scenario_name)
+        self.folderToSaveSummary = 'outputs/sim-{}/summary'.format(scenario_name)
+        self.folderToSaveScenarioAnalysis = 'outputs/sim-{}/scenarios'.format(scenario_name)
+        self.folderToSaveCalibrationResults = 'outputs/calib-{}/calibration'.format(calib_scenario)
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET
         self.probTxCIPIfSuspToCIPAndTET = 0.5

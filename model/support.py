@@ -49,8 +49,8 @@ def simulate_multi_trajectories(n, sim_duration=None, calibration_seed=None,
                                       sim_duration=sim_duration,
                                       calibration_seed=calibration_seed,
                                       if_wider_priors=settings.ifWiderPrior)
-    dir_of_traj_files = 'outputs/{}/trajectories'.format(scenario_name)
-    dir_of_traj_figs = 'figures/{}/trajs'.format(scenario_name)
+    dir_of_traj_files = 'outputs/sim-{}/trajectories'.format(scenario_name)
+    dir_of_traj_figs = 'figures/sim-{}/trajs'.format(scenario_name)
 
     # plot trajectories
     plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalence data
