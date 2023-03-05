@@ -240,7 +240,7 @@ def get_sens_analysis_names_and_definitions(include_sens_analysis_on_sens_spec=F
     return names, definitions
 
 
-def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None, if_wider_priors=None):
+def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None, if_wider_priors=False):
     """
     :param if_m_available: (bool) if M is available for first-line therapy
     :param sim_duration: (float) simulation duration
@@ -262,7 +262,7 @@ def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None, 
     if calibration_seed is not None:
         name += '-{}seed'.format(calibration_seed)
 
-    if if_wider_priors is not None:
+    if if_wider_priors:
         name += '-wider priors'
 
     return name

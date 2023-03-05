@@ -47,7 +47,8 @@ def simulate_multi_trajectories(n, sim_duration=None, calibration_seed=None,
     # scenario name
     scenario_name = get_scenario_name(if_m_available=sets.ifMAvailableFor1stTx,
                                       sim_duration=sim_duration,
-                                      calibration_seed=calibration_seed)
+                                      calibration_seed=calibration_seed,
+                                      if_wider_priors=settings.ifWiderPrior)
     dir_of_traj_files = 'outputs/{}/trajectories'.format(scenario_name)
     dir_of_traj_figs = 'figures/{}/trajs'.format(scenario_name)
 

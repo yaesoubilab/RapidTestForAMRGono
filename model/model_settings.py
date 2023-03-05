@@ -77,9 +77,9 @@ class GonoSettings(ModelSettings):
         self.probTxCIPIfSuspToCIPAndTET = 0.5
 
         # calibration targets
+        self.ifWiderPrior = if_wider_prior
         if if_calibrating:
             self.simulationDuration = END_OF_CALIB
-            self.ifWiderPrior = if_wider_prior
             self.prevMean = []
             self.prevN = []
             self.gonoRateMean = []
