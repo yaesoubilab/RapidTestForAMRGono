@@ -23,6 +23,7 @@ TET_SENS_VALUES = (0.5, 0.75, 1.0)
 TET_SPEC_VALUES = (0.9, 0.95, 1.0)
 
 COVERAGE_VALUES = (0.5, 0.75, 1.0)      # coverage
+TRANSMISSION_FACTOR_VALUES = (0.95, 1, 1.05)
 
 # plots
 COLOR_VARYING_COVERAGE = 'blue'
@@ -190,62 +191,83 @@ def get_survey_size(mean, l, u, multiplier=1):
     return var * pow(z/hw, 2)
 
 
-def get_name_of_sensitivity_analysis(cip_sens, cip_spec, tet_sens, tet_spec, coverage):
+def get_name_of_scenario_analysis(cip_sens, cip_spec, tet_sens, tet_spec, coverage, transmission_factor):
+    """
+    :return: the name of this scenario
+    """
 
     cip_sens_name = 'None' if cip_sens is None else '{:.3f}'.format(cip_sens)
     cip_spec_name = 'None' if cip_spec is None else '{:.3f}'.format(cip_spec)
     tet_sens_name = 'None' if tet_sens is None else '{:.3f}'.format(tet_sens)
     tet_spec_name = 'None' if tet_spec is None else '{:.3f}'.format(tet_spec)
 
-    return '(p={}, {}), q=({}, {}), c={:0.3f})'.format(
-        cip_sens_name, tet_sens_name, cip_spec_name, tet_spec_name, coverage)
+    return '(p={}, {}), q=({}, {}), c={:0.3f}, f={:0.2f})'.format(
+        cip_sens_name, tet_sens_name, cip_spec_name, tet_spec_name, coverage, transmission_factor)
 
 
-def get_sens_analysis_names_and_definitions(include_sens_analysis_on_sens_spec=False):
+def get_sens_analysis_names_and_definitions(vary_sens_spec=False, vary_transm_factor=False):
     """
-    :param include_sens_analysis_on_sens_spec: (bool) if include analyses to vary sensitivity and specificity
+    :param vary_sens_spec: (bool) if include analyses to vary sensitivity and specificity
         of CIP and TET
+    :param vary_transm_factor: (bool) if includes analyses to vary transmission factor
     :return: (tuple of two list) (scenario names, scenarios definitions)
         according to:
-        [CIP-sensitivity, CIP-specificity, TET-sensitivity, TET-specificity, coverage of rapid test]
+        [CIP-sensitivity, CIP-specificity,
+        TET-sensitivity, TET-specificity,
+        coverage of rapid test, transmission factor]
     """
 
     names = ['Status quo (no rapid test)']
-    definitions = [[0.0, 1.0, 0.0, 1.0, 0.0]]
+    definitions = [[0.0, 1.0, 0.0, 1.0, 0.0, 1.0]]
 
-    # sensitivity analysis by varying coverage but using beta distributions for
-    # sensitivity and specificity of tests
-    for cov in COVERAGE_VALUES:
-        names.append(get_name_of_sensitivity_analysis(
-            cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None, coverage=cov))
-        definitions.append([None, None, None, None, cov])
+    if not vary_transm_factor:
+        # varying coverage but using beta distributions for sensitivity and specificity of tests
+        for cov in COVERAGE_VALUES:
+            names.append(get_name_of_scenario_analysis(
+                cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None,
+                coverage=cov, transmission_factor=1))
+            definitions.append([None, None, None, None, cov, 1])
 
-    if include_sens_analysis_on_sens_spec:
+    else:
+        # varying transmission factor and coverage but
+        # using beta distributions for sensitivity and specificity of tests
+        for f in TRANSMISSION_FACTOR_VALUES:
+            for cov in COVERAGE_VALUES:
+                names.append(get_name_of_scenario_analysis(
+                    cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None,
+                    coverage=cov, transmission_factor=f))
+                definitions.append([None, None, None, None, cov, f])
+
+    if vary_sens_spec:
         # use beta distributions for CIP and vary characteristics of TET
         for cov in COVERAGE_VALUES:
             for tet_sens in reversed(TET_SENS_VALUES):
                 for tet_spec in TET_SPEC_VALUES:
-                    names.append(get_name_of_sensitivity_analysis(
-                        cip_sens=None, cip_spec=None, tet_sens=tet_sens, tet_spec=tet_spec, coverage=cov))
-                    definitions.append([None, None, tet_sens, tet_spec, cov])
+                    names.append(get_name_of_scenario_analysis(
+                        cip_sens=None, cip_spec=None, tet_sens=tet_sens, tet_spec=tet_spec,
+                        coverage=cov, transmission_factor=1))
+                    definitions.append([None, None, tet_sens, tet_spec, cov, 1])
 
         # use beta distributions for TET and vary characteristics of CIP
         for cov in COVERAGE_VALUES:
             for cip_sens in reversed(CIP_SENS_VALUES):
                 for cip_spec in CIP_SPEC_VALUES:
-                    names.append(get_name_of_sensitivity_analysis(
-                        cip_sens=cip_sens, cip_spec=cip_spec, tet_sens=None, tet_spec=None, coverage=cov))
-                    definitions.append([cip_sens, cip_spec, None, None, cov])
+                    names.append(get_name_of_scenario_analysis(
+                        cip_sens=cip_sens, cip_spec=cip_spec, tet_sens=None, tet_spec=None,
+                        coverage=cov, transmission_factor=1))
+                    definitions.append([cip_sens, cip_spec, None, None, cov, 1])
 
     return names, definitions
 
 
-def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None, if_wider_priors=False):
+def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None,
+                      if_wider_priors=False, trans_factor=None):
     """
     :param if_m_available: (bool) if M is available for first-line therapy
     :param sim_duration: (float) simulation duration
     :param calibration_seed: (int or None) calibration seed (for sensitivity analysis)
     :param if_wider_priors: (bool) set to True if the winder prior distributions should be used
+    :param trans_factor: (float) transmission factor
     :return: the name the scenario being simulated
     """
 
@@ -260,9 +282,12 @@ def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None, 
         name += '-{}yrs'.format(sim_duration)
 
     if calibration_seed is not None:
-        name += '-{}seed'.format(calibration_seed)
+        name += '-seed{}'.format(calibration_seed)
 
     if if_wider_priors:
         name += '-wider priors'
+
+    if trans_factor is not None:
+        name += '-f{}'
 
     return name

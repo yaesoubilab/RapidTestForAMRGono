@@ -2,7 +2,7 @@ from model.plots import plot_trajectories
 
 
 """
-To plot the simulated trajectories available under 
+To plot the simulated trajectories available under 'outputs/sim-with M-25yrs/trajectories'
 """
 
 # plot trajectories
@@ -10,5 +10,6 @@ plot_trajectories(prev_multiplier=1,  # to show weeks on the x-axis of prevalenc
                   incd_multiplier=1,  # to show weeks on the x-axis of incidence data
                   obs_prev_multiplier=1,
                   obs_incd_multiplier=1,
-                  dir_of_traj_files='outputs/with M-25yrs/trajectories',
+                  dir_of_traj_files='outputs/sim-with M-25yrs/trajectories',
+                  # dir_of_traj_figs='',
                   filename='Calibrated.png')

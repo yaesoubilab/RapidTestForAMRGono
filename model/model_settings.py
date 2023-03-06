@@ -70,7 +70,7 @@ class GonoSettings(ModelSettings):
 
         self.folderToSaveTrajs = 'outputs/sim-{}/trajectories'.format(scenario_name)
         self.folderToSaveSummary = 'outputs/sim-{}/summary'.format(scenario_name)
-        self.folderToSaveScenarioAnalysis = 'outputs/sim-{}/scenarios'.format(scenario_name)
+        self.folderToSaveScenarioAnalysis = 'outputs/scen-{}/scenarios'.format(scenario_name)
         self.folderToSaveCalibrationResults = 'outputs/calib-{}/calibration'.format(calib_scenario)
 
         # probability of receiving CIP if someone is susceptible to both CIP and TET

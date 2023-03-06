@@ -2,7 +2,7 @@ import apacepy.analysis.scenarios as scen
 from deampy.in_out_functions import write_csv
 from deampy.sensitivity_analysis import SensitivityAnalysis
 
-from definitions import ROOT_DIR, get_scenario_name, ANTIBIOTICS, get_name_of_sensitivity_analysis
+from definitions import ROOT_DIR, get_scenario_name, ANTIBIOTICS, get_name_of_scenario_analysis
 
 SCENARIO_COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
 
@@ -147,32 +147,31 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
         calibration_seed=calibration_seed
     )
 
-    csv_file_scenarios = 'outputs/{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
-    csv_file_summary = 'outputs/{}/scenarios/performance_summary.csv'.format(scenario_name)
+    csv_file_scenarios = 'outputs/scen-{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
+    csv_file_summary = 'outputs/scen-{}/scenarios/performance_summary.csv'.format(scenario_name)
 
     # read scenarios into a dataframe
     scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_scenarios)
 
     # rows
-    rows = [
-        ['Scenario name',
-         'Rate of gonorrhea cases',
-         '% cases successfully treated with CIP, TET, or CRO',
-         '% cases successfully treated with CIP',
-         '% cases successfully treated with TET',
-         '% cases successfully treated with CRO',
-         'Effective lifespan of CIP, TET, and CRO',
-         'Effective lifespan of CIP',
-         'Effective lifespan of TET',
-         'Effective lifespan of CRO',
-         'delta - Rate of gonorrhea cases',
-         'delta - Effective lifespan of CIP, TET, and CRO',
-         'delta - Effective lifespan of CIP',
-         'delta - Effective lifespan of TET',
-         'delta - Effective lifespan of CRO',
-         ]
-    ]
-
+    # rows = [
+    #     ['Scenario name',
+    #      'Rate of gonorrhea cases',
+    #      '% cases successfully treated with CIP, TET, or CRO',
+    #      '% cases successfully treated with CIP',
+    #      '% cases successfully treated with TET',
+    #      '% cases successfully treated with CRO',
+    #      'Effective lifespan of CIP, TET, and CRO',
+    #      'Effective lifespan of CIP',
+    #      'Effective lifespan of TET',
+    #      'Effective lifespan of CRO',
+    #      'delta - Rate of gonorrhea cases',
+    #      'delta - Effective lifespan of CIP, TET, and CRO',
+    #      'delta - Effective lifespan of CIP',
+    #      'delta - Effective lifespan of TET',
+    #      'delta - Effective lifespan of CRO',
+    #      ]
+    # ]
     rows = [
         ['Scenario name',
          'Rate of gonorrhea cases',
@@ -201,7 +200,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     #
     for test_coverage in coverage_values:
         # scenario name
-        scenario_name = get_name_of_sensitivity_analysis(
+        scenario_name = get_name_of_scenario_analysis(
             cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None, coverage=test_coverage)
 
         # get rate, percentage treated with 1st-line drugs, and lifespan of 1st-line drugs
@@ -224,7 +223,7 @@ def get_scenarios_csv_filename_and_fig_filename(
     """
     :param if_m_available_for_1st_tx: (bool) if M is available for first-line therapy
     :param ab: (string) 'CIP' or 'TET'
-    :param test_coverage: (float) coverage of rapid text
+    :param test_coverage: (float) coverage of rapid test
     :param sim_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     :return: (tuple) name of csv file containing the summary of simulated scenarios,
