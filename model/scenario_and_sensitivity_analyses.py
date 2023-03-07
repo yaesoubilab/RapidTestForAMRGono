@@ -128,13 +128,14 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
 
 
 def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
-                                    simulation_duration, calibration_seed=None):
+                                    simulation_duration, calibration_seed=None, trans_factor=1.0):
     """
     export performance of different scenarios of test characteristics
     :param if_m_available_for_1st_tx: (bool) if m is available for first-line therapy
     :param coverage_values: (float) specific coverage value for the test
     :param simulation_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
+    :param trans_factor: (float) transmission factor
     :return: saves a csv file with the following columns for each scenario:
         (rate of gonorrhea cases, % cases treated with CIP, TET, or CRO, lifespan of CIP, TET, or CRO,
         % increase in cases with respect to the status quo,
@@ -144,7 +145,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     scenario_name = get_scenario_name(
         if_m_available=if_m_available_for_1st_tx,
         sim_duration=simulation_duration,
-        calibration_seed=calibration_seed
+        calibration_seed=calibration_seed,
     )
 
     csv_file_scenarios = 'outputs/scen-{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
@@ -201,7 +202,8 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     for test_coverage in coverage_values:
         # scenario name
         scenario_name = get_name_of_scenario_analysis(
-            cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None, coverage=test_coverage)
+            cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None,
+            coverage=test_coverage, transmission_factor=trans_factor)
 
         # get rate, percentage treated with 1st-line drugs, and lifespan of 1st-line drugs
         rate, prob_success, eff_life = get_rate_percentage_life(
@@ -219,13 +221,15 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
 
 
 def get_scenarios_csv_filename_and_fig_filename(
-        if_m_available_for_1st_tx, ab=None, test_coverage=None, sim_duration=None, calibration_seed=None):
+        if_m_available_for_1st_tx, ab=None, test_coverage=None,
+        sim_duration=None, calibration_seed=None, trans_factor=None):
     """
     :param if_m_available_for_1st_tx: (bool) if M is available for first-line therapy
     :param ab: (string) 'CIP' or 'TET'
     :param test_coverage: (float) coverage of rapid test
     :param sim_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
+    :param trans_factor: (float) transmission factor
     :return: (tuple) name of csv file containing the summary of simulated scenarios,
                  name of figure to save the results as
     """
@@ -243,7 +247,7 @@ def get_scenarios_csv_filename_and_fig_filename(
         else:
             fig_file_name = 'figures/SA/{}-{}-coverage.png'.format(scenario_name, ab)
 
-    csv_file_name = 'outputs/{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
+    csv_file_name = 'outputs/scen-{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
 
     return csv_file_name, fig_file_name
 

@@ -201,7 +201,7 @@ def get_name_of_scenario_analysis(cip_sens, cip_spec, tet_sens, tet_spec, covera
     tet_sens_name = 'None' if tet_sens is None else '{:.3f}'.format(tet_sens)
     tet_spec_name = 'None' if tet_spec is None else '{:.3f}'.format(tet_spec)
 
-    return '(p={}, {}), q=({}, {}), c={:0.3f}, f={:0.2f})'.format(
+    return 'p=({}, {}), q=({}, {}), c={:0.3f}, f={:0.2f})'.format(
         cip_sens_name, tet_sens_name, cip_spec_name, tet_spec_name, coverage, transmission_factor)
 
 
@@ -225,8 +225,8 @@ def get_sens_analysis_names_and_definitions(vary_sens_spec=False, vary_transm_fa
         for cov in COVERAGE_VALUES:
             names.append(get_name_of_scenario_analysis(
                 cip_sens=None, cip_spec=None, tet_sens=None, tet_spec=None,
-                coverage=cov, transmission_factor=1))
-            definitions.append([None, None, None, None, cov, 1])
+                coverage=cov, transmission_factor=1.0))
+            definitions.append([None, None, None, None, cov, 1.0])
 
     else:
         # varying transmission factor and coverage but
@@ -245,8 +245,8 @@ def get_sens_analysis_names_and_definitions(vary_sens_spec=False, vary_transm_fa
                 for tet_spec in TET_SPEC_VALUES:
                     names.append(get_name_of_scenario_analysis(
                         cip_sens=None, cip_spec=None, tet_sens=tet_sens, tet_spec=tet_spec,
-                        coverage=cov, transmission_factor=1))
-                    definitions.append([None, None, tet_sens, tet_spec, cov, 1])
+                        coverage=cov, transmission_factor=1.0))
+                    definitions.append([None, None, tet_sens, tet_spec, cov, 1.0])
 
         # use beta distributions for TET and vary characteristics of CIP
         for cov in COVERAGE_VALUES:
@@ -261,13 +261,14 @@ def get_sens_analysis_names_and_definitions(vary_sens_spec=False, vary_transm_fa
 
 
 def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None,
-                      if_wider_priors=False, trans_factor=None):
+                      if_wider_priors=False, if_varying_transmission_factor=False):
     """
     :param if_m_available: (bool) if M is available for first-line therapy
     :param sim_duration: (float) simulation duration
     :param calibration_seed: (int or None) calibration seed (for sensitivity analysis)
     :param if_wider_priors: (bool) set to True if the winder prior distributions should be used
-    :param trans_factor: (float) transmission factor
+    :param if_varying_transmission_factor: (bool) set to True if transmission factor will be varied
+        (for sensitivity analysis)
     :return: the name the scenario being simulated
     """
 
@@ -287,7 +288,7 @@ def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None,
     if if_wider_priors:
         name += '-wider priors'
 
-    if trans_factor is not None:
-        name += '-f{}'
+    if if_varying_transmission_factor:
+        name += '-varying f'
 
     return name

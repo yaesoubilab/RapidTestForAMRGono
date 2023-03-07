@@ -9,7 +9,8 @@ class GonoSettings(ModelSettings):
     """ settings of the gonorrhea model """
 
     def __init__(self, if_calibrating=False, collect_traj_of_comparts=True,
-                 if_m_available_for_1st_tx=False, sim_duration=None, calibration_seed=None, if_wider_prior=False):
+                 if_m_available_for_1st_tx=False, sim_duration=None, calibration_seed=None,
+                 if_wider_prior=False, if_varying_transmission_factor=False):
         """
         :param if_calibrating: (bool) if calibrating the model
         :param collect_traj_of_comparts: (bool) if collect the trajectories of all compartments
@@ -17,6 +18,8 @@ class GonoSettings(ModelSettings):
         :param sim_duration: (float) simulation duration (for sensitivity analysis)
         :param calibration_seed: (int) calibration seed (for sensitivity analysis)
         :param if_wider_prior: (bool) set to True for using wider prior distribution (for sensitivity analysis)
+        :param if_varying_transmission_factor: (bool) set to True if transmission factor will be varied
+            (for sensitivity analysis)
         """
 
         ModelSettings.__init__(self)
@@ -62,7 +65,8 @@ class GonoSettings(ModelSettings):
         scenario_name = get_scenario_name(if_m_available=self.ifMAvailableFor1stTx,
                                           sim_duration=self.simulationDuration,
                                           calibration_seed=self.calibSeed,
-                                          if_wider_priors=if_wider_prior)
+                                          if_wider_priors=if_wider_prior,
+                                          if_varying_transmission_factor=if_varying_transmission_factor)
         calib_scenario = get_scenario_name(if_m_available=True,
                                            sim_duration=None,
                                            calibration_seed=self.calibSeed,
