@@ -3,7 +3,7 @@ import warnings
 import apacepy.calibration as calib
 from analyze_and_plot_scenarios import export_summary_and_plots_for_varying_coverage, plot_by_sens_spec
 from apacepy.scenario_simulation import ScenarioSimulator
-from definitions import get_sens_analysis_names_and_definitions, SIM_DURATION, TRANSMISSION_FACTOR_VALUES
+from definitions import get_sens_analysis_names_and_definitions, SIM_DURATION
 from model.model_settings import GonoSettings
 from model.model_structure import build_model
 
@@ -37,7 +37,8 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration,
     sets = GonoSettings(if_m_available_for_1st_tx=if_m_available_for_1st_tx,
                         sim_duration=simulation_duration,
                         calibration_seed=calibration_seed,
-                        if_wider_prior=if_wider_prior)
+                        if_wider_prior=if_wider_prior,
+                        if_varying_transmission_factor=vary_transm_factor)
     sets.exportTrajectories = False
 
     # variable names (these correspond to the arguments of update_settings function of ModelSettings)
@@ -65,19 +66,11 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration,
     scenario_sim.export_results()
 
     # export the summary of performance and cost-effectiveness plots
-    if not vary_transm_factor:
-        export_summary_and_plots_for_varying_coverage(
-            if_m_available=if_m_available_for_1st_tx,
-            simulation_duration=simulation_duration,
-            calibration_seed=calibration_seed,
-            trans_factor=1.0)
-    else:
-        for f in TRANSMISSION_FACTOR_VALUES:
-            export_summary_and_plots_for_varying_coverage(
-                if_m_available=if_m_available_for_1st_tx,
-                simulation_duration=simulation_duration,
-                calibration_seed=calibration_seed,
-                trans_factor=f)
+    export_summary_and_plots_for_varying_coverage(
+        if_m_available=if_m_available_for_1st_tx,
+        simulation_duration=simulation_duration,
+        calibration_seed=calibration_seed,
+        varying_trans_factor=vary_transm_factor)
 
     if vary_sens_spec:
         plot_by_sens_spec(
