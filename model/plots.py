@@ -5,7 +5,8 @@ import apacepy.analysis.visualize_scenarios as vis
 from definitions import RestProfile, SympStat, REST_PROFILES, ConvertSympAndResitAndAntiBio, \
     SIM_DURATION, ANTIBIOTICS, COVERAGE_VALUES, COLOR_VARYING_COVERAGE, \
     CIP_SPEC_VALUES, TET_SPEC_VALUES, COLOR_BY_SPEC, SINGLE_FIG_SIZE, \
-    EFFECT_OUTCOME, COST_OUTCOME, EFFECT_COST_LABELS, EFFECT_COST_LABELS_NO_LINE_BREAK
+    EFFECT_OUTCOME, COST_OUTCOME, EFFECT_COST_LABELS, EFFECT_COST_LABELS_NO_LINE_BREAK, \
+    TRANSMISSION_FACTOR_VALUES, TRANSMISSION_FACTOR_COLORS
 from model import data as D
 from model.scenario_and_sensitivity_analyses import get_rate_percentage_life, \
     get_sa_scenarios_with_specific_spec_coverage_ab, \
@@ -157,13 +158,16 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
                                   file_name=dir_of_traj_figs+'/(valid-Tx) ' + filename)
 
 
-def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_range, y_range, interval='c'):
-    """ plots the cost-effectiveness figure for varying test coverage under unknown sensitivity and specificity values
+def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name,
+                                 x_range, y_range, varying_trans_factor=False, interval='c'):
+    """ plots the cost-effectiveness figure for varying test coverage and varying transmission factor (if needed)
+        under sensitivity and specificity values that follow the beta distributions
     :param csv_file_name: (string) csv filename where the summary of simulated scenarios are located
     :param sim_duration: (float) simulation duration
     :param fig_file_name: (string) filename of the figure to save the results as
     :param x_range: range of x-axis
     :param y_range: range of y-axis
+    :param varying_trans_factor: (bool) set to True to plot the figure with different tranmission factors
     :param interval: (string) 'c' for confidence interval and 'p' for prediction interval
     """
 
@@ -174,13 +178,20 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name, x_r
     scen.ERROR_BAR_ALPHA = 0.2
 
     # sets of scenarios to display on the cost-effectiveness plane
-    list_of_scenario_sets = [get_sa_scenarios_varying_coverage(
-        scenarios_df=scenarios_df, color=COLOR_VARYING_COVERAGE)]
+    if varying_trans_factor:
+        list_of_scenario_sets = []
+        for f, color in zip(TRANSMISSION_FACTOR_VALUES, TRANSMISSION_FACTOR_COLORS):
+            list_of_scenario_sets.append(
+                get_sa_scenarios_varying_coverage(
+                    scenarios_df=scenarios_df, color=color, transmission_factor=f))
+    else:
+        list_of_scenario_sets = [get_sa_scenarios_varying_coverage(
+            scenarios_df=scenarios_df, color=COLOR_VARYING_COVERAGE)]
 
     vis.plot_sets_of_scenarios(
         list_of_scenario_sets=list_of_scenario_sets,
         name_of_base_scenario='Status quo (no rapid test)',
-        list_if_remove_base_scenario=[True],
+        list_if_remove_base_scenario=[True, True, True], # in case there 3 sets of scenarios
         effect_outcome=EFFECT_OUTCOME,
         cost_outcome=COST_OUTCOME,
         labels=EFFECT_COST_LABELS,

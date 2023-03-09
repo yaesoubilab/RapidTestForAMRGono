@@ -85,8 +85,8 @@ if __name__ == "__main__":
     # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
     #                    include_sens_analysis_on_sens_spec=True)
 
-    print('\n*** M is available for 1st Tx with simulation duration of 35 years ***')
-    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
+    # print('\n*** M is available for 1st Tx with simulation duration of 35 years ***')
+    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
 
     print('\n*** M is available for 1st Tx with varying transmission factor ***')
     simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,

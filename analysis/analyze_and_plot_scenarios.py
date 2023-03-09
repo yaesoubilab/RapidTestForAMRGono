@@ -15,6 +15,8 @@ X_RANGE_WITH_M = [-0.1, 6.1]
 Y_RANGE_WITH_M = [-250, 2000]
 X_RANGE_NO_M = [-0.1, 6.1]
 Y_RANGE_NO_M = [-5000, 500]
+X_RANGE_VARYING_F = [-0.1, 6.1]
+Y_RANGE_VARYING_F = [-2000, 3000]
 
 
 def plot_by_sens_spec_coverage(if_m_available_for_1st_tx, ab, include_sens_labels,
@@ -87,6 +89,9 @@ def export_summary_and_plots_for_varying_coverage(
     else:
         x_range = X_RANGE_NO_M
         y_range = Y_RANGE_NO_M
+    if varying_trans_factor:
+        x_range = X_RANGE_VARYING_F
+        y_range = Y_RANGE_VARYING_F
 
     plot_sa_for_varying_coverage(
         csv_file_name=csv_file_name,
@@ -94,7 +99,8 @@ def export_summary_and_plots_for_varying_coverage(
         fig_file_name=fig_file_name,
         x_range=x_range,
         y_range=y_range,
-        interval=interval)
+        interval=interval,
+        varying_trans_factor=varying_trans_factor)
 
 
 def plot_by_sens_spec(

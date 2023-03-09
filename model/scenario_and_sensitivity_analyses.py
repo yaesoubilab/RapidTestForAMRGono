@@ -157,24 +157,6 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_scenarios)
 
     # rows
-    # rows = [
-    #     ['Scenario name',
-    #      'Rate of gonorrhea cases',
-    #      '% cases successfully treated with CIP, TET, or CRO',
-    #      '% cases successfully treated with CIP',
-    #      '% cases successfully treated with TET',
-    #      '% cases successfully treated with CRO',
-    #      'Effective lifespan of CIP, TET, and CRO',
-    #      'Effective lifespan of CIP',
-    #      'Effective lifespan of TET',
-    #      'Effective lifespan of CRO',
-    #      'delta - Rate of gonorrhea cases',
-    #      'delta - Effective lifespan of CIP, TET, and CRO',
-    #      'delta - Effective lifespan of CIP',
-    #      'delta - Effective lifespan of TET',
-    #      'delta - Effective lifespan of CRO',
-    #      ]
-    # ]
     rows = [
         ['Scenario name',
          'Rate of gonorrhea cases',
@@ -258,15 +240,16 @@ def get_scenarios_csv_filename_and_fig_filename(
     return csv_file_name, fig_file_name
 
 
-def get_sa_scenarios_varying_coverage(scenarios_df, color):
+def get_sa_scenarios_varying_coverage(scenarios_df, color, transmission_factor=1.0):
     """
     :param scenarios_df: dataframe of simulated scenarios
     :param color: (string) color of set
+    :param transmission_factor: (float) transmission factor
     :return: set of scenarios varying sensitivity for the specified specificity and test coverage
     """
 
     return scen.SetOfScenarios(
-        name='Varying coverage',
+        name='Transmission factor {:.2f}'.format(transmission_factor),
         scenario_df=scenarios_df,
         color=color,
         marker='o',
@@ -275,7 +258,8 @@ def get_sa_scenarios_varying_coverage(scenarios_df, color):
             scen.ConditionOnVariable(var_name='CIP-spec', values=[None, '']),
             scen.ConditionOnVariable(var_name='TET-sens', values=[None, '']),
             scen.ConditionOnVariable(var_name='TET-spec', values=[None, '']),
-            scen.ConditionOnVariable(var_name='rapid test coverage', if_included_in_label=True, label_format='{:.0%}')
+            scen.ConditionOnVariable(var_name='rapid test coverage', if_included_in_label=True, label_format='{:.0%}'),
+            scen.ConditionOnVariable(var_name='transmission factor', values=transmission_factor)
         ],
         if_find_frontier=False,
         if_show_fitted_curve=False,
