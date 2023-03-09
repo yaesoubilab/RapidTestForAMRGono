@@ -14,7 +14,7 @@ To simulate and plot the impact of rapid tests with different characteristics
 The results will be saved under outputs/(with or no)-M/scenarios
 """
 
-N_OF_SIMS = 4 #250
+N_OF_SIMS = 250
 RUN_IN_PARALLEL = True
 
 
@@ -70,7 +70,8 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration,
         if_m_available=if_m_available_for_1st_tx,
         simulation_duration=simulation_duration,
         calibration_seed=calibration_seed,
-        varying_trans_factor=vary_transm_factor)
+        varying_trans_factor=vary_transm_factor,
+        if_wider_priors=if_wider_prior)
 
     if vary_sens_spec:
         plot_by_sens_spec(
@@ -80,17 +81,22 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration,
 
 
 if __name__ == "__main__":
-
+    #
     # print('\n*** M is available for 1st Tx ***')
     # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
-    #                    include_sens_analysis_on_sens_spec=True)
-
+    #                    vary_sens_spec=True)
+    #
     # print('\n*** M is available for 1st Tx with simulation duration of 35 years ***')
     # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
+    #
+    # print('\n*** M is available for 1st Tx with varying transmission factor ***')
+    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
+    #                    vary_transm_factor=True)
 
-    print('\n*** M is available for 1st Tx with varying transmission factor ***')
-    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
-                       vary_transm_factor=True)
+    print('\n*** M is available/unavailable for 1st Tx with wider priors ***')
+    for m in (True, False):
+        simulate_scenarios(if_m_available_for_1st_tx=m, simulation_duration=SIM_DURATION,
+                           if_wider_prior=True)
 
     # print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
     # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,

@@ -159,7 +159,8 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
 
 
 def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name,
-                                 x_range, y_range, varying_trans_factor=False, interval='c'):
+                                 x_range, y_range, varying_trans_factor=False,
+                                 interval='c'):
     """ plots the cost-effectiveness figure for varying test coverage and varying transmission factor (if needed)
         under sensitivity and specificity values that follow the beta distributions
     :param csv_file_name: (string) csv filename where the summary of simulated scenarios are located
@@ -167,7 +168,7 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name,
     :param fig_file_name: (string) filename of the figure to save the results as
     :param x_range: range of x-axis
     :param y_range: range of y-axis
-    :param varying_trans_factor: (bool) set to True to plot the figure with different tranmission factors
+    :param varying_trans_factor: (bool) set to True to plot the figure with different transmission factors
     :param interval: (string) 'c' for confidence interval and 'p' for prediction interval
     """
 

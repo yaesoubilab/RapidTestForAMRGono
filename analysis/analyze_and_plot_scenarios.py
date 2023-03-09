@@ -56,7 +56,7 @@ def plot_by_sens_spec_coverage(if_m_available_for_1st_tx, ab, include_sens_label
 
 def export_summary_and_plots_for_varying_coverage(
         if_m_available, simulation_duration,
-        calibration_seed=None, varying_trans_factor=False, interval='c'):
+        calibration_seed=None, varying_trans_factor=False, if_wider_priors=False, interval='c'):
     """
     exports performance summary and plot the cost-effectiveness figure for varying coverage level under
         this scenario of the availability for M
@@ -64,6 +64,7 @@ def export_summary_and_plots_for_varying_coverage(
     :param simulation_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     :param varying_trans_factor: (float) transmission factor
+    :param if_wider_priors: (bool) if use the model with wider priors
     :param interval: (string) 'c' for confidence interval and 'p' for prediction interval
     """
 
@@ -73,7 +74,8 @@ def export_summary_and_plots_for_varying_coverage(
         simulation_duration=simulation_duration,
         calibration_seed=calibration_seed,
         coverage_values=COVERAGE_VALUES,
-        varying_trans_factor=varying_trans_factor)
+        varying_trans_factor=varying_trans_factor,
+        if_wider_priors=if_wider_priors)
 
     # get the filename of csv file where the scenario analysis and the
     # figure name which the figure for the scenario analysis should be saved as
@@ -81,7 +83,8 @@ def export_summary_and_plots_for_varying_coverage(
         if_m_available_for_1st_tx=if_m_available,
         sim_duration=simulation_duration,
         calibration_seed=calibration_seed,
-        varying_trans_factor=varying_trans_factor)
+        varying_trans_factor=varying_trans_factor,
+        if_wider_priors=if_wider_priors)
 
     if if_m_available:
         x_range = X_RANGE_WITH_M
@@ -168,6 +171,10 @@ if __name__ == "__main__":
     export_summary_and_plots_for_varying_coverage(
         if_m_available=True, simulation_duration=SIM_DURATION, varying_trans_factor=True)
 
+    # with wider prior distributions
+    for m in (True, False):
+        export_summary_and_plots_for_varying_coverage(
+            if_m_available=m, simulation_duration=SIM_DURATION, if_wider_priors=True)
     #
     # export_summary_and_plots_for_varying_coverage(
     #     if_m_available=True, simulation_duration=SIM_DURATION, calibration_seed=1)

@@ -129,7 +129,8 @@ def print_change_rate_percentage_life(scenarios_df, scenario_name_base, scenario
 
 
 def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
-                                    simulation_duration, calibration_seed=None, varying_trans_factor=False):
+                                    simulation_duration, calibration_seed=None,
+                                    varying_trans_factor=False, if_wider_priors=False):
     """
     export performance of different scenarios of test characteristics
     :param if_m_available_for_1st_tx: (bool) if m is available for first-line therapy
@@ -137,6 +138,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
     :param simulation_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     :param varying_trans_factor: (float) if transmission factor is being varied in this analysis
+    :param if_wider_priors: (bool) if model with wider priors should be used
     :return: saves a csv file with the following columns for each scenario:
         (rate of gonorrhea cases, % cases treated with CIP, TET, or CRO, lifespan of CIP, TET, or CRO,
         % increase in cases with respect to the status quo,
@@ -147,7 +149,8 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
         if_m_available=if_m_available_for_1st_tx,
         sim_duration=simulation_duration,
         calibration_seed=calibration_seed,
-        if_varying_transmission_factor=varying_trans_factor
+        if_varying_transmission_factor=varying_trans_factor,
+        if_wider_priors=if_wider_priors
     )
 
     csv_file_scenarios = 'outputs/scen-{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
@@ -209,7 +212,7 @@ def export_performance_of_scenarios(if_m_available_for_1st_tx, coverage_values,
 
 def get_scenarios_csv_filename_and_fig_filename(
         if_m_available_for_1st_tx, ab=None, test_coverage=None,
-        sim_duration=None, calibration_seed=None, varying_trans_factor=False):
+        sim_duration=None, calibration_seed=None, varying_trans_factor=False, if_wider_priors=False):
     """
     :param if_m_available_for_1st_tx: (bool) if M is available for first-line therapy
     :param ab: (string) 'CIP' or 'TET'
@@ -217,6 +220,7 @@ def get_scenarios_csv_filename_and_fig_filename(
     :param sim_duration: (float) simulation duration (for sensitivity analysis)
     :param calibration_seed: (int) calibration seed (for sensitivity analysis)
     :param varying_trans_factor: (float) if varying the transmission factor
+    :param if_wider_priors: (bool) if using the model with wider prior distributions
     :return: (tuple) name of csv file containing the summary of simulated scenarios,
                  name of figure to save the results as
     """
@@ -225,7 +229,8 @@ def get_scenarios_csv_filename_and_fig_filename(
         if_m_available=if_m_available_for_1st_tx,
         sim_duration=sim_duration,
         calibration_seed=calibration_seed,
-        if_varying_transmission_factor=varying_trans_factor)
+        if_varying_transmission_factor=varying_trans_factor,
+        if_wider_priors=if_wider_priors)
 
     if test_coverage is not None:
         fig_file_name = 'figures/SA/{}-{}-coverage {:.2f}.png'.format(scenario_name, ab, test_coverage)
