@@ -1,7 +1,6 @@
 import sys
 
 from deampy.in_out_functions import make_directory
-
 from definitions import SIM_DURATION, ROOT_DIR
 from model.model_settings import GonoSettings
 from model.support import simulate_calibrated_model
@@ -11,11 +10,12 @@ To simulate different scenarios with respect to the characteristics of rapid tes
 (sensitivity, specificity, coverage) 
 """
 
-N_OF_TRAJS = 250   # number of trajectories to simulate
+N_OF_TRAJS = 8   # number of trajectories to simulate
 
 
 def simulate_calibrated(cip_sens=None, cip_spec=None,
-                        tet_sens=None, tet_spec=None, coverage=0.0, if_m_available=True):
+                        tet_sens=None, tet_spec=None, coverage=0.0,
+                        if_m_available=True, if_wider_priors=False, transmission_factor=1.0):
     """
     simulates trajectories from the calibrated model
     :param cip_sens: (float) sensitivity of the rapid test for CIP susceptibility (default 0)
@@ -23,21 +23,23 @@ def simulate_calibrated(cip_sens=None, cip_spec=None,
     :param tet_sens: (float) sensitivity of the rapid test for TET susceptibility (default 0)
     :param tet_spec: (float) specificity of the rapid test for TET susceptibility (default 1)
     :param coverage: (float) coverage of the rapid test (default 0)
+    :param if_wider_priors: (bool) if wider priors should be used
     :param if_m_available: (bool) if drug M is available for 1st line therapy
+    :param transmission_factor: (float) transmission factor
     """
 
-    if if_m_available:
-        figure_filename = 'With M p({}, {}) q({}, {}) c{}.png'.format(
-            cip_sens, tet_sens, cip_spec, tet_spec, coverage)
-    else:
-        figure_filename = 'No M p({}, {}) q({}, {}) c{}.png'.format(
-            cip_sens, tet_sens, cip_spec, tet_spec, coverage)
+    # if if_m_available:
+    #     figure_filename = 'With M p({}, {}) q({}, {}) c{} f{}.png'.format(
+    #         cip_sens, tet_sens, cip_spec, tet_spec, coverage, transmission_factor)
+    # else:
+    #     figure_filename = 'No M p({}, {}) q({}, {}) c{} f{}.png'.format(
+    #         cip_sens, tet_sens, cip_spec, tet_spec, coverage, transmission_factor)
 
     # get model settings
     sets = GonoSettings(if_m_available_for_1st_tx=if_m_available)
     sets.update_settings(cip_sens=cip_sens, cip_spec=cip_spec,
                          tet_sens=tet_sens, tet_spec=tet_spec,
-                         prob_rapid_test=coverage)
+                         prob_rapid_test=coverage, transmission_factor=transmission_factor)
 
     print('\n --- '+figure_filename+' ---')
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS,

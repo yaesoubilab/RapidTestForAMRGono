@@ -19,7 +19,7 @@ class GonoSettings(ModelSettings):
         :param calibration_seed: (int) calibration seed (for sensitivity analysis)
         :param if_wider_prior: (bool) set to True for using wider prior distribution (for sensitivity analysis)
         :param if_varying_transmission_factor: (bool) set to True if transmission factor will be varied
-            (for sensitivity analysis)
+            (for sensitivity analysis) this is mainly to make sure the results will be saved in the right folder
         """
 
         ModelSettings.__init__(self)
