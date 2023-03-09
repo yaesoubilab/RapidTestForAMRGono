@@ -36,7 +36,7 @@ def calibrate(if_m_available, calibration_seed, if_wider_priors=False):
     sets = GonoSettings(if_calibrating=True, collect_traj_of_comparts=False,
                         if_m_available_for_1st_tx=if_m_available,
                         calibration_seed=calibration_seed,
-                        if_wider_prior=if_wider_priors)
+                        if_wider_priors=if_wider_priors)
     # calibrate under the status quo scenario (no rapid test)
     sets.update_settings(cip_sens=0, cip_spec=1, tet_sens=0, tet_spec=1, prob_rapid_test=0)
 
@@ -74,7 +74,7 @@ def calibrate(if_m_available, calibration_seed, if_wider_priors=False):
     sets = GonoSettings(if_calibrating=False, collect_traj_of_comparts=True,
                         if_m_available_for_1st_tx=if_m_available,
                         calibration_seed=calibration_seed,
-                        if_wider_prior=if_wider_priors)
+                        if_wider_priors=if_wider_priors)
     sets.update_settings(cip_sens=0, cip_spec=1, tet_sens=0, tet_spec=1, prob_rapid_test=0)
 
     simulate_calibrated_model(n_of_sims=N_OF_TRAJS_TO_USE_FOR_SIMULATION,
@@ -89,15 +89,15 @@ if __name__ == "__main__":
     # for m_available in [True, False]:
     for calib_seed in [None, 1]:
 
-        scenario_name = get_scenario_name(
+        scen_name = get_scenario_name(
             if_m_available=True, calibration_seed=calib_seed, sim_duration=None)
-        print("\nCalibrating scenario '{}':".format(scenario_name))
+        print("\nCalibrating scenario '{}':".format(scen_name))
 
         calibrate(if_m_available=True, calibration_seed=calib_seed)
 
     # calibrating the model using wider prior distributions
-    scenario_name = get_scenario_name(
+    scen_name = get_scenario_name(
         if_m_available=True, calibration_seed=None, sim_duration=None, if_wider_priors=True)
-    print("\nCalibrating scenario '{}':".format(scenario_name))
+    print("\nCalibrating scenario '{}':".format(scen_name))
 
     calibrate(if_m_available=True, calibration_seed=None, if_wider_priors=True)

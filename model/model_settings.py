@@ -10,14 +10,14 @@ class GonoSettings(ModelSettings):
 
     def __init__(self, if_calibrating=False, collect_traj_of_comparts=True,
                  if_m_available_for_1st_tx=False, sim_duration=None, calibration_seed=None,
-                 if_wider_prior=False, if_varying_transmission_factor=False):
+                 if_wider_priors=False, if_varying_transmission_factor=False):
         """
         :param if_calibrating: (bool) if calibrating the model
         :param collect_traj_of_comparts: (bool) if collect the trajectories of all compartments
         :param if_m_available_for_1st_tx: (bool) if M is available for 1st_tx
         :param sim_duration: (float) simulation duration (for sensitivity analysis)
         :param calibration_seed: (int) calibration seed (for sensitivity analysis)
-        :param if_wider_prior: (bool) set to True for using wider prior distribution (for sensitivity analysis)
+        :param if_wider_priors: (bool) set to True for using wider prior distribution (for sensitivity analysis)
         :param if_varying_transmission_factor: (bool) set to True if transmission factor will be varied
             (for sensitivity analysis) this is mainly to make sure the results will be saved in the right folder
         """
@@ -65,12 +65,12 @@ class GonoSettings(ModelSettings):
         scenario_name = get_scenario_name(if_m_available=self.ifMAvailableFor1stTx,
                                           sim_duration=self.simulationDuration,
                                           calibration_seed=self.calibSeed,
-                                          if_wider_priors=if_wider_prior,
+                                          if_wider_priors=if_wider_priors,
                                           if_varying_transmission_factor=if_varying_transmission_factor)
         calib_scenario = get_scenario_name(if_m_available=True,
                                            sim_duration=None,
                                            calibration_seed=self.calibSeed,
-                                           if_wider_priors=if_wider_prior)
+                                           if_wider_priors=if_wider_priors)
 
         self.folderToSaveTrajs = 'outputs/sim-{}/trajectories'.format(scenario_name)
         self.folderToSaveSummary = 'outputs/sim-{}/summary'.format(scenario_name)
@@ -81,7 +81,7 @@ class GonoSettings(ModelSettings):
         self.probTxCIPIfSuspToCIPAndTET = 0.5
 
         # calibration targets
-        self.ifWiderPrior = if_wider_prior
+        self.ifWiderPrior = if_wider_priors
         if if_calibrating:
             self.simulationDuration = END_OF_CALIB
             self.prevMean = []

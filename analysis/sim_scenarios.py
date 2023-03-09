@@ -37,7 +37,7 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration,
     sets = GonoSettings(if_m_available_for_1st_tx=if_m_available_for_1st_tx,
                         sim_duration=simulation_duration,
                         calibration_seed=calibration_seed,
-                        if_wider_prior=if_wider_prior,
+                        if_wider_priors=if_wider_prior,
                         if_varying_transmission_factor=vary_transm_factor)
     sets.exportTrajectories = False
 
