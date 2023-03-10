@@ -73,18 +73,19 @@ if __name__ == "__main__":
     make_directory(ROOT_DIR + '/analysis/outputs/')
     sys.stdout = open(ROOT_DIR + '/analysis/outputs/summary_simulating_calibrated_models.txt', 'w')
 
-    # # base (M is available)
-    # simulate_calibrated(if_m_available=True)
-    #
-    # # M and rapid DST is available
-    # simulate_calibrated(if_m_available=True, dict_test_characts={'coverage': 0.75})
-    #
-    # # worst-case scenario (neither M nor rapid DST is available)
-    # simulate_calibrated(if_m_available=False)
-    #
-    # # M not available but and rapid DST is available
-    # simulate_calibrated(if_m_available=False, dict_test_characts={'coverage': 0.75})
+    # base (M is available)
+    simulate_calibrated(if_m_available=True)
 
+    # M and rapid DST is available
+    simulate_calibrated(if_m_available=True, dict_test_characts={'coverage': 0.75})
+
+    # worst-case scenario (neither M nor rapid DST is available)
+    simulate_calibrated(if_m_available=False)
+
+    # M not available but rapid DST is available
+    simulate_calibrated(if_m_available=False, dict_test_characts={'coverage': 0.75})
+
+    # change in transmission factor
     simulate_calibrated(if_m_available=True, transmission_factor=TRANSMISSION_FACTOR_VALUES[0])
     simulate_calibrated(if_m_available=True, transmission_factor=TRANSMISSION_FACTOR_VALUES[-1])
 

@@ -7,11 +7,11 @@ from model.model_structure import build_model
 from model.support import estimate_parameters, simulate_calibrated_model
 
 """
-To calibrate the model under two scenarios: 
+To calibrate the model under scenarios: 
     1) when M is available for first-line therapy 
-    2) when M is not available for first-line therapy
+    2) when a different seed is used
+    3) when winder prior distributions are used 
 
-The results will be saved under analysis/outputs/with-M or analysis/outputs/no-M
 """
 
 RUN_IN_PARALLEL = True
@@ -86,7 +86,8 @@ def calibrate(if_m_available, calibration_seed, if_wider_priors=False):
 
 if __name__ == "__main__":
 
-    # for m_available in [True, False]:
+    # calibrate the model under the scenario when M is available for the first-line therapy
+    # for two different seeds
     for calib_seed in [None, 1]:
 
         scen_name = get_scenario_name(

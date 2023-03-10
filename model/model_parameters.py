@@ -90,8 +90,8 @@ class Parameters(EpiParameters):
         self.fitnessFMins[RestProfile.CIP_TET_CRO.value] = Uniform(0.7, 1) if if_base_prior else Uniform(0.6, 1)
 
         for p in range(len(RestProfile)):
-            self.fitnessBs[p] = Uniform(0.1, 0.5) if if_base_prior else Uniform(0.0, 0.7)
-            self.fitnessTMids[p] = Uniform(7, 13) if if_base_prior else Uniform(5, 15)
+            self.fitnessBs[p] = Uniform(0.1, 0.5) if if_base_prior else Uniform(0.0, 0.6)
+            self.fitnessTMids[p] = Uniform(7, 13) if if_base_prior else Uniform(6, 14)
 
         # exponent of the probability for the emergence of resistance for a drug
         self.exponProbRes[AB.CIP.value] = Uniform(-5, -3) if if_base_prior else Uniform(-6, -2)

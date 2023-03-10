@@ -81,29 +81,29 @@ def simulate_scenarios(if_m_available_for_1st_tx, simulation_duration,
 
 
 if __name__ == "__main__":
-    #
-    # print('\n*** M is available for 1st Tx ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
-    #                    vary_sens_spec=True)
-    #
-    # print('\n*** M is available for 1st Tx with simulation duration of 35 years ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
-    #
-    # print('\n*** M is available for 1st Tx with varying transmission factor ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
-    #                    vary_transm_factor=True)
 
-    print('\n*** M is available/unavailable for 1st Tx with wider priors ***')
+    print('\n*** M is available for 1st Tx ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
+                       vary_sens_spec=True)
+
+    print('\n*** M is available for 1st Tx with simulation duration of 35 years ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=35)
+
     for m in (True, False):
+        print('\n*** M is available/unavailable for 1st Tx with varying transmission factor ***')
+        simulate_scenarios(if_m_available_for_1st_tx=m, simulation_duration=SIM_DURATION,
+                           vary_transm_factor=True)
+
+        print('\n*** M is available/unavailable for 1st Tx with wider priors ***')
         simulate_scenarios(if_m_available_for_1st_tx=m, simulation_duration=SIM_DURATION,
                            if_wider_prior=True)
 
-    # print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
-    #                    calibration_seed=1)
-    #
-    # print('\n*** M is not available for 1st Tx***')
-    # simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=SIM_DURATION)
-    #
-    # print('\n*** M is not available for 1st Tx with simulation duration of 35 years ***')
-    # simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=35)
+    print('\n*** M is available for 1st Tx with a new initial calibration seed ***')
+    simulate_scenarios(if_m_available_for_1st_tx=True, simulation_duration=SIM_DURATION,
+                       calibration_seed=1)
+
+    print('\n*** M is not available for 1st Tx***')
+    simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=SIM_DURATION)
+
+    print('\n*** M is not available for 1st Tx with simulation duration of 35 years ***')
+    simulate_scenarios(if_m_available_for_1st_tx=False, simulation_duration=35)
