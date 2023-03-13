@@ -10,7 +10,7 @@ To simulate different scenarios with respect to the characteristics of rapid tes
 (sensitivity, specificity, coverage) 
 """
 
-N_OF_TRAJS = 4   # number of trajectories to simulate
+N_OF_TRAJS = 250   # number of trajectories to simulate
 
 
 def simulate_calibrated(dict_test_characts=None,
