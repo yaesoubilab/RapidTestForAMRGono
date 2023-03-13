@@ -293,3 +293,38 @@ def get_scenario_name(if_m_available, sim_duration=None, calibration_seed=None,
         name += '-varying f'
 
     return name
+
+
+def get_traj_fig_name(if_m_available, dict_test_characts, transmission_factor):
+
+    if dict_test_characts is None:
+        test_text = 'No DST'
+    else:
+        test_p_q_provided = True
+        for p in ('cip_sens', 'cip_spec', 'tet_sens', 'tet_spec'):
+            if p not in dict_test_characts:
+                dict_test_characts[p] = None
+                test_p_q_provided = False
+
+        if test_p_q_provided:
+            test_text = 'p({}, {}) q({}, {}) c{}'.format(
+                dict_test_characts['cip_sens'],
+                dict_test_characts['tet_sens'],
+                dict_test_characts['cip_spec'],
+                dict_test_characts['tet_spec'],
+                int(dict_test_characts['coverage']*100))
+        else:
+            test_text = 'With DST c{}'.format(
+                int(dict_test_characts['coverage'] * 100))
+
+    if transmission_factor == 1.0:
+        trans_factor_text = ''
+    else:
+        trans_factor_text = ' f{}'.format(int(100*transmission_factor))
+
+    if if_m_available:
+        figure_filename = 'With M ' + test_text + trans_factor_text
+    else:
+        figure_filename = 'No M ' + test_text + trans_factor_text
+
+    return figure_filename

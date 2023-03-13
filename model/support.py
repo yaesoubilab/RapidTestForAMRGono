@@ -50,9 +50,6 @@ def simulate_multi_trajectories(n, sim_duration=None, calibration_seed=None,
                                       calibration_seed=calibration_seed,
                                       if_wider_priors=settings.ifWiderPrior)
 
-    # if sets.transmissionFactor != 1.0:
-    #     scenario_name += '-f{:.2f}'.format(sets.transmissionFactor)
-
     dir_of_traj_files = 'outputs/sim-{}/trajectories'.format(scenario_name)
     dir_of_traj_figs = 'figures/sim-{}/trajs'.format(scenario_name)
 

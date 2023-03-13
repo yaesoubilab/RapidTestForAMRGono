@@ -1,7 +1,7 @@
 import sys
 
 from deampy.in_out_functions import make_directory
-from definitions import SIM_DURATION, ROOT_DIR, TRANSMISSION_FACTOR_VALUES
+from definitions import SIM_DURATION, ROOT_DIR, TRANSMISSION_FACTOR_VALUES, get_traj_fig_name
 from model.model_settings import GonoSettings
 from model.support import simulate_calibrated_model
 
@@ -10,7 +10,7 @@ To simulate different scenarios with respect to the characteristics of rapid tes
 (sensitivity, specificity, coverage) 
 """
 
-N_OF_TRAJS = 2   # number of trajectories to simulate
+N_OF_TRAJS = 4   # number of trajectories to simulate
 
 
 def simulate_calibrated(dict_test_characts=None,
@@ -28,30 +28,13 @@ def simulate_calibrated(dict_test_characts=None,
     :param transmission_factor: (float) transmission factor
     """
 
+    figure_filename = get_traj_fig_name(
+        if_m_available=if_m_available, dict_test_characts=dict_test_characts, transmission_factor=transmission_factor)
+
+    # set the test characteristics to default if not provided
     if dict_test_characts is None:
-        test_text = 'No DST'
+        # test_text = 'No DST'
         dict_test_characts = {'cip_sens': 0, 'cip_spec': 1, 'tet_sens': 0, 'tet_spec': 1, 'coverage': 0}
-    else:
-        for p in ('cip_sens', 'cip_spec', 'tet_sens', 'tet_spec'):
-            if p not in dict_test_characts:
-                dict_test_characts[p] = None
-
-        test_text = 'p({}, {}) q({}, {}) c{}'.format(
-            dict_test_characts['cip_sens'],
-            dict_test_characts['tet_sens'],
-            dict_test_characts['cip_spec'],
-            dict_test_characts['tet_spec'],
-            dict_test_characts['coverage'])
-
-    if transmission_factor == 1.0:
-        trans_factor_text = ''
-    else:
-        trans_factor_text = ' f{}'.format(transmission_factor)
-
-    if if_m_available:
-        figure_filename = 'With M ' + test_text + trans_factor_text
-    else:
-        figure_filename = 'No M ' + test_text + trans_factor_text
 
     # get model settings
     sets = GonoSettings(if_m_available_for_1st_tx=if_m_available, if_wider_priors=if_wider_priors)
