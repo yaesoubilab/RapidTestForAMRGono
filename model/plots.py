@@ -127,7 +127,9 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
         outcome_name='Proportion of cases CRO-NS',
         title='Cases with CRO-NS (%)',
         x_multiplier=obs_incd_multiplier,
-        y_multiplier=100, y_range=(0, 50))
+        y_multiplier=100, y_range=(0, 50),
+        lines_info=traj.LinePlotInfo(
+            v_or_h='h', loc=5, color='b'))
 
     calibration_filename = dir_of_traj_figs+'/(summary) ' + filename
 
