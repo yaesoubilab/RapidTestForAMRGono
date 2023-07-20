@@ -1,7 +1,11 @@
+import matplotlib
+
 from definitions import COVERAGE_VALUES, TRIPLE_FIG_SIZE, SIM_DURATION
 from model.plots import plot_sa_for_specific_ab, plot_sa_for_varying_coverage, plot_sa_for_specific_ab_and_coverage
 from model.scenario_and_sensitivity_analyses import get_scenarios_csv_filename_and_fig_filename, \
     export_performance_of_scenarios
+
+matplotlib.use('cairo')
 
 """
 To plot the cost-effectiveness plan visualizing the performance of rapid tests for 
@@ -162,29 +166,29 @@ def plot_by_sens_spec(
 if __name__ == "__main__":
 
     # plot for when sensitivity and specificity of tests have Beta distribution
-    # export_summary_and_plots_for_varying_coverage(
-    #     if_m_available=True,  simulation_duration=SIM_DURATION, interval='c')
+    export_summary_and_plots_for_varying_coverage(
+        if_m_available=True,  simulation_duration=SIM_DURATION, interval='c')
 
-    # export_summary_and_plots_for_varying_coverage(
-    #     if_m_available=True, simulation_duration=35)
+    export_summary_and_plots_for_varying_coverage(
+        if_m_available=True, simulation_duration=35)
 
     export_summary_and_plots_for_varying_coverage(
         if_m_available=True, simulation_duration=SIM_DURATION, varying_trans_factor=True)
 
-    # with wider prior distributions
-    for m in (True, False):
-        export_summary_and_plots_for_varying_coverage(
-            if_m_available=m, simulation_duration=SIM_DURATION, if_wider_priors=True)
-    #
-    # export_summary_and_plots_for_varying_coverage(
-    #     if_m_available=True, simulation_duration=SIM_DURATION, calibration_seed=1)
-    #
-    # export_summary_and_plots_for_varying_coverage(
-    #     if_m_available=False, simulation_duration=SIM_DURATION)
-    #
-    # export_summary_and_plots_for_varying_coverage(
-    #     if_m_available=False, simulation_duration=35)
-    #
-    # plot_by_sens_spec(
-    #     if_m_available=True,
-    #     simulation_duration=SIM_DURATION)
+    # # with wider prior distributions
+    # for m in (True, False):
+    #     export_summary_and_plots_for_varying_coverage(
+    #         if_m_available=m, simulation_duration=SIM_DURATION, if_wider_priors=True)
+
+    export_summary_and_plots_for_varying_coverage(
+        if_m_available=True, simulation_duration=SIM_DURATION, calibration_seed=1)
+
+    export_summary_and_plots_for_varying_coverage(
+        if_m_available=False, simulation_duration=SIM_DURATION)
+
+    export_summary_and_plots_for_varying_coverage(
+        if_m_available=False, simulation_duration=35)
+
+    plot_by_sens_spec(
+        if_m_available=True,
+        simulation_duration=SIM_DURATION)

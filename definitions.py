@@ -3,6 +3,7 @@ from enum import Enum
 
 from scipy.stats import norm
 
+FIG_EXT = 'pdf'  # 'png'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SIM_DURATION = 25
@@ -327,4 +328,4 @@ def get_traj_fig_name(if_m_available, dict_test_characts, transmission_factor):
     else:
         figure_filename = 'No M ' + test_text + trans_factor_text
 
-    return figure_filename
+    return '{}.{}'.format(figure_filename, FIG_EXT)

@@ -3,7 +3,7 @@ from deampy.in_out_functions import write_csv
 from deampy.sensitivity_analysis import SensitivityAnalysis
 
 from definitions import ROOT_DIR, get_scenario_name, ANTIBIOTICS, get_name_of_scenario_analysis, \
-    TRANSMISSION_FACTOR_VALUES
+    TRANSMISSION_FACTOR_VALUES, FIG_EXT
 
 SCENARIO_COLORS = ['purple', 'blue', 'red', 'green', 'orange', 'brown']
 
@@ -233,12 +233,12 @@ def get_scenarios_csv_filename_and_fig_filename(
         if_wider_priors=if_wider_priors)
 
     if test_coverage is not None:
-        fig_file_name = 'figures/SA/{}-{}-coverage {:.2f}.png'.format(scenario_name, ab, test_coverage)
+        fig_file_name = 'figures/SA/{}-{}-coverage {:.2f}.{}'.format(scenario_name, ab, test_coverage, FIG_EXT)
     else:
         if ab is None:
-            fig_file_name = 'figures/SA/{}.png'.format(scenario_name)
+            fig_file_name = 'figures/SA/{}.{}'.format(scenario_name, FIG_EXT)
         else:
-            fig_file_name = 'figures/SA/{}-{}-coverage.png'.format(scenario_name, ab)
+            fig_file_name = 'figures/SA/{}-{}-coverage.{}'.format(scenario_name, ab, FIG_EXT)
 
     csv_file_name = 'outputs/scen-{}/scenarios/simulated_scenarios.csv'.format(scenario_name)
 
