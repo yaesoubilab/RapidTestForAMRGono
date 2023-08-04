@@ -268,8 +268,8 @@ def get_sa_scenarios_varying_coverage(scenarios_df, color, transmission_factor=1
         ],
         if_find_frontier=False,
         if_show_fitted_curve=False,
-        labels_shift_x=0.01,
-        labels_shift_y=0.01)
+        labels_shift_x=0.035,
+        labels_shift_y=-0.01)
 
 
 def get_sa_scenarios_with_specific_spec_coverage_ab(

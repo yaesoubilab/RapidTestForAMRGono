@@ -3,7 +3,7 @@ from enum import Enum
 
 from scipy.stats import norm
 
-FIG_EXT = 'pdf'  # 'png'
+FIG_EXT = 'png'  # 'png'
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 SIM_DURATION = 25
@@ -36,8 +36,8 @@ TRIPLE_FIG_SIZE = (8, 3.5)
 EFFECT_OUTCOME = 'Time-averaged proportion of cases treated successfully with CIP, TET, or CRO ' \
                  '(average incidence after epidemic warm-up)'
 COST_OUTCOME = 'Rate of gonorrhea cases (average incidence after epidemic warm-up)'
-EFFECT_COST_LABELS = ('Change in the combined effective lifespan of\n first-line antibiotics (years)',
-                      'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)')
+EFFECT_COST_LABELS = ('Change in the Combined Effective Lifespan of\n First-Line Antibiotics, Years',
+                      'Change in the Annual Rate of Gonorrhea\n per 100,000 MSM Population')
 EFFECT_COST_LABELS_NO_LINE_BREAK = ('Change in the combined effective lifespan of first-line antibiotics (years)',
                                     'Change in the annual rate of gonorrhea\n(per 100,000 MSM population)')
 

@@ -1,5 +1,11 @@
+import matplotlib
+
 from definitions import get_scenario_name, get_traj_fig_name, SIM_DURATION
 from model.plots import plot_trajectories
+
+matplotlib.rcParams['axes.spines.right'] = False
+matplotlib.rcParams['axes.spines.top'] = False
+
 
 """
 To plot the simulated trajectories available under 'outputs/sim-with M-25yrs/trajectories'

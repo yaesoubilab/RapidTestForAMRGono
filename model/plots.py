@@ -13,7 +13,9 @@ from model.scenario_and_sensitivity_analyses import get_rate_percentage_life, \
     get_sa_scenarios_varying_coverage
 
 traj.SUBPLOT_W_SPACE = 0.25
+traj.TITLE_WEIGHT = 'normal'
 scen.POLY_DEGREES = 1
+# scen.ERROR_BAR_ALPHA = 0.0
 
 
 def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
@@ -116,7 +118,7 @@ def plot_trajectories(prev_multiplier=52, incd_multiplier=1,
 
         perc_cases_by_rest_profile.append(traj.TrajPlotInfo(
             outcome_name='Proportion of cases resistant to '+REST_PROFILES[p],
-            title='Cases with profile\n{} (%)'.format(REST_PROFILES[p]),
+            title='Cases with Profile\n{} (%)'.format(REST_PROFILES[p]),
             x_multiplier=obs_incd_multiplier,
             y_multiplier=100, y_range=y_range,
             calibration_info=traj.CalibrationTargetPlotInfo(
@@ -178,7 +180,8 @@ def plot_sa_for_varying_coverage(csv_file_name, sim_duration, fig_file_name,
     scenarios_df = scen.ScenarioDataFrame(csv_file_name=csv_file_name)
 
     # plot CEA
-    scen.ERROR_BAR_ALPHA = 0.2
+    scen.ERROR_BAR_ALPHA = 0.75
+    scen.LABELS_WITHIN_FIG_FONT_SIZE = 8
 
     # sets of scenarios to display on the cost-effectiveness plane
     if varying_trans_factor:

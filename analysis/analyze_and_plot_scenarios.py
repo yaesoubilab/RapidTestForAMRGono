@@ -6,6 +6,9 @@ from model.scenario_and_sensitivity_analyses import get_scenarios_csv_filename_a
     export_performance_of_scenarios
 
 matplotlib.use('cairo')
+matplotlib.rcParams['axes.spines.right'] = False
+matplotlib.rcParams['axes.spines.top'] = False
+
 
 """
 To plot the cost-effectiveness plan visualizing the performance of rapid tests for 
@@ -190,5 +193,4 @@ if __name__ == "__main__":
         if_m_available=False, simulation_duration=35)
 
     plot_by_sens_spec(
-        if_m_available=True,
-        simulation_duration=SIM_DURATION)
+        if_m_available=True, simulation_duration=SIM_DURATION)
