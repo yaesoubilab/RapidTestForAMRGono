@@ -306,7 +306,7 @@ def get_sa_scenarios_with_specific_spec_coverage_ab(
         ],
         if_find_frontier=False,
         if_show_fitted_curve=False,
-        labels_shift_x=0.01,
+        labels_shift_x=0.015,
         labels_shift_y=0.01)
 
 

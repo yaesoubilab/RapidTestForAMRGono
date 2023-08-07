@@ -178,7 +178,7 @@ if __name__ == "__main__":
     export_summary_and_plots_for_varying_coverage(
         if_m_available=True, simulation_duration=SIM_DURATION, varying_trans_factor=True)
 
-    # # with wider prior distributions
+    # with wider prior distributions
     # for m in (True, False):
     #     export_summary_and_plots_for_varying_coverage(
     #         if_m_available=m, simulation_duration=SIM_DURATION, if_wider_priors=True)
